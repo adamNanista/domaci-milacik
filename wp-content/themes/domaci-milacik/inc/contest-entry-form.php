@@ -4,6 +4,8 @@
 		exit; // Exit if accessed directly.
 	}
 
+    use Rakit\Validation\Validator;
+
     add_action( 'wp_enqueue_scripts', 'enqueue_contest_entry_form_assets' );
 
     function enqueue_contest_entry_form_assets() {
@@ -123,19 +125,32 @@
         $pet_description    = isset( $_POST['contest-entry-form-pet-description'] )     ? sanitize_textarea_field( wp_unslash( $_POST['contest-entry-form-pet-description'] ) ) : '';
         $video_type         = isset( $_POST['contest-entry-form-video-type'] )          ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-video-type'] ) )          : 'upload';
         $video_url          = isset( $_POST['contest-entry-form-video-url'] )           ? esc_url_raw( wp_unslash( $_POST['contest-entry-form-video-url'] ) )                   : '';
-        $consent_comibned   = !empty( $_POST['contest-entry-form-consent-combined'] )   ? 1                                                                                     : 0;
+        $consent_comibned   = ! empty( $_POST['contest-entry-form-consent-combined'] )  ? 1                                                                                     : 0;
+        $photo_name         = $_FILES['contest-entry-form-photo']['name']               ?? null;
 
         // Validate required fields
-        $errors = array();
-        if ( empty( $name ) )                                       $errors[] = 'Name is required.';
-        if ( empty( $email ) || ! is_email( $email ) )              $errors[] = 'A valid email address is required.';
-        if ( empty( $pet_name ) )                                   $errors[] = 'Pet name is required.';
-        if ( empty( $pet_description ) )                            $errors[] = 'Pet description is required.';
-        if ( empty( $_FILES['contest-entry-form-photo']['name'] ) ) $errors[] = 'A photo is required.';
-        if ( empty( $consent_comibned ) )                           $errors[] = 'Consent is required.';
+        $validator = new Validator;
+
+        $validation = $validator->make(array(
+            'name'              => $name,
+            'email'             => $email,
+            'pet_name'          => $pet_name,
+            'pet_description'   => $pet_description,
+            'consent'           => $consent_comibned,
+            'photo'             => $photo_name,
+        ), array(
+            'name'              => 'required',
+            'email'             => 'required|email',
+            'pet_name'          => 'required',
+            'pet_description'   => 'required',
+            'photo'             => 'required',
+            'consent'           => 'required|accepted',
+        ));
+
+        $validation->validate();
     
-        if ( ! empty( $errors ) ) {
-            wp_send_json_error( array( 'message' => implode( ' ', $errors ) ) );
+        if ( $validation->fails() ) {
+            wp_send_json_error( array( 'message' => implode( ' ', $validation->errors()->all() ) ) );
         }
 
         // Load WP upload helpers
