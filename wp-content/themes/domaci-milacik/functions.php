@@ -4,8 +4,12 @@
 		exit; // Exit if accessed directly.
 	}
 
+    /**
+     * Save/Load ACF json
+     */
+
     add_filter('acf/settings/save_json', function() {
-        return get_stylesheet_directory() . '/acf-json'; // Save
+        return get_stylesheet_directory() . '/acf-json';
     });
 
     add_filter('acf/settings/load_json', function($paths) {
