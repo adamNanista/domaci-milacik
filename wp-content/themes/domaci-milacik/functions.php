@@ -4,6 +4,8 @@
 		exit; // Exit if accessed directly.
 	}
 
+    require_once get_stylesheet_directory() . '/inc/contest-entry-form.php';
+
     /**
      * Save/Load ACF json
      */
