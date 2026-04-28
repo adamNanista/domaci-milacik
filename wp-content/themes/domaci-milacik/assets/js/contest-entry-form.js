@@ -5,9 +5,9 @@
 		var $form = $("#contest-entry-form");
 		var $messages = $("#contest-entry-form-messages");
 		var $submit = $("#contest-entry-form-submit");
+		var $videoToggle = $("input[name='contest-entry-form-video-type']");
 
-		// ── Video type toggle ──────────────────────────────────────────────
-		$('input[name="contest-entry-form-video-type"]').on("change", function () {
+		$videoToggle.on("change", function () {
 			if ($(this).val() === "upload") {
 				$("#contest-entry-form-video-upload-panel").removeClass("hidden");
 				$("#contest-entry-form-video-url-panel").addClass("hidden");
@@ -19,16 +19,14 @@
 			}
 		});
 
-		// ── Form submission ────────────────────────────────────────────────
 		$form.on("submit", function (e) {
 			e.preventDefault();
 
 			clearMessages();
 
-			// Basic client-side validation
 			var errors = [];
-			if (!$.trim($("#contest-entry-form-name").val())) errors.push("Name is required.");
-			if (!$.trim($("#contest-entry-form-email").val())) errors.push("Email is required.");
+			if (!$.trim($("#contest-entry-form-owner-name").val())) errors.push("Name is required.");
+			if (!$.trim($("#contest-entry-form-owner-email").val())) errors.push("Email is required.");
 			if (!$.trim($("#contest-entry-form-pet-name").val())) errors.push("Pet name is required.");
 			if (!$.trim($("#contest-entry-form-pet-description").val())) errors.push("Pet description is required.");
 
@@ -42,12 +40,11 @@
 				return;
 			}
 
-			// Build FormData
+			setLoading(true);
+
 			var formData = new FormData($form[0]);
 			formData.append("action", "contest_entry_form_submit_entry");
 			formData.append("nonce", contest_entry_form_ajax.nonce);
-
-			setLoading(true);
 
 			$.ajax({
 				url: contest_entry_form_ajax.ajax_url,
@@ -60,10 +57,8 @@
 					if (response.success) {
 						showSuccess(response.data.message);
 						$form[0].reset();
-						// Reset video toggle UI
 						$("#contest-entry-form-video-upload-panel").removeClass("hidden");
 						$("#contest-entry-form-video-url-panel").addClass("hidden");
-						// Scroll to message
 						$("html, body").animate({ scrollTop: $messages.offset().top - 40 }, 400);
 					} else {
 						showError(response.data.message || "Something went wrong. Please try again.");
@@ -76,13 +71,13 @@
 			});
 		});
 
-		// ── Helpers ────────────────────────────────────────────────────────
 		function setLoading(isLoading) {
-			$submit.prop("disabled", isLoading);
 			if (isLoading) {
+				$submit.prop("disabled", true);
 				$submit.find("#contest-entry-form-submit-text").addClass("hidden");
 				$submit.find("#contest-entry-form-submit-loading").removeClass("hidden");
 			} else {
+				$submit.prop("disabled", false);
 				$submit.find("#contest-entry-form-submit-text").removeClass("hidden");
 				$submit.find("#contest-entry-form-submit-loading").addClass("hidden");
 			}

@@ -42,12 +42,12 @@
         ?>
             <form id="contest-entry-form" enctype="multipart/form-data" novalidate>
                 <div>
-                    <label for="contest-entry-form-name">Meno súťažiaceho <abbr title="Povinné">*</abbr></label>
-                    <input type="text" id="contest-entry-form-name" name="contest-entry-form-name" required placeholder="Zadajte meno súťažiaceho" />
+                    <label for="contest-entry-form-owner-name">Meno súťažiaceho <abbr title="Povinné">*</abbr></label>
+                    <input type="text" id="contest-entry-form-owner-name" name="contest-entry-form-owner-name" required placeholder="Zadajte meno súťažiaceho" />
                 </div>
                 <div>
-                    <label for="contest-entry-form-email">Email <abbr title="Povinné">*</abbr></label>
-                    <input type="email" id="contest-entry-form-email" name="contest-entry-form-email" required placeholder="Zadajte email" />
+                    <label for="contest-entry-form-owner-email">Email <abbr title="Povinné">*</abbr></label>
+                    <input type="email" id="contest-entry-form-owner-email" name="contest-entry-form-owner-email" required placeholder="Zadajte email" />
                 </div>
                 <div>
                     <label for="contest-entry-form-pet-name">Názov miláčika <abbr title="Povinné">*</abbr></label>
@@ -108,10 +108,29 @@
     add_action( 'wp_ajax_nopriv_contest_entry_form_submit_entry', 'contest_entry_form_handle_submission' );
 
     function contest_entry_form_handle_submission() {
-        // Verify nonce
-        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'contest_entry_form_submit_entry' ) ) {
-            wp_send_json_error( array( 'message' => 'Security check failed. Please refresh the page and try again.' ) );
+        // AJAX guard
+        if ( ! wp_doing_ajax() ) {
+            wp_die();
         }
+
+        // Verify nonce
+        check_ajax_referer(
+            'contest_entry_form_submit_entry',
+            'nonce',
+            true
+        );
+
+        // Rate-limit
+        $ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? '' );
+        $rate_key = 'cef_rate_' . wp_hash( $ip );
+
+        $attempts = (int) get_transient( $rate_key );
+        
+        if ( $attempts >= 5 ) {
+            wp_send_json_error( array( 'message' => 'Too many attempts in a short time. Please wait a few minutes and try again.' ) );
+        }
+
+        set_transient( $rate_key, $attempts + 1, 15 * MINUTE_IN_SECONDS );
 
         // Honeypot
         if ( ! empty( $_POST['contest-entry-form-website'] ) ) {
@@ -119,32 +138,44 @@
         }
 
         // Sanitize fields
-        $name               = isset( $_POST['contest-entry-form-name'] )                ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-name'] ) )                : '';
-        $email              = isset( $_POST['contest-entry-form-email'] )               ? sanitize_email( wp_unslash( $_POST['contest-entry-form-email'] ) )                    : '';
+        $owner_name         = isset( $_POST['contest-entry-form-owner-name'] )          ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-owner-name'] ) )          : '';
+        $owner_email        = isset( $_POST['contest-entry-form-owner-email'] )         ? sanitize_email( wp_unslash( $_POST['contest-entry-form-owner-email'] ) )              : '';
         $pet_name           = isset( $_POST['contest-entry-form-pet-name'] )            ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-pet-name'] ) )            : '';
         $pet_description    = isset( $_POST['contest-entry-form-pet-description'] )     ? sanitize_textarea_field( wp_unslash( $_POST['contest-entry-form-pet-description'] ) ) : '';
         $video_type         = isset( $_POST['contest-entry-form-video-type'] )          ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-video-type'] ) )          : 'upload';
         $video_url          = isset( $_POST['contest-entry-form-video-url'] )           ? esc_url_raw( wp_unslash( $_POST['contest-entry-form-video-url'] ) )                   : '';
-        $consent_comibned   = ! empty( $_POST['contest-entry-form-consent-combined'] )  ? 1                                                                                     : 0;
-        $photo_name         = $_FILES['contest-entry-form-photo']['name']               ?? null;
+        $consent_combined   = ! empty( $_POST['contest-entry-form-consent-combined'] )  ? 1                                                                                     : 0;
+
+        // Duplicate submission protection
+        $fingerprint_source = strtolower(
+            trim( $owner_email ) . '|' . trim( $pet_name )
+        );
+
+        $fingerprint = wp_hash( $fingerprint_source );
+
+        $fingerprint_key = 'cef_submission_' . $fingerprint;
+
+        if ( get_transient( $fingerprint_key ) ) {
+            wp_send_json_error( array( 'message' => 'This entry has already been submitted.' ) );
+        }
+
+        set_transient( $fingerprint_key, 1, DAY_IN_SECONDS );
 
         // Validate required fields
         $validator = new Validator;
 
         $validation = $validator->make(array(
-            'name'              => $name,
-            'email'             => $email,
+            'owner_name'        => $owner_name,
+            'owner_email'       => $owner_email,
             'pet_name'          => $pet_name,
             'pet_description'   => $pet_description,
-            'consent'           => $consent_comibned,
-            'photo'             => $photo_name,
+            'consent_combined'  => $consent_combined,
         ), array(
-            'name'              => 'required',
-            'email'             => 'required|email',
+            'owner_name'        => 'required',
+            'owner_email'       => 'required|email',
             'pet_name'          => 'required',
             'pet_description'   => 'required',
-            'photo'             => 'required',
-            'consent'           => 'required|accepted',
+            'consent_combined'  => 'required|accepted',
         ));
 
         $validation->validate();
@@ -159,9 +190,8 @@
         require_once ABSPATH . 'wp-admin/includes/image.php';
 
         // Validate photo type & size
-        $allowed_photo_types = array( 'image/jpeg', 'image/png' );
-        if ( ! in_array( $_FILES['contest-entry-form-photo']['type'], $allowed_photo_types, true ) ) {
-            wp_send_json_error( array( 'message' => 'Invalid photo type. Please upload a JPG or PNG image.' ) );
+        if ( empty( $_FILES['contest-entry-form-photo'] ) || $_FILES['contest-entry-form-photo']['error'] !== UPLOAD_ERR_OK ) {
+            wp_send_json_error( array( 'message' => 'Photo upload failed or missing.' ) );
         }
         if ( $_FILES['contest-entry-form-photo']['size'] > 5 * MB_IN_BYTES ) {
             wp_send_json_error( array( 'message' => 'Photo must be under 5 MB.' ) );
@@ -169,66 +199,107 @@
 
         // Upload photo
         add_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
+        add_filter( 'wp_handle_upload_prefilter', 'contest_entry_form_upload_prefilter' );
         $photo_id = media_handle_upload( 'contest-entry-form-photo', 0 );
+        remove_filter( 'wp_handle_upload_prefilter', 'contest_entry_form_upload_prefilter' );
         remove_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
     
         if ( is_wp_error( $photo_id ) ) {
             wp_send_json_error( array( 'message' => 'Photo upload failed: ' . $photo_id->get_error_message() ) );
         }
 
+        update_post_meta( $photo_id, '_wp_attachment_image_alt', $pet_name );
+
+        $photo_file = get_attached_file( $photo_id );
+        $photo_check = wp_check_filetype_and_ext( $photo_file, basename( $photo_file ) );
+
+        if ( ! in_array( $photo_check['type'], ['image/jpeg', 'image/png'], true ) ) {
+            wp_delete_attachment($photo_id, true);
+            wp_send_json_error( array( 'message' => 'Invalid photo type.' ) );
+        }
+
+        $editor = wp_get_image_editor( $photo_file );
+
+        if ( is_wp_error( $editor ) ) {
+            wp_delete_attachment( $photo_id, true );
+            wp_send_json_error( array( 'message' => 'Invalid image file.' ) );
+        }
+
+        $editor->save( $photo_file );
+
         // Handle optional video
         $video_attachment_id = 0;
         $final_video_url     = '';
 
         if ( $video_type === 'upload' && ! empty( $_FILES['contest-entry-form-video-upload']['name'] ) ) {
-            $allowed_video_types = array( 'video/mp4' );
-            if ( ! in_array( $_FILES['contest-entry-form-video-upload']['type'], $allowed_video_types, true ) ) {
-                wp_send_json_error( array( 'message' => 'Invalid video type. Please upload an MP4, MOV, or AVI file.' ) );
+            if ( empty( $_FILES['contest-entry-form-video-upload'] ) || $_FILES['contest-entry-form-video-upload']['error'] !== UPLOAD_ERR_OK ) {
+                wp_send_json_error( array( 'message' => 'Video upload failed or missing.' ) );
             }
             if ( $_FILES['contest-entry-form-video-upload']['size'] > 30 * MB_IN_BYTES ) {
                 wp_send_json_error( array( 'message' => 'Video must be under 30 MB.' ) );
             }
     
             add_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
+            add_filter( 'wp_handle_upload_prefilter', 'contest_entry_form_upload_prefilter' );
             $video_id = media_handle_upload( 'contest-entry-form-video-upload', 0 );
+            remove_filter( 'wp_handle_upload_prefilter', 'contest_entry_form_upload_prefilter' );
             remove_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
     
             if ( is_wp_error( $video_id ) ) {
                 wp_send_json_error( array( 'message' => 'Video upload failed: ' . $video_id->get_error_message() ) );
             }
+
+            $video_file = get_attached_file( $video_id );
+            $video_check = wp_check_filetype_and_ext( $video_file, basename( $video_file ) );
+
+            if ( ! in_array( $video_check['type'], ['video/mp4'], true ) ) {
+                wp_delete_attachment($video_id, true);
+                wp_send_json_error( array( 'message' => 'Invalid video type.' ) );
+            }
     
             $video_attachment_id = $video_id;
             $final_video_url     = wp_get_attachment_url( $video_id );
-    
         } elseif ( $video_type === 'url' && ! empty( $video_url ) ) {
+            $host = wp_parse_url( $video_url, PHP_URL_HOST );
+            $host = preg_replace( '/^www\./', '', strtolower( $host ) );
+            
+            $allowed_hosts = array(
+                'youtube.com',
+                'youtu.be',
+                'vimeo.com',
+            );
+
+            if ( ! $host || ! in_array( $host, $allowed_hosts, true ) ) {
+                wp_send_json_error( array( 'message' => 'Only YouTube or Vimeo links are allowed.' ) );
+            }
+
             $final_video_url = $video_url;
         }
 
         // Create the post
         $post_id = wp_insert_post( array(
             'post_type'    => 'contest_entry',
-            'post_title'   => $name,
+            'post_title'   => $pet_name,
             'post_content' => $pet_description,
             'post_status'  => 'pending',
         ), true );
 
         if ( is_wp_error( $post_id ) ) {
+            delete_transient( $fingerprint_key );
+
             wp_send_json_error( array( 'message' => 'Could not save your entry. Please try again.' ) );
         }
 
+        $ip_hash = hash( 'sha256', $_SERVER['REMOTE_ADDR'] ?? '' );
+
         // Save meta
-        update_post_meta( $post_id, '_cef_email',               $email );
-        update_post_meta( $post_id, '_cef_pet_name',            $pet_name );
-        update_post_meta( $post_id, '_cef_photo_id',            $photo_id );
-        update_post_meta( $post_id, '_cef_photo_url',           wp_get_attachment_url( $photo_id ) );
-        update_post_meta( $post_id, '_cef_video_type',          $video_type );
-        update_post_meta( $post_id, '_cef_video_url',           $final_video_url );
-        if ( $video_attachment_id ) {
-            update_post_meta( $post_id, '_cef_video_attachment_id', $video_attachment_id );
-        }
-        update_post_meta( $post_id, '_cef_consent_combined',    $consent_comibned );
-        update_post_meta( $post_id, '_cef_submitted_ip',        sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? '' ) );
+        update_post_meta( $post_id, '_cef_consent_combined',    $consent_combined );
+        update_post_meta( $post_id, '_cef_ip_hash',             $ip_hash );
         update_post_meta( $post_id, '_cef_submitted_at',        current_time( 'mysql' ) );
+
+        update_field( 'owner_name', $owner_name, $post_id );
+        update_field( 'owner_email', $owner_email, $post_id );
+        update_field( 'video_url', $final_video_url, $post_id );
 
         // Set featured image
         set_post_thumbnail( $post_id, $photo_id );
@@ -236,6 +307,8 @@
         wp_send_json_success( array(
             'message' => 'Thank you! Your entry has been submitted and is pending review.',
         ) );
+
+        delete_transient( $rate_key )
     }
 
     function contest_entry_form_image_mimes() {
@@ -248,5 +321,39 @@
     function contest_entry_form_video_mimes() {
         return array(
             'mp4|m4v' => 'video/mp4',
+        );
+    }
+
+    function contest_entry_form_upload_prefilter( $file ) {
+        $is_photo = ( $file['type'] === 'image/jpeg' || $file['type'] === 'image/png' );
+        $is_video = ( $file['type'] === 'video/mp4' );
+
+        if ( $is_photo ) {
+
+            if ( $file['size'] > 5 * MB_IN_BYTES ) {
+                return new WP_Error(
+                    'cef_photo_size',
+                    'Photo must be under 5 MB.'
+                );
+            }
+
+            return $file;
+        }
+
+        if ( $is_video ) {
+
+            if ( $file['size'] > 30 * MB_IN_BYTES ) {
+                return new WP_Error(
+                    'cef_video_size',
+                    'Video must be under 30 MB.'
+                );
+            }
+
+            return $file;
+        }
+
+        return new WP_Error(
+            'cef_invalid_type',
+            'Invalid file type.'
         );
     }
