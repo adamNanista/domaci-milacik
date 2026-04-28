@@ -60,20 +60,20 @@ document.addEventListener("DOMContentLoaded", function () {
 		])
 		.addField("#contest-entry-form-photo", [
 			{
-				validator: (value, fields) => {
-					const files = fields["#contest-entry-form-photo"].elem.files;
-					return files.length > 0;
-				},
-				errorMessage: "Fotografia je povinná.",
+				rule: "minFilesCount",
+				value: 1,
+				errorMessage: "Photo is required.",
 			},
 			{
 				rule: "files",
 				value: {
-					extensions: ["jpeg", "jpg", "png"],
-					maxSize: 5000000,
-					types: ["image/jpeg", "image/jpg", "image/png"],
+					files: {
+						extensions: ["jpeg", "jpg", "png"],
+						maxSize: 2000000,
+						types: ["image/jpeg", "image/jpg", "image/png"],
+					},
 				},
-				errorMessage: "Fotografia musí mať menej ako 5 MB.",
+				errorMessage: "Photo must be under 5 MB.",
 			},
 		])
 		.addField("#contest-entry-form-consent-combined", [
