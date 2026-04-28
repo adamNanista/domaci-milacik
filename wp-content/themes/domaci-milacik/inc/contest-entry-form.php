@@ -121,8 +121,8 @@
         );
 
         // Rate-limit
-        $ip = sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? '' );
-        $rate_key = 'cef_rate_' . wp_hash( $ip );
+        $ip_hash = hash( 'sha256', $_SERVER['REMOTE_ADDR'] ?? '' );
+        $rate_key = 'cef_rate_' . $ip_hash;
 
         $attempts = (int) get_transient( $rate_key );
         
@@ -158,8 +158,6 @@
         if ( get_transient( $fingerprint_key ) ) {
             wp_send_json_error( array( 'message' => 'This entry has already been submitted.' ) );
         }
-
-        set_transient( $fingerprint_key, 1, DAY_IN_SECONDS );
 
         // Validate required fields
         $validator = new Validator;
@@ -276,6 +274,8 @@
             $final_video_url = $video_url;
         }
 
+        set_transient( $fingerprint_key, 1, DAY_IN_SECONDS );
+
         // Create the post
         $post_id = wp_insert_post( array(
             'post_type'    => 'contest_entry',
@@ -285,12 +285,13 @@
         ), true );
 
         if ( is_wp_error( $post_id ) ) {
+            wp_delete_attachment( $photo_id, true );
+            if ( $video_attachment_id ) {
+                wp_delete_attachment( $video_attachment_id, true );
+            }
             delete_transient( $fingerprint_key );
-
             wp_send_json_error( array( 'message' => 'Could not save your entry. Please try again.' ) );
         }
-
-        $ip_hash = hash( 'sha256', $_SERVER['REMOTE_ADDR'] ?? '' );
 
         // Save meta
         update_post_meta( $post_id, '_cef_consent_combined',    $consent_combined );
@@ -307,8 +308,6 @@
         wp_send_json_success( array(
             'message' => 'Thank you! Your entry has been submitted and is pending review.',
         ) );
-
-        delete_transient( $rate_key )
     }
 
     function contest_entry_form_image_mimes() {
@@ -331,10 +330,7 @@
         if ( $is_photo ) {
 
             if ( $file['size'] > 5 * MB_IN_BYTES ) {
-                return new WP_Error(
-                    'cef_photo_size',
-                    'Photo must be under 5 MB.'
-                );
+                $file['error'] = 'Photo must be under 5 MB.';
             }
 
             return $file;
@@ -343,17 +339,12 @@
         if ( $is_video ) {
 
             if ( $file['size'] > 30 * MB_IN_BYTES ) {
-                return new WP_Error(
-                    'cef_video_size',
-                    'Video must be under 30 MB.'
-                );
+                $file['error'] = 'Video must be under 30 MB.';
             }
 
             return $file;
         }
 
-        return new WP_Error(
-            'cef_invalid_type',
-            'Invalid file type.'
-        );
+        $file['error'] = 'Invalid file type.';
+        return $file;
     }
