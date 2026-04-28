@@ -12,18 +12,26 @@
         global $post;
 
         if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'contest_entry_form' ) ) {
+            wp_enqueue_script(
+                'just-validate',
+                'https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js',
+                array(),
+                false,
+                true
+            );
+
             wp_enqueue_style(
                 'contest-entry-form',
                 get_stylesheet_directory_uri() . '/assets/css/contest-entry-form.css',
                 array(),
-                filemtime(get_stylesheet_directory() . '/assets/css/contest-entry-form.css'),
+                filemtime( get_stylesheet_directory() . '/assets/css/contest-entry-form.css' ),
             );
 
             wp_enqueue_script(
                 'contest-entry-form',
                 get_stylesheet_directory_uri() . '/assets/js/contest-entry-form.js',
-                array( 'jquery' ),
-                filemtime(get_stylesheet_directory() . '/assets/js/contest-entry-form.js'),
+                array( 'just-validate' ),
+                filemtime( get_stylesheet_directory() . '/assets/js/contest-entry-form.js' ),
                 true
             );
 
@@ -40,7 +48,7 @@
         ob_start();
 
         ?>
-            <form id="contest-entry-form" enctype="multipart/form-data" novalidate>
+            <form id="contest-entry-form" enctype="multipart/form-data" novalidate="novalidate">
                 <div>
                     <label for="contest-entry-form-owner-name">Meno súťažiaceho <abbr title="Povinné">*</abbr></label>
                     <input type="text" id="contest-entry-form-owner-name" name="contest-entry-form-owner-name" required placeholder="Zadajte meno súťažiaceho" />
