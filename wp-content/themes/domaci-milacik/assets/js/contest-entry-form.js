@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
 	"use strict";
 
+	const ALLOWED_HOSTS = ["youtube.com", "youtu.be", "vimeo.com"];
+
 	const form = document.getElementById("contest-entry-form");
 	const messages = document.getElementById("contest-entry-form-messages");
 	const submitBtn = document.getElementById("contest-entry-form-submit");
@@ -62,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			{
 				rule: "minFilesCount",
 				value: 1,
-				errorMessage: "Photo is required.",
+				errorMessage: "Fotografia je povinná.",
 			},
 			{
 				rule: "files",
@@ -73,7 +75,47 @@ document.addEventListener("DOMContentLoaded", function () {
 						types: ["image/jpeg", "image/jpg", "image/png"],
 					},
 				},
-				errorMessage: "Photo must be under 5 MB.",
+				errorMessage: "Fotografia musí mať menej ako 5 MB.",
+			},
+		])
+		.addField("#contest-entry-form-video-upload", [
+			{
+				rule: "files",
+				value: {
+					files: {
+						extensions: ["mp4"],
+						maxSize: 30000000,
+						types: ["video/mp4"],
+					},
+				},
+				errorMessage: "Video musí mať menej ako 30 MB.",
+			},
+		])
+		.addField("#contest-entry-form-video-url", [
+			{
+				validator: (value) => {
+					if (!value) return true;
+					try {
+						const url = new URL(value);
+						return url.protocol === "http:" || url.protocol === "https:";
+					} catch {
+						return false;
+					}
+				},
+				errorMessage: "Zadajte platnú URL adresu.",
+			},
+			{
+				validator: (value) => {
+					if (!value) return true;
+					try {
+						const url = new URL(value);
+						const bare = url.hostname.replace(/^www\./, "").toLowerCase();
+						return ALLOWED_HOSTS.includes(bare);
+					} catch {
+						return false;
+					}
+				},
+				errorMessage: "Povolené sú iba odkazy na YouTube alebo Vimeo.",
 			},
 		])
 		.addField("#contest-entry-form-consent-combined", [

@@ -170,19 +170,32 @@
         // Validate required fields
         $validator = new Validator;
 
-        $validation = $validator->make(array(
+        $validation = $validator->make( array(
             'owner_name'        => $owner_name,
             'owner_email'       => $owner_email,
             'pet_name'          => $pet_name,
             'pet_description'   => $pet_description,
+            'video_url'         => $video_url,
             'consent_combined'  => $consent_combined,
         ), array(
             'owner_name'        => 'required',
             'owner_email'       => 'required|email',
             'pet_name'          => 'required',
             'pet_description'   => 'required',
+            'video_url'         => 'url',
             'consent_combined'  => 'required|accepted',
-        ));
+        ) );
+
+        $validation->setMessages( array(
+            'owner_name:required'       => 'Meno je povinné.',
+            'owner_email:required'      => 'Email je povinný.',
+            'owner_email:email'         => 'Neplatná emailová adresa.',
+            'pet_name:required'         => 'Meno miláčika je povinné.',
+            'pet_description:required'  => 'Popis miláčika je povinný.',
+            'video_url:url'             => 'Zadajte platnú URL adresu.',
+            'consent_combined:required' => 'Súhlas je povinný.',
+            'consent_combined:accepted' => 'Súhlas je povinný.',
+        ) );
 
         $validation->validate();
     
@@ -195,12 +208,12 @@
         require_once ABSPATH . 'wp-admin/includes/media.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
 
-        // Validate photo type & size
+        // Validate photo
         if ( empty( $_FILES['contest-entry-form-photo'] ) || $_FILES['contest-entry-form-photo']['error'] !== UPLOAD_ERR_OK ) {
-            wp_send_json_error( array( 'message' => 'Photo upload failed or missing.' ) );
+            wp_send_json_error( array( 'message' => 'Fotografia je povinná.' ) );
         }
         if ( $_FILES['contest-entry-form-photo']['size'] > 5 * MB_IN_BYTES ) {
-            wp_send_json_error( array( 'message' => 'Photo must be under 5 MB.' ) );
+            wp_send_json_error( array( 'message' => 'Fotografia musí mať menej ako 5 MB.' ) );
         }
 
         // Upload photo
@@ -211,7 +224,7 @@
         remove_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
     
         if ( is_wp_error( $photo_id ) ) {
-            wp_send_json_error( array( 'message' => 'Photo upload failed: ' . $photo_id->get_error_message() ) );
+            wp_send_json_error( array( 'message' => 'Nahrávanie fotografie zlyhalo: ' . $photo_id->get_error_message() ) );
         }
 
         update_post_meta( $photo_id, '_wp_attachment_image_alt', $pet_name );
@@ -221,14 +234,14 @@
 
         if ( ! in_array( $photo_check['type'], ['image/jpeg', 'image/png'], true ) ) {
             wp_delete_attachment($photo_id, true);
-            wp_send_json_error( array( 'message' => 'Invalid photo type.' ) );
+            wp_send_json_error( array( 'message' => 'Nepodporovaný formát fotografie.' ) );
         }
 
         $editor = wp_get_image_editor( $photo_file );
 
         if ( is_wp_error( $editor ) ) {
             wp_delete_attachment( $photo_id, true );
-            wp_send_json_error( array( 'message' => 'Invalid image file.' ) );
+            wp_send_json_error( array( 'message' => 'Nepodporovaný formát fotografie.' ) );
         }
 
         $editor->save( $photo_file );
@@ -239,10 +252,10 @@
 
         if ( $video_type === 'upload' && ! empty( $_FILES['contest-entry-form-video-upload']['name'] ) ) {
             if ( empty( $_FILES['contest-entry-form-video-upload'] ) || $_FILES['contest-entry-form-video-upload']['error'] !== UPLOAD_ERR_OK ) {
-                wp_send_json_error( array( 'message' => 'Video upload failed or missing.' ) );
+                wp_send_json_error( array( 'message' => 'Nahrávanie videa zlyhalo.' ) );
             }
             if ( $_FILES['contest-entry-form-video-upload']['size'] > 30 * MB_IN_BYTES ) {
-                wp_send_json_error( array( 'message' => 'Video must be under 30 MB.' ) );
+                wp_send_json_error( array( 'message' => 'Video musí mať menej ako 30 MB.' ) );
             }
     
             add_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
@@ -252,7 +265,7 @@
             remove_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
     
             if ( is_wp_error( $video_id ) ) {
-                wp_send_json_error( array( 'message' => 'Video upload failed: ' . $video_id->get_error_message() ) );
+                wp_send_json_error( array( 'message' => 'Nahrávanie videa zlyhalo: ' . $video_id->get_error_message() ) );
             }
 
             $video_file = get_attached_file( $video_id );
@@ -260,7 +273,7 @@
 
             if ( ! in_array( $video_check['type'], ['video/mp4'], true ) ) {
                 wp_delete_attachment($video_id, true);
-                wp_send_json_error( array( 'message' => 'Invalid video type.' ) );
+                wp_send_json_error( array( 'message' => 'Nepodporovaný formát videa.' ) );
             }
     
             $video_attachment_id = $video_id;
@@ -276,7 +289,7 @@
             );
 
             if ( ! $host || ! in_array( $host, $allowed_hosts, true ) ) {
-                wp_send_json_error( array( 'message' => 'Only YouTube or Vimeo links are allowed.' ) );
+                wp_send_json_error( array( 'message' => 'Povolené sú iba odkazy na YouTube alebo Vimeo.' ) );
             }
 
             $final_video_url = $video_url;
@@ -298,7 +311,7 @@
                 wp_delete_attachment( $video_attachment_id, true );
             }
             delete_transient( $fingerprint_key );
-            wp_send_json_error( array( 'message' => 'Could not save your entry. Please try again.' ) );
+            wp_send_json_error( array( 'message' => 'Vašu prihlášku sa nepodarilo uložiť. Skúste to prosím znova.' ) );
         }
 
         // Save meta
@@ -313,9 +326,7 @@
         // Set featured image
         set_post_thumbnail( $post_id, $photo_id );
 
-        wp_send_json_success( array(
-            'message' => 'Thank you! Your entry has been submitted and is pending review.',
-        ) );
+        wp_send_json_success( array( 'message' => 'Ďakujeme! Vaša prihláška bola prijatá a čaká na schválenie.', ) );
     }
 
     function contest_entry_form_image_mimes() {
@@ -338,7 +349,7 @@
         if ( $is_photo ) {
 
             if ( $file['size'] > 5 * MB_IN_BYTES ) {
-                $file['error'] = 'Photo must be under 5 MB.';
+                $file['error'] = 'Fotografia musí mať menej ako 5 MB.';
             }
 
             return $file;
@@ -347,12 +358,12 @@
         if ( $is_video ) {
 
             if ( $file['size'] > 30 * MB_IN_BYTES ) {
-                $file['error'] = 'Video must be under 30 MB.';
+                $file['error'] = 'Video musí mať menej ako 30 MB.';
             }
 
             return $file;
         }
 
-        $file['error'] = 'Invalid file type.';
+        $file['error'] = 'Nepodporovaný formát súboru.';
         return $file;
     }
