@@ -135,14 +135,14 @@
         $attempts = (int) get_transient( $rate_key );
         
         if ( $attempts >= 5 ) {
-            wp_send_json_error( array( 'message' => 'Too many attempts in a short time. Please wait a few minutes and try again.' ) );
+            wp_send_json_error( array( 'message' => 'Príliš veľa pokusov v krátkom čase. Počkajte niekoľko minút a skúste to znova.' ) );
         }
 
         set_transient( $rate_key, $attempts + 1, 15 * MINUTE_IN_SECONDS );
 
         // Honeypot
         if ( ! empty( $_POST['contest-entry-form-website'] ) ) {
-            wp_send_json_error( array( 'message' => 'Submission rejected.' ) );
+            wp_send_json_error( array( 'message' => 'Prihláška zamietnutá.' ) );
         }
 
         // Sanitize fields
@@ -150,6 +150,7 @@
         $owner_email        = isset( $_POST['contest-entry-form-owner-email'] )         ? sanitize_email( wp_unslash( $_POST['contest-entry-form-owner-email'] ) )              : '';
         $pet_name           = isset( $_POST['contest-entry-form-pet-name'] )            ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-pet-name'] ) )            : '';
         $pet_description    = isset( $_POST['contest-entry-form-pet-description'] )     ? sanitize_textarea_field( wp_unslash( $_POST['contest-entry-form-pet-description'] ) ) : '';
+        $photo              = $_FILES['contest-entry-form-photo']['name']               ?? null;    
         $video_type         = isset( $_POST['contest-entry-form-video-type'] )          ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-video-type'] ) )          : 'upload';
         $video_url          = isset( $_POST['contest-entry-form-video-url'] )           ? esc_url_raw( wp_unslash( $_POST['contest-entry-form-video-url'] ) )                   : '';
         $consent_combined   = ! empty( $_POST['contest-entry-form-consent-combined'] )  ? 1                                                                                     : 0;
@@ -164,43 +165,46 @@
         $fingerprint_key = 'cef_submission_' . $fingerprint;
 
         if ( get_transient( $fingerprint_key ) ) {
-            wp_send_json_error( array( 'message' => 'This entry has already been submitted.' ) );
+            wp_send_json_error( array( 'message' => 'Táto prihláška už bola odoslaná.' ) );
         }
 
         // Validate required fields
         $validator = new Validator;
 
         $validation = $validator->make( array(
-            'owner_name'        => $owner_name,
-            'owner_email'       => $owner_email,
-            'pet_name'          => $pet_name,
-            'pet_description'   => $pet_description,
-            'video_url'         => $video_url,
-            'consent_combined'  => $consent_combined,
+            'contest-entry-form-owner-name'         => $owner_name,
+            'contest-entry-form-owner-email'        => $owner_email,
+            'contest-entry-form-pet-name'           => $pet_name,
+            'contest-entry-form-pet-description'    => $pet_description,
+            'contest-entry-form-photo'              => $photo,
+            'contest-entry-form-video-url'          => $video_url,
+            'contest-entry-form-consent-combined'   => $consent_combined,
         ), array(
-            'owner_name'        => 'required',
-            'owner_email'       => 'required|email',
-            'pet_name'          => 'required',
-            'pet_description'   => 'required',
-            'video_url'         => 'url',
-            'consent_combined'  => 'required|accepted',
+            'contest-entry-form-owner-name'         => 'required',
+            'contest-entry-form-owner-email'        => 'required|email',
+            'contest-entry-form-pet-name'           => 'required',
+            'contest-entry-form-pet-description'    => 'required',
+            'contest-entry-form-photo'              => 'required',
+            'contest-entry-form-video-url'          => 'url',
+            'contest-entry-form-consent-combined'   => 'required|accepted',
         ) );
 
         $validation->setMessages( array(
-            'owner_name:required'       => 'Meno je povinné.',
-            'owner_email:required'      => 'Email je povinný.',
-            'owner_email:email'         => 'Neplatná emailová adresa.',
-            'pet_name:required'         => 'Meno miláčika je povinné.',
-            'pet_description:required'  => 'Popis miláčika je povinný.',
-            'video_url:url'             => 'Zadajte platnú URL adresu.',
-            'consent_combined:required' => 'Súhlas je povinný.',
-            'consent_combined:accepted' => 'Súhlas je povinný.',
+            'contest-entry-form-owner-name:required'        => 'Meno je povinné.',
+            'contest-entry-form-owner-email:required'       => 'Email je povinný.',
+            'contest-entry-form-owner-email:email'          => 'Neplatná emailová adresa.',
+            'contest-entry-form-pet-name:required'          => 'Meno miláčika je povinné.',
+            'contest-entry-form-pet-description:required'   => 'Popis miláčika je povinný.',
+            'contest-entry-form-photo:required'             => 'Fotografia je povinná.',
+            'contest-entry-form-video-url:url'              => 'Zadajte platnú URL adresu.',
+            'contest-entry-form-consent-combined:required'  => 'Súhlas je povinný.',
+            'contest-entry-form-consent-combined:accepted'  => 'Súhlas je povinný.',
         ) );
 
         $validation->validate();
-    
+
         if ( $validation->fails() ) {
-            wp_send_json_error( array( 'message' => implode( ' ', $validation->errors()->all() ) ) );
+            wp_send_json_error( array( 'message' => implode( ' ', $validation->errors()->all() ), 'fields' => $validation->errors()->firstOfAll() ) );
         }
 
         // Load WP upload helpers
@@ -210,7 +214,7 @@
 
         // Validate photo
         if ( empty( $_FILES['contest-entry-form-photo'] ) || $_FILES['contest-entry-form-photo']['error'] !== UPLOAD_ERR_OK ) {
-            wp_send_json_error( array( 'message' => 'Fotografia je povinná.' ) );
+            wp_send_json_error( array( 'message' => 'Nahrávanie fotografie zlyhalo.' ) );
         }
         if ( $_FILES['contest-entry-form-photo']['size'] > 5 * MB_IN_BYTES ) {
             wp_send_json_error( array( 'message' => 'Fotografia musí mať menej ako 5 MB.' ) );

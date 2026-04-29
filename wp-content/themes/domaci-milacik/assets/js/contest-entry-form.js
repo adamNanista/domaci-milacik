@@ -31,8 +31,20 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Validation
 	const validation = new window.JustValidate(form);
 
+	const alwaysValid = {
+		validator: () => true,
+	};
+
 	validation
-		.addField("#contest-entry-form-owner-name", [
+		.addField("#contest-entry-form-owner-name", [alwaysValid])
+		.addField("#contest-entry-form-owner-email", [alwaysValid])
+		.addField("#contest-entry-form-pet-name", [alwaysValid])
+		.addField("#contest-entry-form-pet-description", [alwaysValid])
+		.addField("#contest-entry-form-photo", [alwaysValid])
+		.addField("#contest-entry-form-video-upload", [alwaysValid])
+		.addField("#contest-entry-form-video-url", [alwaysValid])
+		.addField("#contest-entry-form-consent-combined", [alwaysValid])
+		/*.addField("#contest-entry-form-owner-name", [
 			{
 				rule: "required",
 				errorMessage: "Meno je povinné.",
@@ -123,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				rule: "required",
 				errorMessage: "Súhlas je povinný.",
 			},
-		])
+		])*/
 		.onSuccess(async (event) => {
 			clearMessages();
 
@@ -156,10 +168,19 @@ document.addEventListener("DOMContentLoaded", function () {
 					});
 				} else {
 					showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
+					if (result.data.fields) {
+						const fieldErrors = {};
+
+						Object.entries(result.data.fields).forEach(([id, message]) => {
+							fieldErrors[`#${id}`] = message;
+						});
+
+						validation.showErrors(fieldErrors);
+					}
 				}
 			} catch (error) {
 				setLoading(false);
-				showError("Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.");
+				showError(error, "Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.");
 			}
 		});
 
