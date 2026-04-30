@@ -3,18 +3,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	const ALLOWED_HOSTS = ["youtube.com", "youtu.be", "vimeo.com"];
 
-	const form = document.getElementById("contest-entry-form");
-	const messages = document.getElementById("contest-entry-form-messages");
-	const submitBtn = document.getElementById("contest-entry-form-submit");
+	const form = document.querySelector("#contest-entry-form");
+	const messages = document.querySelector("#contest-entry-form-messages");
+	const submitBtn = document.querySelector("#contest-entry-form-submit");
 	const videoToggles = document.querySelectorAll("input[name='contest-entry-form-video-type']");
 
 	// Video toggles
 	videoToggles.forEach((radio) => {
 		radio.addEventListener("change", function () {
-			const uploadPanel = document.getElementById("contest-entry-form-video-upload-panel");
-			const urlPanel = document.getElementById("contest-entry-form-video-url-panel");
-			const urlInput = document.getElementById("contest-entry-form-video-url");
-			const uploadInput = document.getElementById("contest-entry-form-video-upload");
+			const uploadPanel = document.querySelector("#contest-entry-form-video-upload-panel");
+			const urlPanel = document.querySelector("#contest-entry-form-video-url-panel");
+			const urlInput = document.querySelector("#contest-entry-form-video-url");
+			const uploadInput = document.querySelector("#contest-entry-form-video-upload");
 
 			if (this.value === "upload") {
 				uploadPanel.classList.remove("hidden");
@@ -159,8 +159,8 @@ document.addEventListener("DOMContentLoaded", function () {
 					showSuccess(result.data.message);
 					form.reset();
 
-					document.getElementById("contest-entry-form-video-upload-panel").classList.remove("hidden");
-					document.getElementById("contest-entry-form-video-url-panel").classList.add("hidden");
+					document.querySelector("#contest-entry-form-video-upload-panel").classList.remove("hidden");
+					document.querySelector("#contest-entry-form-video-url-panel").classList.add("hidden");
 
 					window.scrollTo({
 						top: messages.offsetTop - 40,
