@@ -36,15 +36,15 @@ document.addEventListener("DOMContentLoaded", function () {
 	};
 
 	validation
-		.addField("#contest-entry-form-owner-name", [alwaysValid])
+		/*.addField("#contest-entry-form-owner-name", [alwaysValid])
 		.addField("#contest-entry-form-owner-email", [alwaysValid])
 		.addField("#contest-entry-form-pet-name", [alwaysValid])
 		.addField("#contest-entry-form-pet-description", [alwaysValid])
 		.addField("#contest-entry-form-photo", [alwaysValid])
 		.addField("#contest-entry-form-video-upload", [alwaysValid])
 		.addField("#contest-entry-form-video-url", [alwaysValid])
-		.addField("#contest-entry-form-consent-combined", [alwaysValid])
-		/*.addField("#contest-entry-form-owner-name", [
+		.addField("#contest-entry-form-consent-combined", [alwaysValid])*/
+		.addField("#contest-entry-form-owner-name", [
 			{
 				rule: "required",
 				errorMessage: "Meno je povinné.",
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				rule: "required",
 				errorMessage: "Súhlas je povinný.",
 			},
-		])*/
+		])
 		.onSuccess(async (event) => {
 			clearMessages();
 
@@ -167,8 +167,10 @@ document.addEventListener("DOMContentLoaded", function () {
 						behavior: "smooth",
 					});
 				} else {
-					showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
-					if (result.data.fields) {
+					if (result.data.message) {
+						showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
+					}
+					if (Object.keys(result.data.fields).length) {
 						const fieldErrors = {};
 
 						Object.entries(result.data.fields).forEach(([id, message]) => {
@@ -176,6 +178,8 @@ document.addEventListener("DOMContentLoaded", function () {
 						});
 
 						validation.showErrors(fieldErrors);
+
+						console.log(result.data.fields);
 					}
 				}
 			} catch (error) {
