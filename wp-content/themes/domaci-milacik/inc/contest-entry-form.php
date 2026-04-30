@@ -408,9 +408,9 @@
          * FINAL SAVE
          * =========================
          */
-        update_post_meta( $post_id, '_cef_consent_combined',    $consent_combined );
-        update_post_meta( $post_id, '_cef_ip_hash',             $ip_hash );
-        update_post_meta( $post_id, '_cef_submitted_at',        current_time( 'mysql' ) );
+        update_post_meta( $post_id, '_contest_entry_form_consent_combined',    $consent_combined );
+        update_post_meta( $post_id, '_contest_entry_form_ip_hash',             $ip_hash );
+        update_post_meta( $post_id, '_contest_entry_form_submitted_at',        current_time( 'mysql' ) );
 
         update_field( 'owner_name', $owner_name, $post_id );
         update_field( 'owner_email', $owner_email, $post_id );

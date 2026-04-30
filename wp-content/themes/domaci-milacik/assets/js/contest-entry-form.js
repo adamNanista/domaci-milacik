@@ -1,21 +1,21 @@
 document.addEventListener("DOMContentLoaded", function () {
-	"use strict";
+	("use strict");
 
 	const ALLOWED_HOSTS = ["youtube.com", "youtu.be", "vimeo.com"];
 
+	// DOM
 	const form = document.querySelector("#contest-entry-form");
 	const messages = document.querySelector("#contest-entry-form-messages");
 	const submitBtn = document.querySelector("#contest-entry-form-submit");
 	const videoToggles = document.querySelectorAll("input[name='contest-entry-form-video-type']");
+	const uploadPanel = document.querySelector("#contest-entry-form-video-upload-panel");
+	const uploadInput = document.querySelector("#contest-entry-form-video-upload");
+	const urlPanel = document.querySelector("#contest-entry-form-video-url-panel");
+	const urlInput = document.querySelector("#contest-entry-form-video-url");
 
 	// Video toggles
 	videoToggles.forEach((radio) => {
 		radio.addEventListener("change", function () {
-			const uploadPanel = document.querySelector("#contest-entry-form-video-upload-panel");
-			const urlPanel = document.querySelector("#contest-entry-form-video-url-panel");
-			const urlInput = document.querySelector("#contest-entry-form-video-url");
-			const uploadInput = document.querySelector("#contest-entry-form-video-upload");
-
 			if (this.value === "upload") {
 				uploadPanel.classList.remove("hidden");
 				urlPanel.classList.add("hidden");
@@ -28,22 +28,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		});
 	});
 
-	// Validation
+	// Validation & submission
 	const validation = new window.JustValidate(form);
 
-	const alwaysValid = {
-		validator: () => true,
-	};
-
 	validation
-		/*.addField("#contest-entry-form-owner-name", [alwaysValid])
-		.addField("#contest-entry-form-owner-email", [alwaysValid])
-		.addField("#contest-entry-form-pet-name", [alwaysValid])
-		.addField("#contest-entry-form-pet-description", [alwaysValid])
-		.addField("#contest-entry-form-photo", [alwaysValid])
-		.addField("#contest-entry-form-video-upload", [alwaysValid])
-		.addField("#contest-entry-form-video-url", [alwaysValid])
-		.addField("#contest-entry-form-consent-combined", [alwaysValid])*/
 		.addField("#contest-entry-form-owner-name", [
 			{
 				rule: "required",
@@ -159,8 +147,8 @@ document.addEventListener("DOMContentLoaded", function () {
 					showSuccess(result.data.message);
 					form.reset();
 
-					document.querySelector("#contest-entry-form-video-upload-panel").classList.remove("hidden");
-					document.querySelector("#contest-entry-form-video-url-panel").classList.add("hidden");
+					uploadPanel.classList.remove("hidden");
+					urlPanel.classList.add("hidden");
 
 					window.scrollTo({
 						top: messages.offsetTop - 40,
@@ -188,6 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 		});
 
+	// Helpers
 	function setLoading(isLoading) {
 		const text = submitBtn.querySelector("#contest-entry-form-submit-text");
 		const loader = submitBtn.querySelector("#contest-entry-form-submit-loading");
@@ -208,15 +197,15 @@ document.addEventListener("DOMContentLoaded", function () {
 		messages.textContent = "";
 	}
 
-	function showSuccess(msg) {
+	function showSuccess(message) {
 		messages.classList.remove("contest-entry-form-error");
 		messages.classList.add("contest-entry-form-success");
-		messages.textContent = msg;
+		messages.textContent = message;
 	}
 
-	function showError(msg) {
+	function showError(message) {
 		messages.classList.remove("contest-entry-form-success");
 		messages.classList.add("contest-entry-form-error");
-		messages.textContent = msg;
+		messages.textContent = message;
 	}
 });
