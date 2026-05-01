@@ -1,12 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
-	("use strict");
-
 	const ALLOWED_HOSTS = ["youtube.com", "youtu.be", "vimeo.com"];
 
 	// DOM
 	const form = document.querySelector("#contest-entry-form");
 	const messages = document.querySelector("#contest-entry-form-messages");
-	const submitBtn = document.querySelector("#contest-entry-form-submit");
+	const submitButton = document.querySelector("#contest-entry-form-submit");
 	const videoToggles = document.querySelectorAll("input[name='contest-entry-form-video-type']");
 	const uploadPanel = document.querySelector("#contest-entry-form-video-upload-panel");
 	const uploadInput = document.querySelector("#contest-entry-form-video-upload");
@@ -149,11 +147,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 					uploadPanel.classList.remove("hidden");
 					urlPanel.classList.add("hidden");
-
-					window.scrollTo({
-						top: messages.offsetTop - 40,
-						behavior: "smooth",
-					});
 				} else {
 					if (result.data.message) {
 						showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
@@ -178,15 +171,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Helpers
 	function setLoading(isLoading) {
-		const text = submitBtn.querySelector("#contest-entry-form-submit-text");
-		const loader = submitBtn.querySelector("#contest-entry-form-submit-loading");
+		const text = submitButton.querySelector("#contest-entry-form-submit-text");
+		const loader = submitButton.querySelector("#contest-entry-form-submit-loading");
 
 		if (isLoading) {
-			submitBtn.disabled = true;
+			submitButton.disabled = true;
 			text.classList.add("hidden");
 			loader.classList.remove("hidden");
 		} else {
-			submitBtn.disabled = false;
+			submitButton.disabled = false;
 			text.classList.remove("hidden");
 			loader.classList.add("hidden");
 		}

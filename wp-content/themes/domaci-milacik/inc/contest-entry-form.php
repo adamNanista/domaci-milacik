@@ -103,7 +103,7 @@
                 <div>
                     <button type="submit" id="contest-entry-form-submit">
                         <span id="contest-entry-form-submit-text">Odoslať prihlášku</span>
-                        <span id="contest-entry-form-submit-loading" class="hidden">Odosielam</span>
+                        <span id="contest-entry-form-submit-loading" class="hidden">Odosielam prihlášku</span>
                     </button>
                 </div>
             </form>
@@ -167,7 +167,7 @@
         $ip_hash = hash( 'sha256', $_SERVER['REMOTE_ADDR'] ?? '' );
         $rate_key = 'contest_entry_form_rate_' . $ip_hash;
 
-        $attempts = (int) get_transient( $rate_key );
+        $attempts = get_transient( $rate_key );
         
         if ( $attempts >= 5 ) {
             $fail( 'Príliš veľa pokusov v krátkom čase. Počkajte niekoľko minút a skúste to znova.' );
