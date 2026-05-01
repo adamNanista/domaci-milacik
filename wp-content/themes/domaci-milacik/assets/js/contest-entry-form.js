@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				}
 			} catch (error) {
 				setLoading(false);
-				showError(error, "Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.");
+				showError("Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.");
 			}
 		});
 

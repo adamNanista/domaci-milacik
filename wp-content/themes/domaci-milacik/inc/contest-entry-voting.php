@@ -10,7 +10,6 @@
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'contest_entry_votes';
-
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE $table_name (
@@ -53,9 +52,10 @@
     function render_contest_entry_vote_count() {
         ob_start();
 
+        $votes = get_field( 'votes' );
         ?>
             <p id="contest-vote-count">
-                <?php echo esc_html( get_field( 'votes' ) ); ?>
+                <?php echo esc_html( $votes ); ?>
             </p>
         <?php
         
@@ -70,7 +70,8 @@
         ?>
             <button id="contest-vote-button" data-post-id="<?php echo get_the_ID(); ?>">
                 <span id="contest-vote-button-text">Hlasovať</span>
-                <span id="contest-vote-button-loading">Odosielam hlas</span>
+                <span id="contest-vote-button-loading" class="hidden">Odosielam hlas</span>
+                <span id="contest-vote-button-voted" class="hidden">Už ste hlasovali</span>
             </button>
             <div id="contest-vote-messages"></div>
         <?php
@@ -100,7 +101,7 @@
 
         /**
          * =========================
-         * POST
+         * POST VALIDATION
          * =========================
          */
         $post_id = absint( $_POST['post_id'] ?? 0 );
@@ -119,20 +120,27 @@
          * =========================
          */
         if ( empty( $_COOKIE['contest_vote_id'] ) ) {
-            $cookie = wp_generate_uuid4();
-            setcookie( 'contest_vote_id', $cookie, time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
-            $_COOKIE['contest_vote_id'] = $cookie;
+            $cookie_value = wp_generate_uuid4();
+            setcookie( 'contest_vote_id', $cookie_value, time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+            $_COOKIE['contest_vote_id'] = $cookie_value;
+        } else {
+            $cookie_value = sanitize_text_field( $_COOKIE['contest_vote_id'] );
         }
 
         $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-        $cookie = $_COOKIE['contest_vote_id'];
+        $salt = get_option( 'contest_vote_salt', '' );
+
+        if ( ! $salt ) {
+            $salt = wp_generate_password( 64, true, true );
+            update_option( 'contest_vote_salt', $salt, false );
+        }
 
         /**
          * =========================
          * FINGERPRINT
          * =========================
          */
-        $fingerprint = hash( 'sha256', $ip . '|' . $cookie . '|' . $post_id );
+        $fingerprint = hash_hmac( 'sha256', $ip . '|' . $cookie_value . '|' . $post_id, $salt );
 
         /**
          * =========================
@@ -150,21 +158,15 @@
          * GLOBAL RATE LIMIT
          * =========================
          */
-        $rate_key = 'contest_vote_rate_' . hash( 'sha256', $ip );
+        $rate_key = 'contest_vote_rate_' . hash_hmac( 'sha256', $ip, $salt );
         $attempts = get_transient( $rate_key );
 
         if ( $attempts >= 20 ) {
             wp_send_json_error( array( 'message' => 'Príliš veľa hlasovaní. Skúste neskôr.' ) );
         }
 
-        set_transient( $rate_key, $attempts + 1, 10 * MINUTE_IN_SECONDS );
-
-        /**
-         * =========================
-         * LOCK VOTE
-         * =========================
-         */
         set_transient( $vote_key, 1, HOUR_IN_SECONDS );
+        set_transient( $rate_key, $attempts + 1, 10 * MINUTE_IN_SECONDS );
 
         /**
          * =========================
@@ -175,7 +177,7 @@
 
         $updated = $wpdb->query(
             $wpdb->prepare(
-                "UPDATE $wpdb->postmeta 
+                "UPDATE {$wpdb->postmeta} 
                 SET meta_value = meta_value + 1 
                 WHERE post_id = %d AND meta_key = 'votes'",
                 $post_id
@@ -196,8 +198,9 @@
             array(
                 'post_id'     => $post_id,
                 'fingerprint' => $fingerprint,
-                'created_at'  => current_time( 'mysql' )
-            )
+                'created_at'  => current_time( 'mysql', true )
+            ),
+            array( '%d', '%s', '%s' )
         );
 
         $votes = get_post_meta( $post_id, 'votes', true );
