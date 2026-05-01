@@ -29,9 +29,7 @@
     add_action( 'wp_enqueue_scripts', 'enqueue_contest_entry_voting_assets' );
 
     function enqueue_contest_entry_voting_assets() {
-        global $post;
-
-        if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'contest_entry_voting' ) ) {
+        if ( is_singular( 'contest_entry' ) ) {
             wp_enqueue_script(
                 'contest-entry-voting',
                 get_stylesheet_directory_uri() . '/assets/js/contest-entry-voting.js',
@@ -47,27 +45,16 @@
         }
     }
 
-    add_shortcode( 'contest_entry_vote_count', 'render_contest_entry_vote_count' );
+    add_shortcode( 'contest_entry_voting', 'render_contest_entry_voting' );
 
-    function render_contest_entry_vote_count() {
+    function render_contest_entry_voting() {
         ob_start();
 
-        $votes = get_field( 'votes' );
+        $votes = (int) get_field( 'votes' );
         ?>
             <p id="contest-vote-count">
                 <?php echo esc_html( $votes ); ?>
             </p>
-        <?php
-        
-        return ob_get_clean();
-    }
-
-    add_shortcode( 'contest_entry_vote_button', 'render_contest_entry_vote_button' );
-
-    function render_contest_entry_vote_button() {
-        ob_start();
-
-        ?>
             <button id="contest-vote-button" data-post-id="<?php echo get_the_ID(); ?>">
                 <span id="contest-vote-button-text">Hlasovať</span>
                 <span id="contest-vote-button-loading" class="hidden">Odosielam hlas</span>
@@ -203,7 +190,7 @@
             array( '%d', '%s', '%s' )
         );
 
-        $votes = get_post_meta( $post_id, 'votes', true );
+        $votes = (int) get_post_meta( $post_id, 'votes', true );
 
         wp_send_json_success( array( 'message' => 'Váš hlas bol zapísaný.', 'votes' => $votes ) );
     }

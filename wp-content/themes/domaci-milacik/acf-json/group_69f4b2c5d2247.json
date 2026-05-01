@@ -16,7 +16,7 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
+            "default_value": 0,
             "min": "",
             "max": "",
             "allow_in_bindings": 0,
@@ -47,5 +47,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1777644252
+    "modified": 1777649214
 }

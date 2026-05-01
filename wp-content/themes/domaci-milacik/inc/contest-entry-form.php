@@ -9,9 +9,8 @@
     add_action( 'wp_enqueue_scripts', 'enqueue_contest_entry_form_assets' );
 
     function enqueue_contest_entry_form_assets() {
-        global $post;
 
-        if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'contest_entry_form' ) ) {
+        if ( is_page( 10 ) ) {
             wp_enqueue_script(
                 'just-validate',
                 'https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js',

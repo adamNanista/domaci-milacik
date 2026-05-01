@@ -25,6 +25,8 @@
 
     require_once get_stylesheet_directory() . '/inc/contest-entry-form.php';
 
+    require_once get_stylesheet_directory() . '/inc/contest-entry-voting.php';
+
     /**
      * Load CSS and JS
      */

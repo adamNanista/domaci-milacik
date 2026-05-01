@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	const voteButton = document.querySelector("#contest-vote-button");
 	const messages = document.querySelector("#contest-vote-messages");
 
+	const postId = voteButton.dataset.postId;
+
 	// Voted
 	if (sessionStorage.getItem("contest_voted_" + postId)) {
 		setVoted();
@@ -12,8 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Voting
 	voteButton.addEventListener("click", async function (event) {
 		event.preventDefault();
-
-		const postId = voteButton.dataset.postId;
 
 		clearMessages();
 		setLoading(true);
