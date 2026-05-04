@@ -125,6 +125,13 @@ document.addEventListener("DOMContentLoaded", function () {
 		.onSuccess(async (event) => {
 			clearMessages();
 
+			const token = form.querySelector("[name='cf-turnstile-response']");
+
+			if (!token || !token.value) {
+				showError("Overenie zlyhalo. Skúste to znova.");
+				return;
+			}
+
 			setLoading(true);
 
 			const formData = new FormData(form);
@@ -148,9 +155,14 @@ document.addEventListener("DOMContentLoaded", function () {
 					uploadPanel.classList.remove("hidden");
 					urlPanel.classList.add("hidden");
 				} else {
+					if (window.turnstile) {
+						turnstile.reset();
+					}
+
 					if (result.data.message) {
 						showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
 					}
+
 					if (Object.keys(result.data.fields).length) {
 						const fieldErrors = {};
 
@@ -165,6 +177,11 @@ document.addEventListener("DOMContentLoaded", function () {
 				}
 			} catch (error) {
 				setLoading(false);
+
+				if (window.turnstile) {
+					turnstile.reset();
+				}
+
 				showError("Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.");
 			}
 		});

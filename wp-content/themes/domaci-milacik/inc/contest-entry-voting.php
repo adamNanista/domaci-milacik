@@ -4,6 +4,8 @@
 		exit; // Exit if accessed directly.
 	}
 
+    define( 'CONTEST_VOTES_DB_VERSION', '1.1' );
+
     add_action('after_switch_theme', 'create_contest_entry_votes_table');
 
     function create_contest_entry_votes_table() {
@@ -19,11 +21,31 @@
             created_at DATETIME NOT NULL,
             PRIMARY KEY (id),
             INDEX post_id (post_id),
-            INDEX created_at (created_at)
+            INDEX fingerprint_created (fingerprint, created_at)
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
+    }
+
+    add_action( 'after_switch_theme', 'maybe_upgrade_contest_votes_table' );
+
+    function maybe_upgrade_contest_votes_table() {
+        $installed = get_option( 'contest_votes_db_version' );
+
+        if ( $installed === CONTEST_VOTES_DB_VERSION ) {
+            return;
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'contest_entry_votes';
+
+        $wpdb->query(
+            "ALTER TABLE {$table}
+            ADD INDEX fingerprint_created (fingerprint, created_at)"
+        );
+
+        update_option( 'contest_votes_db_version', CONTEST_VOTES_DB_VERSION );
     }
 
     add_action( 'wp_enqueue_scripts', 'enqueue_contest_entry_voting_assets' );
@@ -99,6 +121,8 @@
 
         if ( get_post_status( $post_id ) !== 'publish' ) {
             wp_send_json_error( array( 'message' => 'Hlasovanie nie je dostupné.' ) );
+
+            wp_die();
         }
 
         /**
@@ -108,7 +132,19 @@
          */
         if ( empty( $_COOKIE['contest_vote_id'] ) ) {
             $cookie_value = wp_generate_uuid4();
-            setcookie( 'contest_vote_id', $cookie_value, time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true );
+            
+            setcookie(
+            'contest_vote_id',
+            $cookie_value,
+            [
+                'expires'  => time() + YEAR_IN_SECONDS,
+                'path'     => COOKIEPATH,
+                'domain'   => COOKIE_DOMAIN,
+                'secure'   => is_ssl(),
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ] );
+
             $_COOKIE['contest_vote_id'] = $cookie_value;
         } else {
             $cookie_value = sanitize_text_field( $_COOKIE['contest_vote_id'] );
@@ -131,6 +167,28 @@
 
         /**
          * =========================
+         * HARD 1-HOUR CHECK (DATABASE)
+         * =========================
+         */
+        global $wpdb;
+
+        $last_vote = $wpdb->get_var( $wpdb->prepare(
+            "SELECT created_at
+            FROM {$wpdb->prefix}contest_entry_votes
+            WHERE fingerprint = %s
+            ORDER BY created_at DESC
+            LIMIT 1",
+            $fingerprint
+        ) );
+
+        if ( $last_vote && strtotime($last_vote) > time() - HOUR_IN_SECONDS ) {
+            wp_send_json_error( array( 'message' => 'Už ste hlasovali.' ) );
+
+            wp_die();
+        }
+
+        /**
+         * =========================
          * POST RATE LIMIT
          * =========================
          */
@@ -138,6 +196,8 @@
 
         if ( get_transient( $vote_key ) ) {
             wp_send_json_error( array( 'message' => 'Už ste hlasovali. Skúste znova o hodinu.' ) );
+
+            wp_die();
         }
 
         /**
@@ -146,10 +206,12 @@
          * =========================
          */
         $rate_key = 'contest_vote_rate_' . hash_hmac( 'sha256', $ip, $salt );
-        $attempts = get_transient( $rate_key );
+        $attempts = (int) get_transient( $rate_key );
 
         if ( $attempts >= 20 ) {
             wp_send_json_error( array( 'message' => 'Príliš veľa hlasovaní. Skúste neskôr.' ) );
+
+            wp_die();
         }
 
         set_transient( $vote_key, 1, HOUR_IN_SECONDS );
@@ -160,8 +222,6 @@
          * ATOMIC INCREMENT
          * =========================
          */
-        global $wpdb;
-
         $updated = $wpdb->query(
             $wpdb->prepare(
                 "UPDATE {$wpdb->postmeta} 
@@ -190,9 +250,17 @@
             array( '%d', '%s', '%s' )
         );
 
-        $votes = (int) get_post_meta( $post_id, 'votes', true );
+        $votes = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT meta_value FROM {$wpdb->postmeta}
+                WHERE post_id = %d AND meta_key = 'votes'",
+                $post_id
+            )
+        );
 
         wp_send_json_success( array( 'message' => 'Váš hlas bol zapísaný.', 'votes' => $votes ) );
+
+        wp_die();
     }
 
     add_filter( 'acf/prepare_field/name=votes', function( $field ) {

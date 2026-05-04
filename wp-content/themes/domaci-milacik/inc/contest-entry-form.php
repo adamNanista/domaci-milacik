@@ -19,11 +19,12 @@
                 true
             );
 
-            wp_enqueue_style(
-                'contest-entry-form',
-                get_stylesheet_directory_uri() . '/assets/css/contest-entry-form.css',
-                array(),
-                filemtime( get_stylesheet_directory() . '/assets/css/contest-entry-form.css' ),
+            wp_enqueue_script(
+                'cf-turnstile',
+                'https://challenges.cloudflare.com/turnstile/v0/api.js',
+                [],
+                null,
+                true
             );
 
             wp_enqueue_script(
@@ -99,6 +100,7 @@
                         <input type="checkbox" id="contest-entry-form-consent-combined" name="contest-entry-form-consent-combined" required /> Súhlasím s <a href="#">pravidlami súťaže</a> a so spracovaním osobných údajov. <abbr title="Povinné">*</abbr>
                     </label>
                 </div>
+                <div id="contest-entry-form-turnstile" class="cf-turnstile" data-sitekey="0x4AAAAAADI3OolGYd09Ili5"></div>
                 <div>
                     <button type="submit" id="contest-entry-form-submit">
                         <span id="contest-entry-form-submit-text">Odoslať prihlášku</span>
@@ -156,7 +158,18 @@
                 'message' => $message,
                 'fields'  => $fields
             ]);
+
+            wp_die();
         };
+
+        /**
+         * =========================
+         * HONEYPOT
+         * =========================
+         */
+        if ( ! empty( $_POST['contest-entry-form-website'] ) ) {
+            $fail( 'Prihláška zamietnutá.' );
+        }
 
         /**
          * =========================
@@ -166,7 +179,7 @@
         $ip_hash = hash( 'sha256', $_SERVER['REMOTE_ADDR'] ?? '' );
         $rate_key = 'contest_entry_form_rate_' . $ip_hash;
 
-        $attempts = get_transient( $rate_key );
+        $attempts = (int) get_transient( $rate_key );
         
         if ( $attempts >= 5 ) {
             $fail( 'Príliš veľa pokusov v krátkom čase. Počkajte niekoľko minút a skúste to znova.' );
@@ -176,11 +189,35 @@
 
         /**
          * =========================
-         * HONEYPOT
+         * TURNSTILE CAPTCHA
          * =========================
          */
-        if ( ! empty( $_POST['contest-entry-form-website'] ) ) {
-            $fail( 'Prihláška zamietnutá.' );
+        $turnstile_token = $_POST['cf-turnstile-response'] ?? '';
+
+        if ( empty($turnstile_token) ) {
+            $fail( 'Overenie zlyhalo. Skúste to znova.' );
+        }
+
+        $response = wp_remote_post(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+            [
+                'timeout' => 5,
+                'body' => [
+                    'secret'   => '0x4AAAAAADI3OtR1T6YzpJ79IWI2dhIiEM0',
+                    'response' => $turnstile_token,
+                    'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+                ],
+            ]
+        );
+        
+        if ( is_wp_error( $response ) ) {
+            $fail( 'Overenie zlyhalo. Skúste to znova.' );
+        }
+
+        $result = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        if ( empty( $result['success'] ) ) {
+            $fail( 'Overenie zlyhalo. Skúste to znova.' );
         }
 
         /**
@@ -411,9 +448,11 @@
         update_post_meta( $post_id, '_contest_entry_form_ip_hash',             $ip_hash );
         update_post_meta( $post_id, '_contest_entry_form_submitted_at',        current_time( 'mysql' ) );
 
-        update_field( 'owner_name', $owner_name, $post_id );
-        update_field( 'owner_email', $owner_email, $post_id );
-        update_field( 'video_url', $final_video_url, $post_id );
+        if ( function_exists('update_field') ) {
+            update_field( 'owner_name', $owner_name, $post_id );
+            update_field( 'owner_email', $owner_email, $post_id );
+            update_field( 'video_url', $final_video_url, $post_id );
+        }
 
         set_post_thumbnail( $post_id, $photo_id );
 
@@ -425,6 +464,8 @@
          * =========================
          */
         wp_send_json_success( array( 'message' => 'Ďakujeme! Vaša prihláška bola prijatá a čaká na schválenie.', ) );
+
+        wp_die();
     }
 
     function contest_entry_form_image_mimes() {

@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 			if (result.success) {
 				voteCount.textContent = result.data.votes;
-				sessionStorage.setItem("voted_" + postId, "1");
+				sessionStorage.setItem("contest_voted_" + postId, "1");
 				setVoted();
 				showSuccess(result.data.message);
 			} else {
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		voteButton.disabled = true;
 		const text = voteButton.querySelector("#contest-vote-button-text");
 		const loader = voteButton.querySelector("#contest-vote-button-loading");
-		const voted = voteButton.querySelector("#contest-vote-button-loading");
+		const voted = voteButton.querySelector("#contest-vote-button-voted");
 		text.classList.add("hidden");
 		loader.classList.add("hidden");
 		voted.classList.remove("hidden");
