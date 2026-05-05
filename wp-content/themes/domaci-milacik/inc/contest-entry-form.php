@@ -176,16 +176,16 @@
          * RATE LIMIT
          * =========================
          */
-        $ip_hash = hash( 'sha256', $_SERVER['REMOTE_ADDR'] ?? '' );
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $ip_hash = hash( 'sha256', $ip . '|' . $ua );
         $rate_key = 'contest_entry_form_rate_' . $ip_hash;
 
         $attempts = (int) get_transient( $rate_key );
         
-        if ( $attempts >= 5 ) {
-            $fail( 'Príliš veľa pokusov v krátkom čase. Počkajte niekoľko minút a skúste to znova.' );
+        if ( $attempts >= 3 ) {
+            $fail( 'Dosiahli ste limit odoslaní pre túto chvíľu. Skúste to znova o 15 minút.' );
         }
-
-        set_transient( $rate_key, $attempts + 1, 15 * MINUTE_IN_SECONDS );
 
         /**
          * =========================
@@ -239,7 +239,7 @@
          * DUPLICATE CHECK
          * =========================
          */
-        $fingerprint = wp_hash(strtolower(trim($owner_email . '|' . $pet_name)));
+        $fingerprint = wp_hash( strtolower( trim( $owner_email . '|' . $pet_name ) ) );
         $fingerprint_key = 'contest_entry_form_submission_' . $fingerprint;
 
         if ( get_transient( $fingerprint_key ) ) {
@@ -493,6 +493,8 @@
          * SUCCESS
          * =========================
          */
+        set_transient( $rate_key, $attempts + 1, 15 * MINUTE_IN_SECONDS );
+        
         wp_send_json_success( array( 'message' => 'Ďakujeme! Vaša prihláška bola prijatá a čaká na schválenie.', ) );
 
         wp_die();

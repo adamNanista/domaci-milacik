@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	voteButton.addEventListener("click", function (event) {
 		event.preventDefault();
 		clearMessages();
-		submitVote();
+		handleVote();
 	});
 
 	// Helpers
@@ -66,11 +66,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		});
 	}
 
-	function onTurnstileSuccess(token) {
+	function onTurnstileSuccess(turnstileToken) {
 		if (!pendingVote) return;
 
 		pendingVote = false;
-		handleVote(token);
+		handleVote(turnstileToken);
 	}
 
 	function onTurnstileError() {
@@ -80,6 +80,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	async function handleVote(turnstileToken = "") {
 		setLoading(true);
+
+		if (!turnstileToken && turnstileWidgetId !== null) {
+			turnstileToken = turnstile.getResponse(turnstileWidgetId);
+		}
 
 		const body = {
 			action: "contest_vote",
@@ -144,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				}
 			}
 		} catch (error) {
-			console.warn("Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.", error);
+			showError("Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.");
 		}
 	}
 

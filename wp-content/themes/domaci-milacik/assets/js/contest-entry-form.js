@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
 						showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
 					}
 
-					if (Object.keys(result.data.fields).length) {
+					if (result.data.fields && typeof result.data.fields === "object") {
 						const fieldErrors = {};
 
 						Object.entries(result.data.fields).forEach(([id, message]) => {

@@ -156,7 +156,8 @@
          * FINGERPRINT
          * =========================
          */
-        $fingerprint = hash_hmac( 'sha256', $ip . '|' . $cookie_value . '|' . $post_id, $salt );
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $fingerprint = hash_hmac( 'sha256', $ip . '|' . $ua . '|' . $post_id, $salt );
 
         /**
          * =========================
@@ -175,7 +176,7 @@
         ) );
 
         if ( $last_vote && strtotime($last_vote) > time() - HOUR_IN_SECONDS ) {
-            wp_send_json_error( array( 'message' => 'Už ste hlasovali.' ) );
+            wp_send_json_error( array( 'message' => 'Hlasovať môžete raz za hodinu.' ) );
 
             wp_die();
         }
@@ -209,7 +210,7 @@
             wp_die();
         }
 
-        if ( $attempts >= 2 ) {
+        if ( $attempts >= 3 ) {
             if ( empty( $turnstile_token ) || ! verify_contest_vote_turnstile_token( $turnstile_token ) ) {
                 wp_send_json_error( array(
                     'require_turnstile' => true,
@@ -229,13 +230,13 @@
         $updated = $wpdb->query(
             $wpdb->prepare(
                 "UPDATE {$wpdb->postmeta} 
-                SET meta_value = meta_value + 1 
+                SET meta_value = CAST(meta_value AS UNSIGNED) + 1 
                 WHERE post_id = %d AND meta_key = 'votes'",
                 $post_id
             )
         );
 
-        if ( ! $updated ) {
+        if ( ! $updated && ! metadata_exists( 'post', $post_id, 'votes' ) ) {
             add_post_meta( $post_id, 'votes', 1, true );
         }
 
@@ -338,7 +339,8 @@
          * FINGERPRINT
          * =========================
          */
-        $fingerprint = hash_hmac( 'sha256', $ip . '|' . $cookie_value . '|' . $post_id, $salt );
+        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $fingerprint = hash_hmac( 'sha256', $ip . '|' . $ua . '|' . $post_id, $salt );
 
         /**
          * =========================
