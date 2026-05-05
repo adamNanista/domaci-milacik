@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
 			}
 		} catch (error) {
+			console.log(error);
 			setLoading(false);
 			showError("Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.");
 		}

@@ -4,8 +4,31 @@
     "fields": [
         {
             "key": "field_69f4b2c69c80e",
-            "label": "Počet hlasov",
+            "label": "Počet hlasov (1. fáza - WEB)",
             "name": "votes",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 0,
+            "min": "",
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_69f9a1267844f",
+            "label": "Počet hlasov (2. fáza - SMS)",
+            "name": "sms_votes",
             "aria-label": "",
             "type": "number",
             "instructions": "",
@@ -47,5 +70,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1777649214
+    "modified": 1777971128
 }

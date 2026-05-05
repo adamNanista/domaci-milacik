@@ -24,8 +24,8 @@
     require_once get_stylesheet_directory() . '/vendor/autoload.php';
 
     require_once get_stylesheet_directory() . '/inc/contest-entry-form.php';
-
     require_once get_stylesheet_directory() . '/inc/contest-entry-voting.php';
+    require_once get_stylesheet_directory() . '/inc/contest-entry-import.php';
 
     /**
      * Load CSS and JS

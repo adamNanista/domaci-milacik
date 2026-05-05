@@ -26,24 +26,6 @@
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
-    }
-
-    add_action( 'after_switch_theme', 'maybe_upgrade_contest_votes_table' );
-
-    function maybe_upgrade_contest_votes_table() {
-        $installed = get_option( 'contest_votes_db_version' );
-
-        if ( $installed === CONTEST_VOTES_DB_VERSION ) {
-            return;
-        }
-
-        global $wpdb;
-        $table = $wpdb->prefix . 'contest_entry_votes';
-
-        $wpdb->query(
-            "ALTER TABLE {$table}
-            ADD INDEX fingerprint_created (fingerprint, created_at)"
-        );
 
         update_option( 'contest_votes_db_version', CONTEST_VOTES_DB_VERSION );
     }
@@ -268,6 +250,7 @@
         return $field;
     } );
 
-    add_filter( 'acf/update_value/name=votes', function( $value, $post_id, $field ) {
-        return get_field( 'votes', $post_id );
-    }, 10, 3);
+    add_filter( 'acf/prepare_field/name=sms_votes', function( $field ) {
+        $field['disabled'] = 1;
+        return $field;
+    } );
