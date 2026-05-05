@@ -209,8 +209,6 @@
             wp_die();
         }
 
-        set_transient( $rate_key, $attempts + 1, 10 * MINUTE_IN_SECONDS );
-
         if ( $attempts >= 2 ) {
             if ( empty( $turnstile_token ) || ! verify_contest_vote_turnstile_token( $turnstile_token ) ) {
                 wp_send_json_error( array(
@@ -221,6 +219,7 @@
         }
 
         set_transient( $vote_key, 1, HOUR_IN_SECONDS );
+        set_transient( $rate_key, $attempts + 1, 10 * MINUTE_IN_SECONDS );
 
         /**
          * =========================
