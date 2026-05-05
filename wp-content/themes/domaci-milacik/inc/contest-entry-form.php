@@ -22,7 +22,7 @@
             wp_enqueue_script(
                 'cf-turnstile',
                 'https://challenges.cloudflare.com/turnstile/v0/api.js',
-                [],
+                array(),
                 null,
                 true
             );
@@ -30,7 +30,7 @@
             wp_enqueue_script(
                 'contest-entry-form',
                 get_stylesheet_directory_uri() . '/assets/js/contest-entry-form.js',
-                array( 'just-validate' ),
+                array( 'just-validate', 'cf-turnstile' ),
                 filemtime( get_stylesheet_directory() . '/assets/js/contest-entry-form.js' ),
                 true
             );
@@ -200,14 +200,14 @@
 
         $response = wp_remote_post(
             'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-            [
+            array(
                 'timeout' => 5,
-                'body' => [
+                'body' => array(
                     'secret'   => '0x4AAAAAADI3OtR1T6YzpJ79IWI2dhIiEM0',
                     'response' => $turnstile_token,
                     'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
-                ],
-            ]
+                ),
+            )
         );
         
         if ( is_wp_error( $response ) ) {

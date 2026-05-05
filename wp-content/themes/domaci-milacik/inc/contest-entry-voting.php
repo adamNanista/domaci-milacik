@@ -35,9 +35,17 @@
     function enqueue_contest_entry_voting_assets() {
         if ( is_singular( 'contest_entry' ) ) {
             wp_enqueue_script(
+                'cf-turnstile',
+                'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit',
+                array(),
+                null,
+                true
+            );
+
+            wp_enqueue_script(
                 'contest-entry-voting',
                 get_stylesheet_directory_uri() . '/assets/js/contest-entry-voting.js',
-                array(),
+                array( 'cf-turnstile' ),
                 filemtime( get_stylesheet_directory() . '/assets/js/contest-entry-voting.js' ),
                 true
             );
@@ -59,6 +67,7 @@
             <p id="contest-vote-count">
                 <?php echo esc_html( $votes ); ?>
             </p>
+            <div id="contest-entry-vote-turnstile"></div>
             <button id="contest-vote-button" data-post-id="<?php echo get_the_ID(); ?>">
                 <span id="contest-vote-button-text">Hlasovať</span>
                 <span id="contest-vote-button-loading" class="hidden">Odosielam hlas</span>
@@ -99,6 +108,8 @@
 
         if ( ! $post_id || get_post_type( $post_id ) !== 'contest_entry' ) {
             wp_send_json_error( array( 'message' => 'Neplatný príspevok.' ) );
+
+            wp_die();
         }
 
         if ( get_post_status( $post_id ) !== 'publish' ) {
@@ -187,17 +198,29 @@
          * GLOBAL RATE LIMIT
          * =========================
          */
+        $turnstile_token = sanitize_text_field( $_POST['turnstile_token'] ?? '' );
+
         $rate_key = 'contest_vote_rate_' . hash_hmac( 'sha256', $ip, $salt );
         $attempts = (int) get_transient( $rate_key );
 
-        if ( $attempts >= 20 ) {
+        if ( $attempts >= 5 ) {
             wp_send_json_error( array( 'message' => 'Príliš veľa hlasovaní. Skúste neskôr.' ) );
 
             wp_die();
         }
 
-        set_transient( $vote_key, 1, HOUR_IN_SECONDS );
         set_transient( $rate_key, $attempts + 1, 10 * MINUTE_IN_SECONDS );
+
+        if ( $attempts >= 2 ) {
+            if ( empty( $turnstile_token ) || ! verify_contest_vote_turnstile_token( $turnstile_token ) ) {
+                wp_send_json_error( array(
+                    'require_turnstile' => true,
+                    'message'           => 'Overujem, že nie ste robot...'
+                ) );
+            }
+        }
+
+        set_transient( $vote_key, 1, HOUR_IN_SECONDS );
 
         /**
          * =========================
@@ -240,7 +263,129 @@
             )
         );
 
+        /**
+         * =========================
+         * SUCCESS
+         * =========================
+         */
         wp_send_json_success( array( 'message' => 'Váš hlas bol zapísaný.', 'votes' => $votes ) );
+
+        wp_die();
+    }
+
+    add_action( 'wp_ajax_contest_vote_status', 'check_contest_vote_status' );
+    add_action( 'wp_ajax_nopriv_contest_vote_status', 'check_contest_vote_status' );
+
+    function check_contest_vote_status() {
+        /**
+         * =========================
+         * AJAX GUARD
+         * =========================
+         */
+        if ( ! wp_doing_ajax() ) {
+            wp_die();
+        }
+
+        /**
+         * =========================
+         * VERIFY NONCE
+         * =========================
+         */
+        check_ajax_referer( 'contest_entry_vote', 'nonce', true );
+
+        /**
+         * =========================
+         * POST VALIDATION
+         * =========================
+         */
+        $post_id = absint( $_POST['post_id'] ?? 0 );
+
+        if ( ! $post_id || get_post_type( $post_id ) !== 'contest_entry' ) {
+            wp_send_json_error( array( 'message' => 'Neplatný príspevok.' ) );
+
+            wp_die();
+        }
+
+        if ( get_post_status( $post_id ) !== 'publish' ) {
+            wp_send_json_error( array( 'message' => 'Hlasovanie nie je dostupné.' ) );
+
+            wp_die();
+        }
+
+        /**
+         * =========================
+         * COOKIE
+         * =========================
+         */
+        if ( empty( $_COOKIE['contest_vote_id'] ) ) {
+            wp_send_json_success( array( 'can_vote' => true ) );
+
+            wp_die();
+        }
+
+        $cookie_value = sanitize_text_field( $_COOKIE['contest_vote_id'] );
+
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        $salt = get_option( 'contest_vote_salt', '' );
+
+        if ( ! $salt ) {
+            wp_send_json_success( array( 'can_vote' => true ) );
+
+            wp_die();
+        }
+
+        /**
+         * =========================
+         * FINGERPRINT
+         * =========================
+         */
+        $fingerprint = hash_hmac( 'sha256', $ip . '|' . $cookie_value . '|' . $post_id, $salt );
+
+        /**
+         * =========================
+         * HARD 1-HOUR CHECK (DATABASE)
+         * =========================
+         */
+        global $wpdb;
+
+        $last_vote = $wpdb->get_var( $wpdb->prepare(
+            "SELECT created_at
+            FROM {$wpdb->prefix}contest_entry_votes
+            WHERE fingerprint = %s
+            ORDER BY created_at DESC
+            LIMIT 1",
+            $fingerprint
+        ) );
+
+        if ( ! $last_vote ) {
+            wp_send_json_success( array( 'can_vote' => true ) );
+
+            wp_die();
+        }
+
+        /**
+         * =========================
+         * TIME TO NEXT VOTE
+         * =========================
+         */
+        $elapsed = time() - strtotime( $last_vote );
+        
+        if ( $elapsed >= HOUR_IN_SECONDS ) {
+            wp_send_json_success( array( 'can_vote' => true ) );
+
+            wp_die();
+        }
+
+        /**
+         * =========================
+         * SUCCESS
+         * =========================
+         */
+        wp_send_json_success( array(
+            'can_vote'      => false,
+            'next_vote_in'  => HOUR_IN_SECONDS - $elapsed,
+            'message'       => 'Už ste hlasovali.',
+        ) );
 
         wp_die();
     }
@@ -254,3 +399,29 @@
         $field['disabled'] = 1;
         return $field;
     } );
+
+    function verify_contest_vote_turnstile_token( $turnstile_token ) {
+        if ( empty( $turnstile_token ) ) {
+            return false;
+        }
+
+        $response = wp_remote_post(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+            array(
+                'timeout' => 10,
+                'body' => array(
+                    'secret'   => '0x4AAAAAADI3OtR1T6YzpJ79IWI2dhIiEM0',
+                    'response' => $turnstile_token,
+                    'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+                ),
+            )
+        );
+
+        if ( is_wp_error( $response ) ) {
+            return false;
+        }
+
+        $data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        return ! empty( $data['success'] );
+    }

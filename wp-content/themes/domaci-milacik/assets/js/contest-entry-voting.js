@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+	// Turnstile
+	let turnstileWidgetId = null;
+	let pendingVote = false;
+
 	// DOM
 	const voteCount = document.querySelector("#contest-vote-count");
 	const voteButton = document.querySelector("#contest-vote-button");
@@ -7,45 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
 	const postId = voteButton.dataset.postId;
 
 	// Voted
-	if (sessionStorage.getItem("contest_voted_" + postId)) {
-		setVoted();
-	}
+	checkVoteStatus();
 
 	// Voting
-	voteButton.addEventListener("click", async function (event) {
+	voteButton.addEventListener("click", function (event) {
 		event.preventDefault();
-
 		clearMessages();
-		setLoading(true);
-
-		try {
-			const response = await fetch(contest_entry_voting_ajax.ajax_url, {
-				method: "POST",
-				headers: { "Content-Type": "application/x-www-form-urlencoded" },
-				body: new URLSearchParams({
-					action: "contest_vote",
-					nonce: contest_entry_voting_ajax.nonce,
-					post_id: postId,
-				}),
-			});
-
-			const result = await response.json();
-
-			setLoading(false);
-
-			if (result.success) {
-				voteCount.textContent = result.data.votes;
-				sessionStorage.setItem("contest_voted_" + postId, "1");
-				setVoted();
-				showSuccess(result.data.message);
-			} else {
-				showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
-			}
-		} catch (error) {
-			console.log(error);
-			setLoading(false);
-			showError("Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.");
-		}
+		submitVote();
 	});
 
 	// Helpers
@@ -83,4 +55,98 @@ document.addEventListener("DOMContentLoaded", function () {
 		messages.classList.add("contest-vote-error");
 		messages.textContent = message;
 	}
+
+	function initTurnstile() {
+		if (turnstileWidgetId !== null) return;
+
+		turnstileWidgetId = turnstile.render("#contest-entry-vote-turnstile", {
+			sitekey: "0x4AAAAAADI3OolGYd09Ili5",
+			callback: onTurnstileSuccess,
+			"error-callback": onTurnstileError,
+		});
+	}
+
+	function onTurnstileSuccess(token) {
+		if (!pendingVote) return;
+
+		pendingVote = false;
+		handleVote(token);
+	}
+
+	function onTurnstileError() {
+		pendingVote = false;
+		showError("Overenie zlyhalo, skúste to znova.");
+	}
+
+	async function handleVote(turnstileToken = "") {
+		setLoading(true);
+
+		const body = {
+			action: "contest_vote",
+			nonce: contest_entry_voting_ajax.nonce,
+			post_id: postId,
+		};
+
+		if (turnstileToken) {
+			body.turnstile_token = turnstileToken;
+		}
+
+		const response = await fetch(contest_entry_voting_ajax.ajax_url, {
+			method: "POST",
+			headers: { "Content-Type": "application/x-www-form-urlencoded" },
+			body: new URLSearchParams(body),
+		});
+
+		const result = await response.json();
+		setLoading(false);
+
+		if (result.success) {
+			voteCount.textContent = result.data.votes;
+			setVoted();
+			showSuccess(result.data.message);
+
+			if (turnstileWidgetId !== null) {
+				turnstile.reset(turnstileWidgetId);
+			}
+
+			return;
+		}
+
+		if (result.data?.require_turnstile) {
+			showError(result.data.message || "Overujem, že nie ste robot...");
+			pendingVote = true;
+			turnstile.execute(turnstileWidgetId);
+			return;
+		}
+
+		showError(result.data?.message || "Niečo sa pokazilo.");
+	}
+
+	async function checkVoteStatus() {
+		try {
+			const response = await fetch(contest_entry_voting_ajax.ajax_url, {
+				method: "POST",
+				headers: { "Content-Type": "application/x-www-form-urlencoded" },
+				body: new URLSearchParams({
+					action: "contest_vote_status",
+					nonce: contest_entry_voting_ajax.nonce,
+					post_id: postId,
+				}),
+			});
+
+			const result = await response.json();
+
+			if (result.success && result.data.can_vote === false) {
+				setVoted();
+				if (result.data.next_vote_in) {
+					const nextVoteIn = Math.floor(result.data.next_vote_in / 60);
+					showError(`Hlasovať môžete o ${nextVoteIn} minút.`);
+				}
+			}
+		} catch (error) {
+			console.warn("Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.", error);
+		}
+	}
+
+	initTurnstile();
 });
