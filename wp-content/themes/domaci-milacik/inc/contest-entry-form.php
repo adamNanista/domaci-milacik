@@ -308,7 +308,7 @@
                 $errors['contest-entry-form-photo'] = 'Fotografia je príliš veľká.';
             } elseif ($file_error !== UPLOAD_ERR_OK) {
                 $errors['contest-entry-form-photo'] = 'Nahrávanie fotografie zlyhalo.';
-            } elseif ($_FILES['contest-entry-form-photo']['size'] > 5 * MB_IN_BYTES) {
+            } elseif ($_FILES['contest-entry-form-photo']['size'] > 5 * 1024 * 1024) {
                 $errors['contest-entry-form-photo'] = 'Fotografia musí mať menej ako 5 MB.';
             }
         }
@@ -323,7 +323,7 @@
                 $errors['contest-entry-form-video-upload'] = 'Video je príliš veľké.';
             } elseif ($file_error !== UPLOAD_ERR_OK) {
                 $errors['contest-entry-form-video-upload'] = 'Nahrávanie videa zlyhalo.';
-            } elseif ($_FILES['contest-entry-form-video-upload']['size'] > 30 * MB_IN_BYTES) {
+            } elseif ($_FILES['contest-entry-form-video-upload']['size'] > 30 * 1024 * 1024) {
                 $errors['contest-entry-form-video-upload'] = 'Video musí mať menej ako 30 MB.';
             }
         } elseif ( $video_type === 'url' && ! empty( $video_url ) ) {
@@ -350,6 +350,34 @@
          * PHOTO UPLOAD
          * =========================
          */
+        $tmp_photo = $_FILES['contest-entry-form-photo']['tmp_name'];
+
+        $photo_finfo = finfo_open( FILEINFO_MIME_TYPE );
+        $photo_real_mime = finfo_file( $photo_finfo, $tmp_photo );
+        finfo_close( $photo_finfo );
+
+        if ( ! in_array( $photo_real_mime, [ 'image/jpeg', 'image/png' ], true ) ) {
+            $fail( '', [ 'contest-entry-form-photo' => 'Nepodporovaný formát obrázku. Povolené sú iba JPG a PNG.' ] );
+        }
+
+        $photo_size = @getimagesize( $tmp_photo );
+        if ( false === $photo_size ) {
+            $fail( '', [ 'contest-entry-form-photo' => 'Súbor nie je platný obrázok.' ] );
+        }
+
+        $max_dimension = 10000;
+
+        if ( $photo_size[0] > $max_dimension || $photo_size[1] > $max_dimension ) {
+            $fail( '', [ 'contest-entry-form-photo' => 'Obrázok je príliš veľký. Prosím, zmenšite ho pred nahraním.' ] );
+        }
+
+        $estimated_memory = $photo_size[0] * $photo_size[1] * 4;
+        $limit = 100 * 1024 * 1024;
+
+        if ( $estimated_memory > $limit ) {
+            $fail( '', [ 'contest-entry-form-photo' => 'Súbor je príliš náročný na spracovanie.' ] );
+        }
+
         require_once ABSPATH . 'wp-admin/includes/file.php';
         require_once ABSPATH . 'wp-admin/includes/media.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
@@ -367,18 +395,13 @@
         };
 
         $photo_file = get_attached_file( $photo_id );
-        $photo_check = wp_check_filetype_and_ext( $photo_file, basename( $photo_file ) );
-
-        if ( ! in_array( $photo_check['type'], ['image/jpeg', 'image/png'], true ) ) {
-            $fail( '', [ 'contest-entry-form-photo' => 'Nepodporovaný formát fotografie.' ] );
-        }
-
         $editor = wp_get_image_editor( $photo_file );
 
         if ( is_wp_error( $editor ) ) {
             $fail( '', [ 'contest-entry-form-photo' => 'Nepodporovaný formát fotografie.' ] );
         }
 
+        $editor->resize( 2560, 2560, false );
         $saved = $editor->save( $photo_file );
 
         if ( is_wp_error( $saved ) ) {
@@ -395,6 +418,16 @@
         $final_video_url = '';
 
         if ( $video_type === 'upload' && isset( $_FILES['contest-entry-form-video-upload'] ) && $_FILES['contest-entry-form-video-upload']['error'] !== UPLOAD_ERR_NO_FILE ) {
+            $tmp_video = $_FILES['contest-entry-form-video-upload']['tmp_name'];
+
+            $video_finfo = finfo_open( FILEINFO_MIME_TYPE );
+            $video_real_mime = finfo_file( $video_finfo, $tmp_video );
+            finfo_close( $video_finfo );
+
+            if ( ! in_array( $video_real_mime, [ 'video/mp4', 'video/quicktime' ], true ) ) {
+                $fail( '', [ 'contest-entry-form-video-upload' => 'Nepodporovaný formát videa. Povolené je iba MP4.' ] );
+            }
+
             add_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
             $video_id = media_handle_upload( 'contest-entry-form-video-upload', 0 );
             remove_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
@@ -406,13 +439,6 @@
             $rollback[] = function() use ( $video_id ) {
                 wp_delete_attachment( $video_id, true );
             };
-
-            $video_file = get_attached_file( $video_id );
-            $video_check = wp_check_filetype_and_ext( $video_file, basename( $video_file ) );
-
-            if ( ! in_array( $video_check['type'], ['video/mp4'], true ) ) {
-                $fail( '', [ 'contest-entry-form-video-upload' => 'Nepodporovaný formát videa.' ] );
-            }
 
             $final_video_url = wp_get_attachment_url( $video_id );
         } elseif ( $video_type === 'url' && ! empty( $video_url ) ) {
@@ -452,7 +478,11 @@
             update_field( 'owner_name', $owner_name, $post_id );
             update_field( 'owner_email', $owner_email, $post_id );
             update_field( 'video_url', $final_video_url, $post_id );
-        }
+        } else {
+            update_post_meta( $post_id, '_owner_name', $owner_name );
+            update_post_meta( $post_id, '_owner_email', $owner_email );
+            update_post_meta( $post_id, '_video_url', $final_video_url );
+        }  
 
         set_post_thumbnail( $post_id, $photo_id );
 
@@ -477,6 +507,7 @@
     
     function contest_entry_form_video_mimes() {
         return array(
-            'mp4|m4v' => 'video/mp4',
+            'mp4|m4v'   => 'video/mp4',
+            'mov|qt'    => 'video/quicktime',
         );
     }

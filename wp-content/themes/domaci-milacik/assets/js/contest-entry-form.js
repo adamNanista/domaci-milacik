@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				value: {
 					files: {
 						extensions: ["jpeg", "jpg", "png"],
-						maxSize: 2000000,
+						maxSize: 5242880,
 						types: ["image/jpeg", "image/jpg", "image/png"],
 					},
 				},
@@ -81,9 +81,9 @@ document.addEventListener("DOMContentLoaded", function () {
 				rule: "files",
 				value: {
 					files: {
-						extensions: ["mp4"],
-						maxSize: 30000000,
-						types: ["video/mp4"],
+						extensions: ["mp4", "mov"],
+						maxSize: 31457280,
+						types: ["video/mp4", "video/quicktime"],
 					},
 				},
 				errorMessage: "Video musí mať menej ako 30 MB.",
@@ -151,6 +151,10 @@ document.addEventListener("DOMContentLoaded", function () {
 				if (result.success) {
 					showSuccess(result.data.message);
 					form.reset();
+
+					if (window.turnstile) {
+						turnstile.reset();
+					}
 
 					uploadPanel.classList.remove("hidden");
 					urlPanel.classList.add("hidden");
