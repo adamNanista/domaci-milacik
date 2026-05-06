@@ -141,9 +141,9 @@
         $errors   = [];
         $rollback = [];
 
-        $created_post_id      = 0;
-        $photo_id             = 0;
-        $video_attachment_id  = 0;
+        $post_id                = 0;
+        $photo_id               = 0;
+        $video_id               = 0;
 
         $fail = function($message, $fields = []) use (&$rollback) {
             foreach (array_reverse($rollback) as $undo) {
@@ -220,6 +220,8 @@
             $fail( 'Overenie zlyhalo. Skúste to znova.' );
         }
 
+        set_transient( $rate_key, $attempts + 1, 15 * MINUTE_IN_SECONDS );
+
         /**
          * =========================
          * SANITIZATION
@@ -233,18 +235,6 @@
         $video_type         = isset( $_POST['contest-entry-form-video-type'] )          ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-video-type'] ) )          : 'upload';
         $video_url          = isset( $_POST['contest-entry-form-video-url'] )           ? esc_url_raw( wp_unslash( $_POST['contest-entry-form-video-url'] ) )                   : '';
         $consent_combined   = ! empty( $_POST['contest-entry-form-consent-combined'] )  ? 1                                                                                     : 0;
-
-        /**
-         * =========================
-         * DUPLICATE CHECK
-         * =========================
-         */
-        $fingerprint = wp_hash( strtolower( trim( $owner_email . '|' . $pet_name ) ) );
-        $fingerprint_key = 'contest_entry_form_submission_' . $fingerprint;
-
-        if ( get_transient( $fingerprint_key ) ) {
-            $fail( 'Táto prihláška už bola odoslaná.' );
-        }
 
         /**
          * =========================
@@ -267,10 +257,10 @@
             'contest-entry-form-video-url'          => $video_url,
             'contest-entry-form-consent-combined'   => $consent_combined,
         ), array(
-            'contest-entry-form-owner-name'         => 'required',
-            'contest-entry-form-owner-email'        => 'required|email',
-            'contest-entry-form-pet-name'           => 'required',
-            'contest-entry-form-pet-description'    => 'required',
+            'contest-entry-form-owner-name'         => 'required|max:100',
+            'contest-entry-form-owner-email'        => 'required|email|max:100',
+            'contest-entry-form-pet-name'           => 'required|max:100',
+            'contest-entry-form-pet-description'    => 'required|max:2000',
             'contest-entry-form-photo'              => 'required',
             'contest-entry-form-video-url'          => 'url',
             'contest-entry-form-consent-combined'   => 'required|accepted',
@@ -278,10 +268,14 @@
 
         $validation->setMessages( array(
             'contest-entry-form-owner-name:required'        => 'Meno je povinné.',
+            'contest-entry-form-owner-name:max'             => 'Meno môže mať maximálne 100 znakov.',
             'contest-entry-form-owner-email:required'       => 'Email je povinný.',
             'contest-entry-form-owner-email:email'          => 'Neplatná emailová adresa.',
+            'contest-entry-form-owner-email:max'            => 'Email môže mať maximálne 100 znakov.',
             'contest-entry-form-pet-name:required'          => 'Meno miláčika je povinné.',
+            'contest-entry-form-pet-name:max'               => 'Meno miláčika môže mať maximálne 100 znakov.',
             'contest-entry-form-pet-description:required'   => 'Popis miláčika je povinný.',
+            'contest-entry-form-pet-description:max'        => 'Popis miláčika môže mať maximálne 2 000 znakov.',
             'contest-entry-form-photo:required'             => 'Fotografia je povinná.',
             'contest-entry-form-video-url:url'              => 'Zadajte platnú URL adresu.',
             'contest-entry-form-consent-combined:required'  => 'Súhlas je povinný.',
@@ -344,6 +338,18 @@
         if ( ! empty( $errors ) ) {
             $fail( '', $errors );
         }
+
+        /**
+         * =========================
+         * DUPLICATE CHECK
+         * =========================
+         */
+        $fingerprint = wp_hash( strtolower( trim( $owner_email . '|' . $pet_name ) ) );
+        $fingerprint_key = 'contest_entry_form_submission_' . $fingerprint;
+
+        if ( get_transient( $fingerprint_key ) ) {
+            $fail( 'Táto prihláška už bola odoslaná.' );
+        }
         
         /**
          * =========================
@@ -382,9 +388,12 @@
         require_once ABSPATH . 'wp-admin/includes/media.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
 
-        add_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
-        $photo_id = media_handle_upload( 'contest-entry-form-photo', 0 );
-        remove_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
+        try {
+            add_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
+            $photo_id = media_handle_upload( 'contest-entry-form-photo', 0 );
+        } finally {
+            remove_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
+        }
 
         if ( is_wp_error( $photo_id ) ) {
             $fail( '', [ 'contest-entry-form-photo' => 'Nahrávanie fotografie zlyhalo: ' . $photo_id->get_error_message() ] );
@@ -408,6 +417,9 @@
             $fail( '', [ 'contest-entry-form-photo' => 'Nepodarilo sa spracovať fotografiu.' ] );
         }
 
+        $metadata = wp_generate_attachment_metadata( $photo_id, $photo_file );
+        wp_update_attachment_metadata( $photo_id, $metadata );
+
         update_post_meta( $photo_id, '_wp_attachment_image_alt', $pet_name );
 
         /**
@@ -424,13 +436,16 @@
             $video_real_mime = finfo_file( $video_finfo, $tmp_video );
             finfo_close( $video_finfo );
 
-            if ( ! in_array( $video_real_mime, [ 'video/mp4', 'video/quicktime' ], true ) ) {
+            if ( ! in_array( $video_real_mime, [ 'video/mp4' ], true ) ) {
                 $fail( '', [ 'contest-entry-form-video-upload' => 'Nepodporovaný formát videa. Povolené je iba MP4.' ] );
             }
 
-            add_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
-            $video_id = media_handle_upload( 'contest-entry-form-video-upload', 0 );
-            remove_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
+            try {
+                add_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
+                $video_id = media_handle_upload( 'contest-entry-form-video-upload', 0 );
+            } finally {
+                remove_filter( 'upload_mimes', 'contest_entry_form_video_mimes' );
+            }
 
             if ( is_wp_error( $video_id ) ) {
                 $fail( '', [ 'contest-entry-form-video-upload' => 'Nahrávanie videa zlyhalo: ' . $video_id->get_error_message() ] );
@@ -493,8 +508,6 @@
          * SUCCESS
          * =========================
          */
-        set_transient( $rate_key, $attempts + 1, 15 * MINUTE_IN_SECONDS );
-        
         wp_send_json_success( array( 'message' => 'Ďakujeme! Vaša prihláška bola prijatá a čaká na schválenie.', ) );
 
         wp_die();
@@ -502,14 +515,13 @@
 
     function contest_entry_form_image_mimes() {
         return array(
-            'jpg|jpeg|jpe' => 'image/jpeg',
-            'png'          => 'image/png',
+            'jpg|jpeg'  => 'image/jpeg',
+            'png'       => 'image/png',
         );
     }
     
     function contest_entry_form_video_mimes() {
         return array(
-            'mp4|m4v'   => 'video/mp4',
-            'mov|qt'    => 'video/quicktime',
+            'mp4' => 'video/mp4',
         );
     }

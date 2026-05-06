@@ -4,7 +4,7 @@
 		exit; // Exit if accessed directly.
 	}
 
-    define( 'CONTEST_VOTES_DB_VERSION', '1.1' );
+    define( 'CONTEST_VOTES_DB_VERSION', '1.2' );
 
     add_action('after_switch_theme', 'create_contest_entry_votes_table');
 
@@ -17,11 +17,13 @@
         $sql = "CREATE TABLE $table_name (
             id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             post_id BIGINT UNSIGNED NOT NULL,
-            fingerprint CHAR(64) NOT NULL,
+            fingerprint_ip CHAR(64) NOT NULL,
+            fingerprint_cookie CHAR(64) NOT NULL,
             created_at DATETIME NOT NULL,
             PRIMARY KEY (id),
             INDEX post_id (post_id),
-            INDEX fingerprint_created (fingerprint, created_at)
+            INDEX fingerprint_ip_created (fingerprint_ip, created_at),
+            INDEX fingerprint_cookie_created (fingerprint_cookie, created_at)
         ) $charset_collate;";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -67,7 +69,7 @@
             <p id="contest-vote-count">
                 <?php echo esc_html( $votes ); ?>
             </p>
-            <div id="contest-entry-vote-turnstile"></div>
+            <div id="contest-vote-turnstile"></div>
             <button id="contest-vote-button" data-post-id="<?php echo get_the_ID(); ?>">
                 <span id="contest-vote-button-text">Hlasovať</span>
                 <span id="contest-vote-button-loading" class="hidden">Odosielam hlas</span>
@@ -156,8 +158,8 @@
          * FINGERPRINT
          * =========================
          */
-        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        $fingerprint = hash_hmac( 'sha256', $ip . '|' . $ua . '|' . $post_id, $salt );
+        $fingerprint_ip = hash_hmac( 'sha256', $ip . '|' . $post_id, $salt );
+        $fingerprint_cookie = hash_hmac( 'sha256', $cookie_value . '|' . $post_id, $salt );
 
         /**
          * =========================
@@ -166,16 +168,20 @@
          */
         global $wpdb;
 
-        $last_vote = $wpdb->get_var( $wpdb->prepare(
-            "SELECT created_at
+        $since = gmdate( 'Y-m-d H:i:s', time() - HOUR_IN_SECONDS );
+
+        $already_voted  = $wpdb->get_var( $wpdb->prepare(
+            "SELECT 1
             FROM {$wpdb->prefix}contest_entry_votes
-            WHERE fingerprint = %s
-            ORDER BY created_at DESC
+            WHERE ( fingerprint_ip = %s OR fingerprint_cookie = %s )
+            AND created_at > %s
             LIMIT 1",
-            $fingerprint
+            $fingerprint_ip,
+            $fingerprint_cookie,
+            $since
         ) );
 
-        if ( $last_vote && strtotime($last_vote) > time() - HOUR_IN_SECONDS ) {
+        if ( $already_voted  ) {
             wp_send_json_error( array( 'message' => 'Hlasovať môžete raz za hodinu.' ) );
 
             wp_die();
@@ -186,7 +192,7 @@
          * POST RATE LIMIT
          * =========================
          */
-        $vote_key = 'contest_vote_' . $fingerprint;
+        $vote_key = 'contest_vote_' . $fingerprint_ip;
 
         if ( get_transient( $vote_key ) ) {
             wp_send_json_error( array( 'message' => 'Už ste hlasovali. Skúste znova o hodinu.' ) );
@@ -201,7 +207,7 @@
          */
         $turnstile_token = sanitize_text_field( $_POST['turnstile_token'] ?? '' );
 
-        $rate_key = 'contest_vote_rate_' . hash_hmac( 'sha256', $ip, $salt );
+        $rate_key = 'contest_vote_rate_' . $fingerprint_ip;
         $attempts = (int) get_transient( $rate_key );
 
         if ( $attempts >= 5 ) {
@@ -214,13 +220,40 @@
             if ( empty( $turnstile_token ) || ! verify_contest_vote_turnstile_token( $turnstile_token ) ) {
                 wp_send_json_error( array(
                     'require_turnstile' => true,
-                    'message'           => 'Overujem, že nie ste robot...'
+                    'message'           => 'Prebieha overenie, prosím čakajte...'
                 ) );
+
+                wp_die();
             }
         }
 
         set_transient( $vote_key, 1, HOUR_IN_SECONDS );
         set_transient( $rate_key, $attempts + 1, 10 * MINUTE_IN_SECONDS );
+
+        /**
+         * =========================
+         * LOG VOTE
+         * =========================
+         */
+        $inserted = $wpdb->insert(
+            $wpdb->prefix . 'contest_entry_votes',
+            array(
+                'post_id'               => $post_id,
+                'fingerprint_ip'        => $fingerprint_ip,
+                'fingerprint_cookie'    => $fingerprint_cookie,
+                'created_at'            => gmdate( 'Y-m-d H:i:s' )
+            ),
+            array( '%d', '%s', '%s', '%s' )
+        );
+
+        if ( ! $inserted ) {
+            delete_transient( $vote_key );
+            set_transient( $rate_key, max( 0, $attempts ), 10 * MINUTE_IN_SECONDS );
+
+            wp_send_json_error( array( 'message' => 'Hlas sa nepodarilo zaznamenať. Skúste to znova.' ) );
+
+            wp_die();
+        }
 
         /**
          * =========================
@@ -242,19 +275,9 @@
 
         /**
          * =========================
-         * LOG VOTE
+         * SUCCESS
          * =========================
          */
-        $wpdb->insert(
-            $wpdb->prefix . 'contest_entry_votes',
-            array(
-                'post_id'     => $post_id,
-                'fingerprint' => $fingerprint,
-                'created_at'  => current_time( 'mysql', true )
-            ),
-            array( '%d', '%s', '%s' )
-        );
-
         $votes = (int) $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT meta_value FROM {$wpdb->postmeta}
@@ -263,11 +286,6 @@
             )
         );
 
-        /**
-         * =========================
-         * SUCCESS
-         * =========================
-         */
         wp_send_json_success( array( 'message' => 'Váš hlas bol zapísaný.', 'votes' => $votes ) );
 
         wp_die();
@@ -318,12 +336,12 @@
          * =========================
          */
         if ( empty( $_COOKIE['contest_vote_id'] ) ) {
-            wp_send_json_success( array( 'can_vote' => true ) );
-
-            wp_die();
+            $cookie_value = '';
+        } else {
+            $cookie_value = sanitize_text_field( $_COOKIE['contest_vote_id'] );
         }
 
-        $cookie_value = sanitize_text_field( $_COOKIE['contest_vote_id'] );
+        
 
         $ip = $_SERVER['REMOTE_ADDR'] ?? '';
         $salt = get_option( 'contest_vote_salt', '' );
@@ -339,8 +357,8 @@
          * FINGERPRINT
          * =========================
          */
-        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        $fingerprint = hash_hmac( 'sha256', $ip . '|' . $ua . '|' . $post_id, $salt );
+        $fingerprint_ip = hash_hmac( 'sha256', $ip . '|' . $post_id, $salt );
+        $fingerprint_cookie = hash_hmac( 'sha256', $cookie_value . '|' . $post_id, $salt );
 
         /**
          * =========================
@@ -349,16 +367,21 @@
          */
         global $wpdb;
 
-        $last_vote = $wpdb->get_var( $wpdb->prepare(
+        $since = gmdate( 'Y-m-d H:i:s', time() - HOUR_IN_SECONDS );
+
+        $last_vote_at  = $wpdb->get_var( $wpdb->prepare(
             "SELECT created_at
             FROM {$wpdb->prefix}contest_entry_votes
-            WHERE fingerprint = %s
+            WHERE ( fingerprint_ip = %s OR fingerprint_cookie = %s )
+            AND created_at > %s
             ORDER BY created_at DESC
             LIMIT 1",
-            $fingerprint
+            $fingerprint_ip,
+            $fingerprint_cookie,
+            $since
         ) );
 
-        if ( ! $last_vote ) {
+        if ( ! $last_vote_at  ) {
             wp_send_json_success( array( 'can_vote' => true ) );
 
             wp_die();
@@ -369,13 +392,7 @@
          * TIME TO NEXT VOTE
          * =========================
          */
-        $elapsed = time() - strtotime( $last_vote );
-        
-        if ( $elapsed >= HOUR_IN_SECONDS ) {
-            wp_send_json_success( array( 'can_vote' => true ) );
-
-            wp_die();
-        }
+        $elapsed = time() - strtotime( $last_vote_at );
 
         /**
          * =========================

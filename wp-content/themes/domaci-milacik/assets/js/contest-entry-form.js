@@ -35,6 +35,11 @@ document.addEventListener("DOMContentLoaded", function () {
 				rule: "required",
 				errorMessage: "Meno je povinné.",
 			},
+			{
+				rule: "maxLength",
+				value: 100,
+				errorMessage: "Meno môže mať maximálne 100 znakov.",
+			},
 		])
 		.addField("#contest-entry-form-owner-email", [
 			{
@@ -45,17 +50,32 @@ document.addEventListener("DOMContentLoaded", function () {
 				rule: "email",
 				errorMessage: "Neplatná emailová adresa.",
 			},
+			{
+				rule: "maxLength",
+				value: 100,
+				errorMessage: "Email môže mať maximálne 100 znakov.",
+			},
 		])
 		.addField("#contest-entry-form-pet-name", [
 			{
 				rule: "required",
 				errorMessage: "Meno miláčika je povinné.",
 			},
+			{
+				rule: "maxLength",
+				value: 100,
+				errorMessage: "Meno miláčika môže mať maximálne 100 znakov.",
+			},
 		])
 		.addField("#contest-entry-form-pet-description", [
 			{
 				rule: "required",
 				errorMessage: "Popis miláčika je povinný.",
+			},
+			{
+				rule: "maxLength",
+				value: 2000,
+				errorMessage: "Popis miláčika môže mať maximálne 2 000 znakov.",
 			},
 		])
 		.addField("#contest-entry-form-photo", [
@@ -68,12 +88,20 @@ document.addEventListener("DOMContentLoaded", function () {
 				rule: "files",
 				value: {
 					files: {
-						extensions: ["jpeg", "jpg", "png"],
 						maxSize: 5242880,
-						types: ["image/jpeg", "image/jpg", "image/png"],
 					},
 				},
 				errorMessage: "Fotografia musí mať menej ako 5 MB.",
+			},
+			{
+				rule: "files",
+				value: {
+					files: {
+						extensions: ["jpeg", "jpg", "png"],
+						types: ["image/jpeg", "image/jpg", "image/png"],
+					},
+				},
+				errorMessage: "Fotografia musí byť vo formáte JPG alebo PNG.",
 			},
 		])
 		.addField("#contest-entry-form-video-upload", [
@@ -81,12 +109,20 @@ document.addEventListener("DOMContentLoaded", function () {
 				rule: "files",
 				value: {
 					files: {
-						extensions: ["mp4", "mov"],
 						maxSize: 31457280,
-						types: ["video/mp4", "video/quicktime"],
 					},
 				},
 				errorMessage: "Video musí mať menej ako 30 MB.",
+			},
+			{
+				rule: "files",
+				value: {
+					files: {
+						extensions: ["mp4"],
+						types: ["video/mp4"],
+					},
+				},
+				errorMessage: "Video musí byť vo formáte MP4.",
 			},
 		])
 		.addField("#contest-entry-form-video-url", [
@@ -148,21 +184,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 				setLoading(false);
 
+				if (window.turnstile) {
+					turnstile.reset();
+				}
+
 				if (result.success) {
-					showSuccess(result.data.message);
 					form.reset();
 
-					if (window.turnstile) {
-						turnstile.reset();
+					if (result.data.message) {
+						showSuccess(result.data.message);
 					}
 
 					uploadPanel.classList.remove("hidden");
 					urlPanel.classList.add("hidden");
 				} else {
-					if (window.turnstile) {
-						turnstile.reset();
-					}
-
 					if (result.data.message) {
 						showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
 					}
@@ -175,8 +210,6 @@ document.addEventListener("DOMContentLoaded", function () {
 						});
 
 						validation.showErrors(fieldErrors);
-
-						console.log(result.data.fields);
 					}
 				}
 			} catch (error) {
@@ -194,32 +227,28 @@ document.addEventListener("DOMContentLoaded", function () {
 	function setLoading(isLoading) {
 		const text = submitButton.querySelector("#contest-entry-form-submit-text");
 		const loader = submitButton.querySelector("#contest-entry-form-submit-loading");
-
-		if (isLoading) {
-			submitButton.disabled = true;
-			text.classList.add("hidden");
-			loader.classList.remove("hidden");
-		} else {
-			submitButton.disabled = false;
-			text.classList.remove("hidden");
-			loader.classList.add("hidden");
-		}
+		submitButton.disabled = isLoading;
+		text.classList.toggle("hidden", isLoading);
+		loader.classList.toggle("hidden", !isLoading);
 	}
 
 	function clearMessages() {
-		messages.classList.remove("contest-entry-form-success", "contest-entry-form-error");
+		messages.className = "";
 		messages.textContent = "";
 	}
 
 	function showSuccess(message) {
-		messages.classList.remove("contest-entry-form-error");
-		messages.classList.add("contest-entry-form-success");
+		messages.className = "contest-entry-form-success";
 		messages.textContent = message;
 	}
 
 	function showError(message) {
-		messages.classList.remove("contest-entry-form-success");
-		messages.classList.add("contest-entry-form-error");
+		messages.className = "contest-entry-form-error";
+		messages.textContent = message;
+	}
+
+	function showInfo(message) {
+		messages.className = "contest-entry-form-info";
 		messages.textContent = message;
 	}
 });
