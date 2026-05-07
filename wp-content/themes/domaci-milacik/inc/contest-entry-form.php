@@ -33,7 +33,6 @@
     add_action( 'wp_enqueue_scripts', 'enqueue_contest_entry_form_assets' );
 
     function enqueue_contest_entry_form_assets() {
-
         if ( is_page( 10 ) ) {
             wp_enqueue_script(
                 'just-validate',

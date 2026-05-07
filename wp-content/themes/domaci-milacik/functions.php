@@ -26,6 +26,7 @@
     require_once get_stylesheet_directory() . '/inc/contest-entry-form.php';
     require_once get_stylesheet_directory() . '/inc/contest-entry-voting.php';
     require_once get_stylesheet_directory() . '/inc/contest-entry-import.php';
+    require_once get_stylesheet_directory() . '/inc/latest-articles.php';
 
     /**
      * Load CSS and JS
