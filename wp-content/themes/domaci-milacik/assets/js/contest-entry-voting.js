@@ -80,8 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 			if (result.success) {
 				voteCount.textContent = result.data.votes;
-				setVoted();
-				showSuccess(result.data.message);
+				setReceived();
 				return;
 			} else {
 				if (result.data?.require_turnstile) {
@@ -131,18 +130,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Helpers
 	function setLoading(isLoading) {
-		const text = voteButton.querySelector("#contest-vote-button-text");
-		const loader = voteButton.querySelector("#contest-vote-button-loading");
 		voteButton.disabled = isLoading;
-		text.classList.toggle("hidden", isLoading);
-		loader.classList.toggle("hidden", !isLoading);
+		voteButton.textContent = isLoading ? "Odosielam hlas" : "Hlasovať";
+	}
+
+	function setReceived() {
+		voteButton.disabled = true;
+		voteButton.textContent = "Váš hlas bol zapísaný";
 	}
 
 	function setVoted() {
 		voteButton.disabled = true;
-		voteButton.querySelector("#contest-vote-button-text").classList.add("hidden");
-		voteButton.querySelector("#contest-vote-button-loading").classList.add("hidden");
-		voteButton.querySelector("#contest-vote-button-voted").classList.remove("hidden");
+		voteButton.textContent = "Už ste hlasovali";
 	}
 
 	function clearMessages() {

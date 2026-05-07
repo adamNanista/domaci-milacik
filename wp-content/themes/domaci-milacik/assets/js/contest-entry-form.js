@@ -227,11 +227,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Helpers
 	function setLoading(isLoading) {
-		const text = submitButton.querySelector("#contest-entry-form-submit-text");
-		const loader = submitButton.querySelector("#contest-entry-form-submit-loading");
 		submitButton.disabled = isLoading;
-		text.classList.toggle("hidden", isLoading);
-		loader.classList.toggle("hidden", !isLoading);
+		submitButton = isLoading ? "Odosielam prihlášku" : "Odoslať prihlášku";
 	}
 
 	function clearMessages() {
