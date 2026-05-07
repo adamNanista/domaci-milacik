@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	const voteCount = document.querySelector("#contest-vote-count");
 	const voteButton = document.querySelector("#contest-vote-button");
 	const messages = document.querySelector("#contest-vote-messages");
+	const countdown = document.querySelector("#contest-vote-countdown");
 
 	if (!voteButton) return;
 
@@ -121,8 +122,8 @@ document.addEventListener("DOMContentLoaded", function () {
 			if (result.success && result.data.can_vote === false) {
 				setVoted();
 				if (result.data.next_vote_in) {
-					const nextVoteIn = Math.ceil(result.data.next_vote_in / 60);
-					showInfo(`Hlasovať môžete o ${nextVoteIn} minút.`);
+					const nextVoteIn = parseInt(result.data.next_vote_in, 10);
+					startCountdown(nextVoteIn, countdown);
 				}
 			}
 		} catch {}
@@ -162,5 +163,29 @@ document.addEventListener("DOMContentLoaded", function () {
 	function showInfo(message) {
 		messages.className = "contest-vote-info";
 		messages.textContent = message;
+	}
+
+	function startCountdown(seconds, element) {
+		let remaining = seconds;
+
+		function updateCountdown() {
+			if (remaining <= 0) {
+				clearInterval(interval);
+
+				element.textContent = "Môžete hlasovať znova.";
+				return;
+			}
+
+			const minutes = Math.floor(remaining / 60);
+			const seconds = remaining % 60;
+
+			element.textContent = `Hlasovať môžete o ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+			remaining--;
+		}
+
+		updateCountdown();
+
+		const interval = setInterval(updateCountdown, 1000);
 	}
 });

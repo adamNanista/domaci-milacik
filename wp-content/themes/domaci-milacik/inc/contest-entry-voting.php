@@ -80,6 +80,7 @@
                 </button>
             </div>
             <div id="contest-vote-messages"></div>
+            <div id="contest-vote-countdown"></div>
         <?php
         
         return ob_get_clean();
