@@ -146,42 +146,44 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 
 	function clearMessages() {
-		messages.className = "";
+		messages.parentElement.classList.add("hidden");
+		messages.parentElement.classList.remove("messages--success", "messages--error");
 		messages.textContent = "";
 	}
 
 	function showSuccess(message) {
-		messages.className = "contest-vote-success";
+		messages.parentElement.classList.remove("hidden");
+		messages.parentElement.classList.add("messages--success");
 		messages.textContent = message;
 	}
 
 	function showError(message) {
-		messages.className = "contest-vote-error";
+		messages.parentElement.classList.remove("hidden");
+		messages.parentElement.classList.add("messages--error");
 		messages.textContent = message;
 	}
 
-	function showInfo(message) {
-		messages.className = "contest-vote-info";
-		messages.textContent = message;
-	}
+	function startCountdown(durationSeconds, element) {
+		element.parentElement.classList.remove("hidden");
 
-	function startCountdown(seconds, element) {
-		let remaining = seconds;
+		const endTime = Date.now() + durationSeconds * 1000;
 
 		function updateCountdown() {
-			if (remaining <= 0) {
-				clearInterval(interval);
+			const now = Date.now();
+			const remainingMs = Math.max(0, endTime - now);
+			const remainingSeconds = Math.round(remainingMs / 1000);
 
-				element.textContent = "Môžete hlasovať znova.";
+			if (remainingSeconds <= 0) {
+				clearInterval(interval);
+				element.parentElement.classList.add("hidden");
+				window.location.reload();
 				return;
 			}
 
-			const minutes = Math.floor(remaining / 60);
-			const seconds = remaining % 60;
+			const minutes = Math.floor(remainingSeconds / 60);
+			const seconds = remainingSeconds % 60;
 
-			element.textContent = `Hlasovať môžete o ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-			remaining--;
+			element.textContent = `Hlasovať môžete o ${minutes}:${String(seconds).padStart(2, "0")}`;
 		}
 
 		updateCountdown();

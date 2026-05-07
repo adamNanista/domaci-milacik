@@ -8,7 +8,7 @@
 
     if ( have_posts() ) {
         ?>
-            <main role="main">
+            <main class="main" role="main">
                 <section class="container">
                     <?php 
                         while ( have_posts() ) {

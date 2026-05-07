@@ -235,22 +235,20 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 
 	function clearMessages() {
-		messages.className = "";
+		messages.parentElement.classList.add("hidden");
+		messages.parentElement.classList.remove("messages--success", "messages--error");
 		messages.textContent = "";
 	}
 
 	function showSuccess(message) {
-		messages.className = "contest-entry-form-success";
+		messages.parentElement.classList.remove("hidden");
+		messages.parentElement.classList.add("messages--success");
 		messages.textContent = message;
 	}
 
 	function showError(message) {
-		messages.className = "contest-entry-form-error";
-		messages.textContent = message;
-	}
-
-	function showInfo(message) {
-		messages.className = "contest-entry-form-info";
+		messages.parentElement.classList.remove("hidden");
+		messages.parentElement.classList.add("messages--error");
 		messages.textContent = message;
 	}
 });

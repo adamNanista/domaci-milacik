@@ -59,28 +59,46 @@
         }
     }
 
-    add_shortcode( 'contest_entry_voting', 'render_contest_entry_voting' );
+    add_shortcode( 'contest_entry_vote_count', 'render_contest_entry_vote_count' );
 
-    function render_contest_entry_voting() {
+    function render_contest_entry_vote_count() {
         ob_start();
 
         $votes = (int) get_field( 'votes' );
         ?>
-            <div>
-                <p id="contest-vote-count" class="text-xl">
+            <p class="votes votes-md md:votes-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="votes-icon"><path d="M305 151.1L320 171.8L335 151.1C360 116.5 400.2 96 442.9 96C516.4 96 576 155.6 576 229.1L576 231.7C576 343.9 436.1 474.2 363.1 529.9C350.7 539.3 335.5 544 320 544C304.5 544 289.2 539.4 276.9 529.9C203.9 474.2 64 343.9 64 231.7L64 229.1C64 155.6 123.6 96 197.1 96C239.8 96 280 116.5 305 151.1z"/></svg>
+                <span id="contest-vote-count">
                     <?php echo esc_html( $votes ); ?>
-                </p>
-            </div>
-            <div id="contest-vote-turnstile"></div>
+                </span>
+            </p>
+        <?php
+        
+        return ob_get_clean();
+    }
+
+    add_shortcode( 'contest_entry_vote_button', 'render_contest_entry_vote_button' );
+
+    function render_contest_entry_vote_button() {
+        ob_start();
+        ?>
             <div>
-                <button id="contest-vote-button" class="button button-md" data-post-id="<?php echo get_the_ID(); ?>">
+                <div id="contest-vote-turnstile"></div>
+                <button id="contest-vote-button" class="button button-md button-wide button-primary md:button-lg" data-post-id="<?php echo get_the_ID(); ?>">
                     <span id="contest-vote-button-text">Hlasovať</span>
                     <span id="contest-vote-button-loading" class="hidden">Odosielam hlas</span>
                     <span id="contest-vote-button-voted" class="hidden">Už ste hlasovali</span>
                 </button>
             </div>
-            <div id="contest-vote-messages"></div>
-            <div id="contest-vote-countdown"></div>
+            <p class="messages hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="messages-icon messages-icon--success"><path d="M320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576zM438 209.7C427.3 201.9 412.3 204.3 404.5 215L285.1 379.2L233 327.1C223.6 317.7 208.4 317.7 199.1 327.1C189.8 336.5 189.7 351.7 199.1 361L271.1 433C276.1 438 282.9 440.5 289.9 440C296.9 439.5 303.3 435.9 307.4 430.2L443.3 243.2C451.1 232.5 448.7 217.5 438 209.7z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="messages-icon messages-icon--error"><path d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM231 231C240.4 221.6 255.6 221.6 264.9 231L319.9 286L374.9 231C384.3 221.6 399.5 221.6 408.8 231C418.1 240.4 418.2 255.6 408.8 264.9L353.8 319.9L408.8 374.9C418.2 384.3 418.2 399.5 408.8 408.8C399.4 418.1 384.2 418.2 374.9 408.8L319.9 353.8L264.9 408.8C255.5 418.2 240.3 418.2 231 408.8C221.7 399.4 221.6 384.2 231 374.9L286 319.9L231 264.9C221.6 255.5 221.6 240.3 231 231z"/></svg>
+                <span id="contest-vote-messages"></span>
+            </p>
+            <p class="countdown hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="countdown-icon"><path d="M160 64C142.3 64 128 78.3 128 96C128 113.7 142.3 128 160 128L160 139C160 181.4 176.9 222.1 206.9 252.1L274.8 320L206.9 387.9C176.9 417.9 160 458.6 160 501L160 512C142.3 512 128 526.3 128 544C128 561.7 142.3 576 160 576L480 576C497.7 576 512 561.7 512 544C512 526.3 497.7 512 480 512L480 501C480 458.6 463.1 417.9 433.1 387.9L365.2 320L433.1 252.1C463.1 222.1 480 181.4 480 139L480 128C497.7 128 512 113.7 512 96C512 78.3 497.7 64 480 64L160 64zM224 139L224 128L416 128L416 139C416 158 410.4 176.4 400 192L240 192C229.7 176.4 224 158 224 139zM240 448C243.5 442.7 247.6 437.7 252.1 433.1L320 365.2L387.9 433.1C392.5 437.7 396.5 442.7 400.1 448L240 448z"/></svg>
+                <span id="contest-vote-countdown"></span>
+            </p>
         <?php
         
         return ob_get_clean();

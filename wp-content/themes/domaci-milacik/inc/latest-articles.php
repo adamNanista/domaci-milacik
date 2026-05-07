@@ -20,13 +20,6 @@
                 'swiper',
                 'https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css',
             );
-            
-            wp_enqueue_style(
-                'latest-articles',
-                get_stylesheet_directory_uri() . '/assets/css/latest-articles.css',
-                array(),
-                filemtime( get_stylesheet_directory() . '/assets/css/latest-articles.css' ),
-            );
 
             wp_enqueue_script(
                 'latest-articles',
