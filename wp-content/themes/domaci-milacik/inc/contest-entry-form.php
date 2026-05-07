@@ -575,3 +575,35 @@
             'mp4' => 'video/mp4',
         );
     }
+
+    function send_thank_you_email( $post_id ) {
+        if ( get_post_type( $post_id ) !== 'contest_entry' ) {
+            return;
+        }
+
+        $owner_name     = get_field( 'owner_name' );
+        $owner_email    = get_field( 'owner_email' );
+        $pet_name       = get_the_title( $post_id );
+        $photo_url      = get_post_thumbnail_url( $post_id, 'thumbnail' );
+
+        if ( ! $owner_email ) {
+            return;
+        }
+
+        $subject    = 'Ďakujeme! Vaša prihláška bola prijatá a čaká na schválenie.';
+        $body       = get_thank_you_email_html( $pet_name, $photo_url );
+        $headers    = [ 'Content-Type: text/html; charset=UTF-8' ];
+
+        wp_mail( $owner_email, $subject, $body, $headers );
+    }
+
+    function get_thank_you_email_html( $pet_name, $photo_url ) {
+        ob_start();
+
+        $template_path = get_template_part( 'templates/email/thank-you', null, array(
+            'pet_name'  => $pet_name,
+            'photo_url' => $photo_url,
+        ) );
+
+        return ob_get_clean();
+    }

@@ -233,7 +233,7 @@
         }
 
         set_transient( $vote_key, 1, HOUR_IN_SECONDS );
-        set_transient( $rate_key, $attempts + 1, 10 * MINUTE_IN_SECONDS );
+        set_transient( $rate_key, $attempts + 1, 15 * MINUTE_IN_SECONDS );
 
         /**
          * =========================
@@ -253,7 +253,7 @@
 
         if ( ! $inserted ) {
             delete_transient( $vote_key );
-            set_transient( $rate_key, max( 0, $attempts ), 10 * MINUTE_IN_SECONDS );
+            set_transient( $rate_key, max( 0, $attempts ), 15 * MINUTE_IN_SECONDS );
 
             wp_send_json_error( array( 'message' => 'Hlas sa nepodarilo zaznamenať. Skúste to znova.' ) );
 
