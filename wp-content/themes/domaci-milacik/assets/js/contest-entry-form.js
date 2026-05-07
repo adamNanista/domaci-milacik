@@ -11,20 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	const urlPanel = document.querySelector("#contest-entry-form-video-url-panel");
 	const urlInput = document.querySelector("#contest-entry-form-video-url");
 
-	// Video toggles
-	videoToggles.forEach((radio) => {
-		radio.addEventListener("change", function () {
-			if (this.value === "upload") {
-				uploadPanel.classList.remove("hidden");
-				urlPanel.classList.add("hidden");
-				urlInput.value = "";
-			} else {
-				uploadPanel.classList.add("hidden");
-				uploadInput.value = "";
-				urlPanel.classList.remove("hidden");
-			}
-		});
-	});
+	if (!form) return;
 
 	// Validation & submission
 	const validation = new window.JustValidate(form);
@@ -222,6 +209,21 @@ document.addEventListener("DOMContentLoaded", function () {
 				showError("Vyskytla sa chyba siete. Skontrolujte svoje pripojenie a skúste to znova.");
 			}
 		});
+
+	// Video toggles
+	videoToggles.forEach((radio) => {
+		radio.addEventListener("change", function () {
+			if (this.value === "upload") {
+				uploadPanel.classList.remove("hidden");
+				urlPanel.classList.add("hidden");
+				urlInput.value = "";
+			} else {
+				uploadPanel.classList.add("hidden");
+				uploadInput.value = "";
+				urlPanel.classList.remove("hidden");
+			}
+		});
+	});
 
 	// Helpers
 	function setLoading(isLoading) {

@@ -39,7 +39,7 @@
                 'https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js',
                 array(),
                 false,
-                true
+                true,
             );
 
             wp_enqueue_script(
@@ -47,7 +47,7 @@
                 'https://challenges.cloudflare.com/turnstile/v0/api.js',
                 array(),
                 null,
-                true
+                true,
             );
 
             wp_enqueue_script(
@@ -55,7 +55,7 @@
                 get_stylesheet_directory_uri() . '/assets/js/contest-entry-form.js',
                 array( 'just-validate', 'cf-turnstile' ),
                 filemtime( get_stylesheet_directory() . '/assets/js/contest-entry-form.js' ),
-                true
+                true,
             );
 
             wp_localize_script( 'contest-entry-form', 'contest_entry_form_ajax', array(
@@ -124,7 +124,7 @@
                 </div>
                 <div id="contest-entry-form-turnstile" class="cf-turnstile" data-sitekey="0x4AAAAAADI3OolGYd09Ili5"></div>
                 <div>
-                    <button type="submit" id="contest-entry-form-submit">
+                    <button id="contest-entry-form-submit" class="button button-lg" type="submit">
                         <span id="contest-entry-form-submit-text">Odoslať prihlášku</span>
                         <span id="contest-entry-form-submit-loading" class="hidden">Odosielam prihlášku</span>
                     </button>

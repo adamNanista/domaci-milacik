@@ -41,7 +41,7 @@
                 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit',
                 array(),
                 null,
-                true
+                true,
             );
 
             wp_enqueue_script(
@@ -49,7 +49,7 @@
                 get_stylesheet_directory_uri() . '/assets/js/contest-entry-voting.js',
                 array( 'cf-turnstile' ),
                 filemtime( get_stylesheet_directory() . '/assets/js/contest-entry-voting.js' ),
-                true
+                true,
             );
 
             wp_localize_script( 'contest-entry-voting', 'contest_entry_voting_ajax', array(
@@ -67,13 +67,13 @@
         $votes = (int) get_field( 'votes' );
         ?>
             <div>
-                <p id="contest-vote-count">
+                <p id="contest-vote-count" class="text-xl">
                     <?php echo esc_html( $votes ); ?>
                 </p>
             </div>
             <div id="contest-vote-turnstile"></div>
             <div>
-                <button id="contest-vote-button" data-post-id="<?php echo get_the_ID(); ?>">
+                <button id="contest-vote-button" class="button button-md" data-post-id="<?php echo get_the_ID(); ?>">
                     <span id="contest-vote-button-text">Hlasovať</span>
                     <span id="contest-vote-button-loading" class="hidden">Odosielam hlas</span>
                     <span id="contest-vote-button-voted" class="hidden">Už ste hlasovali</span>

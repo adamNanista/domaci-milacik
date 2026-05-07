@@ -34,11 +34,38 @@
 
     add_action( 'wp_enqueue_scripts', function() {
         wp_enqueue_style(
+            'pt-sans',
+            'https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap',
+        );
+
+        wp_enqueue_style(
+            'reset',
+            get_stylesheet_directory_uri() . '/assets/css/reset.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/assets/css/reset.css'),
+        );
+
+        wp_enqueue_style(
+            'theme',
+            get_stylesheet_directory_uri() . '/assets/css/theme.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/assets/css/theme.css'),
+        );
+
+        wp_enqueue_style(
             'utilities',
             get_stylesheet_directory_uri() . '/assets/css/utilities.css',
             array(),
             filemtime(get_stylesheet_directory() . '/assets/css/utilities.css'),
         );
+
+        wp_enqueue_style(
+            'components',
+            get_stylesheet_directory_uri() . '/assets/css/components.css',
+            array(),
+            filemtime(get_stylesheet_directory() . '/assets/css/components.css'),
+        );
+
     } );
 
     /**

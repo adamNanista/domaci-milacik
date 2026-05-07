@@ -7,18 +7,51 @@
     get_header();
 
     if ( have_posts() ) {
-        while ( have_posts() ) {
-            the_post();
+        ?>
+            <main role="main">
+                <section class="container">
+                    <article class="grid lg:grid-cols-2">
+                        <?php 
+                            while ( have_posts() ) {
+                                the_post();
 
-            the_post_thumbnail( 'full' );
-
-            ?>
-                <h1><?php the_title(); ?></h1>
-            <?php
-
-            echo do_shortcode( '[contest_entry_voting]' );
-            the_content();
-        } 
+                                $voting = '[contest_entry_voting]';
+                                $permalink = get_the_permalink();
+                                ?>
+                                    <div>
+                                        <?php 
+                                            the_post_thumbnail( 'full', array( 'class' => 'w-full' ) ); 
+                                        ?>
+                                    </div>
+                                    <div>
+                                        <h1 class="text-3xl">
+                                            <?php 
+                                                the_title();
+                                            ?>
+                                        </h1>
+                                        <div>
+                                            <?php 
+                                                echo do_shortcode( $voting );
+                                            ?>
+                                        </div>
+                                        <div>
+                                            <?php 
+                                                the_content(); 
+                                            ?>
+                                        </div>
+                                        <ul>
+                                            <li>
+                                                <a href="<?php echo esc_url( 'https://www.facebook.com/sharer/sharer.php?u=' . $permalink ); ?>">Facebook</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                <?php
+                            } 
+                        ?>
+                    <article>
+                </section>
+            </main>
+        <?php
     } 
 
     get_footer();
