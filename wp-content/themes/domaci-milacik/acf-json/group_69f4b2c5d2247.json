@@ -26,6 +26,27 @@
             "append": ""
         },
         {
+            "key": "field_69fc3906f30d5",
+            "label": "SMS kód",
+            "name": "sms_code",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_69f9a1267844f",
             "label": "Počet hlasov (2. fáza - SMS)",
             "name": "sms_votes",
@@ -70,5 +91,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1777971128
+    "modified": 1778137373
 }

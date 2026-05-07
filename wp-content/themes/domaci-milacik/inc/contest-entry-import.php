@@ -123,26 +123,29 @@
                 continue;
             }
 
-            [$slug, $value] = $row;
+            [$sms_code, $value] = $row;
 
-            $slug = trim( $slug );
+            $sms_code = trim( $sms_code );
             $value = trim( $value );
 
-            error_log('LOOKING FOR SLUG: ' . $slug . ' VALUE: ' . $value);
-
-            if ( empty( $slug ) || ! is_numeric( $value )) {
-                $invalid[] = $slug ?: "Row " . ( $index + 1 );
+            if ( empty( $sms_code ) || ! is_numeric( $value )) {
+                $invalid[] = $sms_code ?: "Row " . ( $index + 1 );
                 continue;
             }
 
-            $post = get_page_by_path( $slug, OBJECT, 'contest_entry' );
+            $post = get_posts( array(
+                'post_type'         => 'contest_entry',
+                'posts_per_page'    => 1,
+                'meta_key'          => 'sms_code',
+                'meta_value'        => $sms_code,
+            ) );
 
             if ( ! $post ) {
-                $not_found[] = $slug;
+                $not_found[] = $sms_code;
                 continue;
             }
 
-            update_field( 'sms_votes', (int) $value, $post->ID );
+            update_field( 'sms_votes', (int) $value, $post[0]->ID );
             $updated++;
         }
 

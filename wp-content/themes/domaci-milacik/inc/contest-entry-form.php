@@ -6,6 +6,30 @@
 
     use Rakit\Validation\Validator;
 
+    define( 'CONTEST_ENTRY_SUBMISSIONS_DB_VERSION', '1.0' );
+
+    add_action('after_switch_theme', 'create_contest_entry_submissions_table');
+
+    function create_contest_entry_submissions_table() {
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'contest_entry_submissions';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            fingerprint_entry CHAR(64) NOT NULL,
+            created_at DATETIME NOT NULL,
+            PRIMARY KEY (id),
+            UNIQUE KEY fingerprint_entry (fingerprint_entry)
+        ) $charset_collate;";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta( $sql );
+
+        update_option( 'contest_entry_submissions_db_version', CONTEST_ENTRY_SUBMISSIONS_DB_VERSION );
+    }
+
     add_action( 'wp_enqueue_scripts', 'enqueue_contest_entry_form_assets' );
 
     function enqueue_contest_entry_form_assets() {
@@ -50,7 +74,7 @@
         ?>
             <form id="contest-entry-form" enctype="multipart/form-data" novalidate="novalidate">
                 <div>
-                    <label for="contest-entry-form-owner-name">Meno súťažiaceho <abbr title="Povinné">*</abbr></label>
+                    <label for="contest-entry-form-owner-name">Meno <abbr title="Povinné">*</abbr></label>
                     <input type="text" id="contest-entry-form-owner-name" name="contest-entry-form-owner-name" required placeholder="Zadajte meno súťažiaceho" />
                 </div>
                 <div>
@@ -58,8 +82,8 @@
                     <input type="email" id="contest-entry-form-owner-email" name="contest-entry-form-owner-email" required placeholder="Zadajte email" />
                 </div>
                 <div>
-                    <label for="contest-entry-form-pet-name">Názov miláčika <abbr title="Povinné">*</abbr></label>
-                    <input type="text" id="contest-entry-form-pet-name" name="contest-entry-form-pet-name" required placeholder="Zadajte názov miláčika" />
+                    <label for="contest-entry-form-pet-name">Meno miláčika <abbr title="Povinné">*</abbr></label>
+                    <input type="text" id="contest-entry-form-pet-name" name="contest-entry-form-pet-name" required placeholder="Zadajte meno miláčika" />
                 </div>
                 <div>
                     <label for="contest-entry-form-pet-description">Popis miláčika <abbr title="Povinné">*</abbr></label>
@@ -94,7 +118,6 @@
                     <label for="contest-entry-form-website">Webstránka</label>
                     <input type="text" id="contest-entry-form-website" name="contest-entry-form-website" autocomplete="off" />
                 </div>
-                <div id="contest-entry-form-messages"></div>
                 <div>
                     <label>
                         <input type="checkbox" id="contest-entry-form-consent-combined" name="contest-entry-form-consent-combined" required /> Súhlasím s <a href="#">pravidlami súťaže</a> a so spracovaním osobných údajov. <abbr title="Povinné">*</abbr>
@@ -107,6 +130,7 @@
                         <span id="contest-entry-form-submit-loading" class="hidden">Odosielam prihlášku</span>
                     </button>
                 </div>
+                <div id="contest-entry-form-messages"></div>
             </form>
         <?php
 
@@ -177,9 +201,15 @@
          * =========================
          */
         $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-        $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        $ip_hash = hash( 'sha256', $ip . '|' . $ua );
-        $rate_key = 'contest_entry_form_rate_' . $ip_hash;
+        $salt = get_option( 'contest_entry_form_salt', '' );
+
+        if ( ! $salt ) {
+            $salt = wp_generate_password( 64, true, true );
+            update_option( 'contest_entry_form_salt', $salt, false );
+        }
+
+        $fingerprint_ip = hash_hmac( 'sha256', $ip, $salt );
+        $rate_key = 'contest_entry_form_rate_' . $fingerprint_ip;
 
         $attempts = (int) get_transient( $rate_key );
         
@@ -231,7 +261,7 @@
         $owner_email        = isset( $_POST['contest-entry-form-owner-email'] )         ? sanitize_email( wp_unslash( $_POST['contest-entry-form-owner-email'] ) )              : '';
         $pet_name           = isset( $_POST['contest-entry-form-pet-name'] )            ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-pet-name'] ) )            : '';
         $pet_description    = isset( $_POST['contest-entry-form-pet-description'] )     ? sanitize_textarea_field( wp_unslash( $_POST['contest-entry-form-pet-description'] ) ) : '';
-        $photo_uploaded     = isset( $_FILES['contest-entry-form-photo'] ) && $_FILES['contest-entry-form-photo']['error'] === UPLOAD_ERR_OK;
+        $photo              = isset( $_FILES['contest-entry-form-photo'] ) && $_FILES['contest-entry-form-photo']['error'] === UPLOAD_ERR_OK;
         $video_type         = isset( $_POST['contest-entry-form-video-type'] )          ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-video-type'] ) )          : 'upload';
         $video_url          = isset( $_POST['contest-entry-form-video-url'] )           ? esc_url_raw( wp_unslash( $_POST['contest-entry-form-video-url'] ) )                   : '';
         $consent_combined   = ! empty( $_POST['contest-entry-form-consent-combined'] )  ? 1                                                                                     : 0;
@@ -253,7 +283,7 @@
             'contest-entry-form-owner-email'        => $owner_email,
             'contest-entry-form-pet-name'           => $pet_name,
             'contest-entry-form-pet-description'    => $pet_description,
-            'contest-entry-form-photo'              => $photo_uploaded,
+            'contest-entry-form-photo'              => $photo,
             'contest-entry-form-video-url'          => $video_url,
             'contest-entry-form-consent-combined'   => $consent_combined,
         ), array(
@@ -302,7 +332,7 @@
                 $errors['contest-entry-form-photo'] = 'Fotografia je príliš veľká.';
             } elseif ($file_error !== UPLOAD_ERR_OK) {
                 $errors['contest-entry-form-photo'] = 'Nahrávanie fotografie zlyhalo.';
-            } elseif ($_FILES['contest-entry-form-photo']['size'] > 5 * 1024 * 1024) {
+            } elseif ($_FILES['contest-entry-form-photo']['size'] > 5 * MB_IN_BYTES) {
                 $errors['contest-entry-form-photo'] = 'Fotografia musí mať menej ako 5 MB.';
             }
         }
@@ -317,7 +347,7 @@
                 $errors['contest-entry-form-video-upload'] = 'Video je príliš veľké.';
             } elseif ($file_error !== UPLOAD_ERR_OK) {
                 $errors['contest-entry-form-video-upload'] = 'Nahrávanie videa zlyhalo.';
-            } elseif ($_FILES['contest-entry-form-video-upload']['size'] > 30 * 1024 * 1024) {
+            } elseif ($_FILES['contest-entry-form-video-upload']['size'] > 30 * MB_IN_BYTES) {
                 $errors['contest-entry-form-video-upload'] = 'Video musí mať menej ako 30 MB.';
             }
         } elseif ( $video_type === 'url' && ! empty( $video_url ) ) {
@@ -344,10 +374,29 @@
          * DUPLICATE CHECK
          * =========================
          */
-        $fingerprint = wp_hash( strtolower( trim( $owner_email . '|' . $pet_name ) ) );
-        $fingerprint_key = 'contest_entry_form_submission_' . $fingerprint;
+        $fingerprint_entry = hash_hmac( 'sha256', strtolower( trim( $owner_email . '|' . $pet_name ) ), $salt );
+        $entry_key = 'contest_entry_form_submission_' . $fingerprint_entry;
 
-        if ( get_transient( $fingerprint_key ) ) {
+        if ( get_transient( $entry_key ) ) {
+            $fail( 'Táto prihláška už bola odoslaná.' );
+        }
+
+        global $wpdb;
+
+        $wpdb->suppress_errors( true );
+
+        $inserted = $wpdb->insert(
+            $wpdb->prefix . 'contest_entry_submissions',
+            array(
+                'fingerprint_entry' => $fingerprint_entry,
+                'created_at'        => gmdate( 'Y-m-d H:i:s' )
+            ),
+            array( '%s' )
+        );
+
+        $wpdb->suppress_errors( false );
+
+        if ( $inserted === false ) {
             $fail( 'Táto prihláška už bola odoslaná.' );
         }
         
@@ -378,7 +427,7 @@
         }
 
         $estimated_memory = $photo_size[0] * $photo_size[1] * 4;
-        $limit = 100 * 1024 * 1024;
+        $limit = 100 * MB_IN_BYTES;
 
         if ( $estimated_memory > $limit ) {
             $fail( '', [ 'contest-entry-form-photo' => 'Súbor je príliš náročný na spracovanie.' ] );
@@ -485,23 +534,24 @@
          * FINAL SAVE
          * =========================
          */
-        update_post_meta( $post_id, '_contest_entry_form_consent_combined',    $consent_combined );
-        update_post_meta( $post_id, '_contest_entry_form_ip_hash',             $ip_hash );
-        update_post_meta( $post_id, '_contest_entry_form_submitted_at',        current_time( 'mysql' ) );
+        update_post_meta( $post_id, '_contest_entry_form_photo',                $photo_id );
+        update_post_meta( $post_id, '_contest_entry_form_consent_combined',     $consent_combined );
+        update_post_meta( $post_id, '_contest_entry_form_ip_hash',              $fingerprint_ip );
+        update_post_meta( $post_id, '_contest_entry_form_submitted_at',         gmdate( 'Y-m-d H:i:s' ) );
 
         if ( function_exists('update_field') ) {
-            update_field( 'owner_name', $owner_name, $post_id );
-            update_field( 'owner_email', $owner_email, $post_id );
-            update_field( 'video_url', $final_video_url, $post_id );
+            update_field( 'owner_name',     $owner_name,        $post_id );
+            update_field( 'owner_email',    $owner_email,       $post_id );
+            update_field( 'video_url',      $final_video_url,   $post_id );
         } else {
-            update_post_meta( $post_id, '_owner_name', $owner_name );
+            update_post_meta( $post_id, '_owner_name',  $owner_name );
             update_post_meta( $post_id, '_owner_email', $owner_email );
-            update_post_meta( $post_id, '_video_url', $final_video_url );
+            update_post_meta( $post_id, '_video_url',   $final_video_url );
         }  
 
         set_post_thumbnail( $post_id, $photo_id );
 
-        set_transient($fingerprint_key, 1, DAY_IN_SECONDS);
+        set_transient($entry_key, 1, DAY_IN_SECONDS);
 
         /**
          * =========================

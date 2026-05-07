@@ -4,7 +4,7 @@
 		exit; // Exit if accessed directly.
 	}
 
-    define( 'CONTEST_VOTES_DB_VERSION', '1.2' );
+    define( 'CONTEST_ENTRY_VOTES_DB_VERSION', '1.0' );
 
     add_action('after_switch_theme', 'create_contest_entry_votes_table');
 
@@ -29,7 +29,7 @@
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql );
 
-        update_option( 'contest_votes_db_version', CONTEST_VOTES_DB_VERSION );
+        update_option( 'contest_entry_votes_db_version', CONTEST_ENTRY_VOTES_DB_VERSION );
     }
 
     add_action( 'wp_enqueue_scripts', 'enqueue_contest_entry_voting_assets' );
@@ -66,15 +66,19 @@
 
         $votes = (int) get_field( 'votes' );
         ?>
-            <p id="contest-vote-count">
-                <?php echo esc_html( $votes ); ?>
-            </p>
+            <div>
+                <p id="contest-vote-count">
+                    <?php echo esc_html( $votes ); ?>
+                </p>
+            </div>
             <div id="contest-vote-turnstile"></div>
-            <button id="contest-vote-button" data-post-id="<?php echo get_the_ID(); ?>">
-                <span id="contest-vote-button-text">Hlasovať</span>
-                <span id="contest-vote-button-loading" class="hidden">Odosielam hlas</span>
-                <span id="contest-vote-button-voted" class="hidden">Už ste hlasovali</span>
-            </button>
+            <div>
+                <button id="contest-vote-button" data-post-id="<?php echo get_the_ID(); ?>">
+                    <span id="contest-vote-button-text">Hlasovať</span>
+                    <span id="contest-vote-button-loading" class="hidden">Odosielam hlas</span>
+                    <span id="contest-vote-button-voted" class="hidden">Už ste hlasovali</span>
+                </button>
+            </div>
             <div id="contest-vote-messages"></div>
         <?php
         
@@ -241,7 +245,7 @@
                 'post_id'               => $post_id,
                 'fingerprint_ip'        => $fingerprint_ip,
                 'fingerprint_cookie'    => $fingerprint_cookie,
-                'created_at'            => gmdate( 'Y-m-d H:i:s' )
+                'created_at'            => gmdate( 'Y-m-d H:i:s' ),
             ),
             array( '%d', '%s', '%s', '%s' )
         );
