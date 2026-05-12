@@ -157,7 +157,7 @@ ol li {
 	--button--gap: 0.75rem;
 	--button--padding-inline: 1.75rem;
 	--button--padding-block: 0.875rem;
-	--button--font-size: 1.25rem;
+	--button--font-size: 1.125rem;
 	--button--line-height: 1.75rem;
 	--button--border-radius: 0.5rem;
 	--button--icon-size: 1.5rem;
@@ -192,7 +192,7 @@ ol li {
 	.md\:button-lg {
 		--button--padding-inline: 1.75rem;
 		--button--padding-block: 0.875rem;
-		--button--font-size: 1.25rem;
+		--button--font-size: 1.125rem;
 		--button--line-height: 1.75rem;
 		--button--border-radius: 0.5rem;
 	}
@@ -216,7 +216,7 @@ ol li {
 	.lg\:button-lg {
 		--button--padding-inline: 1.75rem;
 		--button--padding-block: 0.875rem;
-		--button--font-size: 1.25rem;
+		--button--font-size: 1.125rem;
 		--button--line-height: 1.75rem;
 		--button--border-radius: 0.5rem;
 	}
@@ -254,7 +254,7 @@ ol li {
 }
 .votes-lg {
 	--votes--gap: 0.625rem;
-	--votes--font-size: 1.25rem;
+	--votes--font-size: 1.125rem;
 	--votes--line-height: 1.75rem;
 	--votes--icon-size: 1.5rem;
 }
@@ -274,7 +274,7 @@ ol li {
 	}
 	.md\:votes-lg {
 		--votes--gap: 0.625rem;
-		--votes--font-size: 1.25rem;
+		--votes--font-size: 1.125rem;
 		--votes--line-height: 1.75rem;
 		--votes--icon-size: 1.5rem;
 	}
@@ -295,7 +295,7 @@ ol li {
 	}
 	.lg\:votes-lg {
 		--votes--gap: 0.625rem;
-		--votes--font-size: 1.25rem;
+		--votes--font-size: 1.125rem;
 		--votes--line-height: 1.75rem;
 		--votes--icon-size: 1.5rem;
 	}

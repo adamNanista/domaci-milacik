@@ -39,6 +39,4 @@
 body {
 	color: var(--black);
 	font-family: "PT Sans", sans-serif;
-	-webkit-text-size-adjust: 100%;
-	-webkit-tap-highlight-color: transparent;
 }
