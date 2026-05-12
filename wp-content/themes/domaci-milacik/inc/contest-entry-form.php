@@ -74,7 +74,7 @@
             <form id="contest-entry-form" enctype="multipart/form-data" novalidate="novalidate">
                 <div>
                     <label for="contest-entry-form-owner-name">Meno <abbr title="Povinné">*</abbr></label>
-                    <input type="text" id="contest-entry-form-owner-name" name="contest-entry-form-owner-name" required placeholder="Zadajte meno súťažiaceho" />
+                    <input type="text" id="contest-entry-form-owner-name" name="contest-entry-form-owner-name" required placeholder="Zadajte meno" />
                 </div>
                 <div>
                     <label for="contest-entry-form-owner-email">Email <abbr title="Povinné">*</abbr></label>
@@ -86,7 +86,7 @@
                 </div>
                 <div>
                     <label for="contest-entry-form-pet-description">Popis miláčika <abbr title="Povinné">*</abbr></label>
-                    <textarea id="contest-entry-form-pet-description" name="contest-entry-form-pet-description" required placeholder="Napšte niečo o svojom miláčikovi..."></textarea>
+                    <textarea id="contest-entry-form-pet-description" name="contest-entry-form-pet-description" required placeholder="Napíšte niečo o svojom miláčikovi..."></textarea>
                 </div>
                 <div>
                     <label for="contest-entry-form-photo">Fotografia <abbr title="Povinné">*</abbr></label>
@@ -122,7 +122,7 @@
                         <input type="checkbox" id="contest-entry-form-consent-combined" name="contest-entry-form-consent-combined" required /> Súhlasím s <a href="#">pravidlami súťaže</a> a so spracovaním osobných údajov. <abbr title="Povinné">*</abbr>
                     </label>
                 </div>
-                <div id="contest-entry-form-turnstile" class="cf-turnstile" data-sitekey="0x4AAAAAADI3OolGYd09Ili5"></div>
+                <div id="contest-entry-form-turnstile" class="cf-turnstile" data-sitekey="<?php echo CLOUDFLARE_TURNSTILE_SITE_KEY; ?>"></div>
                 <div>
                     <button id="contest-entry-form-submit" class="button button-md button-wide button-primary lg:button-lg" type="submit">Odoslať prihlášku</button>
                 </div>
@@ -233,7 +233,7 @@
             array(
                 'timeout' => 5,
                 'body' => array(
-                    'secret'   => '0x4AAAAAADI3OtR1T6YzpJ79IWI2dhIiEM0',
+                    'secret'   => CLOUDFLARE_TURNSTILE_SECRET_KEY,
                     'response' => $turnstile_token,
                     'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
                 ),

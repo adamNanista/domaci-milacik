@@ -108,10 +108,68 @@
     }
 
     function run_contest_entry_sms_votes_import( $file ) {
-        $rows = array_map( 'str_getcsv', file( $file ) );
+        $updated = 0;
+        $not_found = [];
+        $invalid = [];
 
-        // optional remove header (if readded change all index + 1 to index + 2)
-        // array_shift($rows); 
+        $counts = [];
+
+        if ( ( $handle = fopen( $file, 'r' ) ) !== false ) {
+
+            while ( ( $row = fgetcsv( $handle, 0, ';' ) ) !== false ) {
+
+                $text = trim( $row[2] ?? '' );
+
+                if ( preg_match( '/\b(milacik[1-9]|milacik10)\b/i', $text, $matches ) ) {
+
+                    $key = strtolower( $matches[1] );
+
+                    if ( ! isset( $counts[$key] ) ) {
+                        $counts[$key] = 0;
+                    }
+
+                    $counts[$key]++;
+                } else {
+                    $invalid[] = $text;
+                }
+            }
+
+            fclose( $handle );
+        }
+
+        foreach ( $counts as $sms_code => $votes ) {
+
+            $posts = get_posts( array(
+                'post_type'      => 'contest_entry',
+                'posts_per_page' => 1,
+                'meta_query'     => array(
+                    array(
+                        'key'   => 'sms_code',
+                        'value' => $sms_code,
+                    )
+                )
+            ));
+
+            if ( empty( $posts ) ) {
+                $not_found[] = $sms_code;
+                continue;
+            }
+
+            $post_id = $posts[0]->ID;
+            $current = (int) get_field('sms_votes', $post_id);
+            update_field('sms_votes', $current + $votes, $post_id);
+            $updated++;
+        }
+
+        return [
+            'contest_entry_sms_votes_import_updated'   => $updated,
+            'contest_entry_sms_votes_import_not_found' => $not_found,
+            'contest_entry_sms_votes_import_invalid'   => $invalid,
+        ];
+    }
+
+    /*function run_contest_entry_sms_votes_import( $file ) {
+        $rows = array_map( 'str_getcsv', file( $file ) );
 
         $updated = 0;
         $not_found = [];
@@ -154,7 +212,7 @@
             'contest_entry_sms_votes_import_not_found' => $not_found,
             'contest_entry_sms_votes_import_invalid'   => $invalid,
         ];
-    }
+    }*/
 
     add_action( 'admin_notices', 'display_contest_entry_sms_votes_import_message' );
 

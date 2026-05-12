@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		if (turnstileWidgetId !== null) return;
 
 		turnstileWidgetId = turnstile.render("#contest-vote-turnstile", {
-			sitekey: "0x4AAAAAADI3OolGYd09Ili5",
+			sitekey: contest_entry_voting_ajax.turnstile_site_key,
 			size: "invisible",
 			callback: onTurnstileSuccess,
 			"error-callback": onTurnstileError,

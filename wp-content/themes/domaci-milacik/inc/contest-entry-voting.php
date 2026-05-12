@@ -53,8 +53,9 @@
             );
 
             wp_localize_script( 'contest-entry-voting', 'contest_entry_voting_ajax', array(
-                'ajax_url' => admin_url( 'admin-ajax.php' ),
-                'nonce'    => wp_create_nonce( 'contest_entry_vote' ),
+                'ajax_url'              => admin_url( 'admin-ajax.php' ),
+                'nonce'                 => wp_create_nonce( 'contest_entry_vote' ),
+                'turnstile_site_key'    => CLOUDFLARE_TURNSTILE_SITE_KEY,
             ) );
         }
     }
@@ -447,7 +448,7 @@
             array(
                 'timeout' => 10,
                 'body' => array(
-                    'secret'   => '0x4AAAAAADI3OtR1T6YzpJ79IWI2dhIiEM0',
+                    'secret'   => CLOUDFLARE_TURNSTILE_SECRET_KEY,
                     'response' => $turnstile_token,
                     'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
                 ),
