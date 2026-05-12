@@ -36,14 +36,18 @@
     function render_latest_articles() {
         include_once( ABSPATH . WPINC . '/feed.php' );
 
-        $rss = fetch_feed( 'https://www.cas.sk/temporary-rss.xml' );
+        add_filter( 'wp_feed_cache_transient_lifetime' , 'return_3600' );
 
-        if ( is_wp_error( $rss ) ) {
+        $feed = fetch_feed( 'https://www.cas.sk/temporary-rss.xml' );
+
+        remove_filter( 'wp_feed_cache_transient_lifetime' , 'return_3600' );
+
+        if ( is_wp_error( $feed ) ) {
             return;
         }
 
-        $max_items = $rss->get_item_quantity( 6 );
-        $rss_items = $rss->get_items( 0, $max_items );
+        $max_items = $feed->get_item_quantity( 6 );
+        $feed_items = $feed->get_items( 0, $max_items );
 
         ob_start();
 
@@ -51,7 +55,7 @@
             <div id="latest-articles-slider" class="swiper">
                 <div class="swiper-wrapper">
                     <?php 
-                        foreach ( $rss_items as $item ) {
+                        foreach ( $feed_items as $item ) {
                             $link = $item->get_link();
                             $title = $item->get_title();
 
@@ -90,4 +94,8 @@
         
 
         return ob_get_clean();
+    }
+
+    function return_3600( $seconds ) {
+        return 3600;
     }

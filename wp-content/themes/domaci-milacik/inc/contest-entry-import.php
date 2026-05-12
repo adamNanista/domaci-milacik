@@ -89,10 +89,19 @@
         ) {
             $result = run_contest_entry_sms_votes_import( $_FILES['contest-entry-import-file']['tmp_name'] );
 
-            $args = [
-                'contest_entry_sms_votes_import_status'     => 'success',
-                'contest_entry_sms_votes_import_updated'    => $result['contest_entry_sms_votes_import_updated'],
-            ];
+            $args = array();
+
+            if ( isset( $result['contest_entry_sms_votes_import_status'] ) ) {
+                $args['contest_entry_sms_votes_import_status'] = $result['contest_entry_sms_votes_import_status'];
+            }
+
+            if ( isset( $result['contest_entry_sms_votes_import_status'] ) ) {
+                $args['contest_entry_sms_votes_import_message'] = $result['contest_entry_sms_votes_import_message'];
+            }
+
+            if ( isset( $result['contest_entry_sms_votes_import_updated'] ) ) {
+                $args['contest_entry_sms_votes_import_updated'] = $result['contest_entry_sms_votes_import_updated'];
+            }
 
             if ( ! empty( $result['contest_entry_sms_votes_import_not_found'] ) ) {
                 $args['contest_entry_sms_votes_import_not_found'] = implode( ',', $result['contest_entry_sms_votes_import_not_found'] );
@@ -116,13 +125,30 @@
 
         if ( ( $handle = fopen( $file, 'r' ) ) !== false ) {
 
+            $header = fgetcsv($handle, 0, ';');
+            $sms_text_index = false;
+
+            foreach ($header as $index => $column_name) {
+                if (strtolower(trim($column_name)) === 'text sms') {
+                    $sms_text_index = $index;
+                    break;
+                }
+            }
+
+            if ($sms_text_index === false) {
+                return array(
+                    'contest_entry_sms_votes_import_status'     => 'error',
+                    'contest_entry_sms_votes_import_message'    => 'Stĺpec Text SMS sa nenašiel.',
+                );
+            }
+
             while ( ( $row = fgetcsv( $handle, 0, ';' ) ) !== false ) {
 
-                $text = trim( $row[2] ?? '' );
+                $text = trim( $row[$sms_text_index] ?? '' );
 
-                if ( preg_match( '/\b(milacik[1-9]|milacik10)\b/i', $text, $matches ) ) {
+                if ( preg_match( '/\bmilacik\s*([1-9]|10)\b/i', $text, $matches ) ) {
 
-                    $key = strtolower( $matches[1] );
+                    $key = 'milacik' . $matches[1];
 
                     if ( ! isset( $counts[$key] ) ) {
                         $counts[$key] = 0;
@@ -161,72 +187,32 @@
             $updated++;
         }
 
-        return [
-            'contest_entry_sms_votes_import_updated'   => $updated,
-            'contest_entry_sms_votes_import_not_found' => $not_found,
-            'contest_entry_sms_votes_import_invalid'   => $invalid,
-        ];
+        return array(
+            'contest_entry_sms_votes_import_status'     => 'success',
+            'contest_entry_sms_votes_import_message'    => 'Import SMS hlasov prebehol úspešne.',
+            'contest_entry_sms_votes_import_updated'    => $updated,
+            'contest_entry_sms_votes_import_not_found'  => $not_found,
+            'contest_entry_sms_votes_import_invalid'    => $invalid,
+        );
     }
-
-    /*function run_contest_entry_sms_votes_import( $file ) {
-        $rows = array_map( 'str_getcsv', file( $file ) );
-
-        $updated = 0;
-        $not_found = [];
-        $invalid = [];
-
-        foreach ( $rows as $index => $row ) {
-            if ( count( $row ) < 2 ) {
-                $invalid[] = "Row " . ( $index + 1 );
-                continue;
-            }
-
-            [$sms_code, $value] = $row;
-
-            $sms_code = trim( $sms_code );
-            $value = trim( $value );
-
-            if ( empty( $sms_code ) || ! is_numeric( $value )) {
-                $invalid[] = $sms_code ?: "Row " . ( $index + 1 );
-                continue;
-            }
-
-            $post = get_posts( array(
-                'post_type'         => 'contest_entry',
-                'posts_per_page'    => 1,
-                'meta_key'          => 'sms_code',
-                'meta_value'        => $sms_code,
-            ) );
-
-            if ( ! $post ) {
-                $not_found[] = $sms_code;
-                continue;
-            }
-
-            update_field( 'sms_votes', (int) $value, $post[0]->ID );
-            $updated++;
-        }
-
-        return [
-            'contest_entry_sms_votes_import_updated'   => $updated,
-            'contest_entry_sms_votes_import_not_found' => $not_found,
-            'contest_entry_sms_votes_import_invalid'   => $invalid,
-        ];
-    }*/
 
     add_action( 'admin_notices', 'display_contest_entry_sms_votes_import_message' );
 
     function display_contest_entry_sms_votes_import_message() {
         if ( ! isset( $_GET['contest_entry_sms_votes_import_status'] ) ) return;
 
-        $updated   = isset( $_GET['contest_entry_sms_votes_import_updated'] ) ? (int) $_GET['contest_entry_sms_votes_import_updated'] : 0;
-        $not_found = isset( $_GET['contest_entry_sms_votes_import_not_found'] ) ? explode( ',', $_GET['contest_entry_sms_votes_import_not_found'] ) : [];
-        $invalid   = isset( $_GET['contest_entry_sms_votes_import_invalid'] ) ? explode( ',', $_GET['contest_entry_sms_votes_import_invalid'] ) : [];
+        $status     = $_GET['contest_entry_sms_votes_import_status'];
+        $message    = isset( $_GET['contest_entry_sms_votes_import_message'] ) ? $_GET['contest_entry_sms_votes_import_message'] : '';
+        $updated    = isset( $_GET['contest_entry_sms_votes_import_updated'] ) ? (int) $_GET['contest_entry_sms_votes_import_updated'] : 0;
+        $not_found  = isset( $_GET['contest_entry_sms_votes_import_not_found'] ) ? explode( ',', $_GET['contest_entry_sms_votes_import_not_found'] ) : [];
+        $invalid    = isset( $_GET['contest_entry_sms_votes_import_invalid'] ) ? explode( ',', $_GET['contest_entry_sms_votes_import_invalid'] ) : [];
 
         ?>
-            <div class="notice notice-success is-dismissible">
-                <p><strong>Import SMS hlasov prebehol úspešne.</strong></p>
-                <p>Počet aktualizovaných príspevkov: <?php echo $updated; ?></p>
+            <div class="notice notice-<?php echo esc_attr( $status ); ?> is-dismissible">
+                <p><strong><?php echo $message; ?></strong></p>
+                <?php if ( $updated > 0 ) : ?>
+                    <p>Počet aktualizovaných príspevkov: <?php echo $updated; ?></p>
+                <?php endif; ?>
                 <?php if ( ! empty( $not_found ) ) : ?>
                     <p>Nenájdené príspevky (<?php echo count( $not_found ); ?>): 
                         <?php echo implode( ', ', $not_found ); ?>
