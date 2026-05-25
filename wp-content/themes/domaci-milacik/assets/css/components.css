@@ -86,15 +86,15 @@ ol li {
 	text-decoration: none;
 	text-transform: uppercase;
 
-	border-width: 1px;
+	border-width: 2px;
 	border-style: solid;
 	transition: all 0.3s;
 
-	gap: var(--button--gap, 0.75rem);
-	padding-right: var(--button--padding-inline, 1.5rem);
-	padding-left: var(--button--padding-inline, 1.5rem);
-	padding-top: var(--button--padding-block, 0.75rem);
-	padding-bottom: var(--button--padding-block, 0.75rem);
+	gap: var(--button--gap, 0.625rem);
+	padding-right: var(--button--padding-inline, 1.25rem);
+	padding-left: var(--button--padding-inline, 1.25rem);
+	padding-top: var(--button--padding-block, 0.625rem);
+	padding-bottom: var(--button--padding-block, 0.625rem);
 
 	color: var(--button--text-filled, var(--black));
 	font-size: var(--button--font-size, 1rem);
@@ -137,8 +137,8 @@ ol li {
 
 .button-sm {
 	--button--gap: 0.5rem;
-	--button--padding-inline: 1.25rem;
-	--button--padding-block: 0.625rem;
+	--button--padding-inline: 1rem;
+	--button--padding-block: 0.5rem;
 	--button--font-size: 0.875rem;
 	--button--line-height: 1.25rem;
 	--button--border-radius: 0.25rem;
@@ -146,8 +146,8 @@ ol li {
 }
 .button-md {
 	--button--gap: 0.625rem;
-	--button--padding-inline: 1.5rem;
-	--button--padding-block: 0.75rem;
+	--button--padding-inline: 1.25rem;
+	--button--padding-block: 0.625rem;
 	--button--font-size: 1rem;
 	--button--line-height: 1.5rem;
 	--button--border-radius: 0.375rem;
@@ -155,8 +155,8 @@ ol li {
 }
 .button-lg {
 	--button--gap: 0.75rem;
-	--button--padding-inline: 1.75rem;
-	--button--padding-block: 0.875rem;
+	--button--padding-inline: 1.5rem;
+	--button--padding-block: 0.75rem;
 	--button--font-size: 1.125rem;
 	--button--line-height: 1.75rem;
 	--button--border-radius: 0.5rem;
@@ -380,4 +380,234 @@ ol li {
 		width: 1.25rem;
 		height: 1.25rem;
 	}
+}
+
+/* Tabs */
+
+.tabs {
+	display: flex;
+	gap: 0.25rem;
+
+	text-align: center;
+}
+.tab {
+	cursor: pointer;
+	flex: 1 1 0;
+	padding: 0.5rem 1rem;
+
+	font-size: 0.875rem;
+	font-weight: bolder;
+	line-height: 1.25rem;
+
+	background-color: var(--neutral-100);
+	border: 2px solid var(--neutral-100);
+	border-radius: 0.25rem;
+}
+.tab:has(:focus) {
+	outline: 2px solid var(--black);
+	outline-offset: 2px;
+}
+.tab:hover {
+	background-color: var(--neutral-200);
+	border-color: var(--neutral-200);
+}
+.tab:has(:checked) {
+	color: var(--white);
+
+	background-color: var(--neutral-500);
+	border-color: var(--neutral-500);
+}
+
+/* Form controls */
+
+.field {
+	display: block;
+}
+.field--checkbox {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.25rem;
+}
+.field__label {
+	display: block;
+	margin-bottom: 0.25rem;
+
+	font-size: 0.875rem;
+	font-weight: bolder;
+	line-height: 1.25rem;
+}
+.field__required {
+	color: var(--red-600);
+	text-decoration: none;
+}
+
+.field__input,
+.field__textarea {
+	display: block;
+	width: 100%;
+	padding: 0.5rem 0.75rem;
+
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+
+	background-color: var(--white);
+	border: 2px solid var(--neutral-500);
+	border-radius: 0.25rem;
+}
+.field__input::placeholder,
+.field__textarea::placeholder {
+	color: var(--neutral-500);
+}
+.field__input:focus,
+.field__textarea:focus {
+	outline: none;
+	border-color: var(--red-600);
+}
+.field--error {
+	border-color: var(--red-600);
+}
+.field__input:disabled,
+.field__input[disabled],
+.field__textarea:disabled,
+.field__textarea[disabled] {
+	cursor: not-allowed;
+
+	color: var(--neutral-500);
+
+	border-color: var(--neutral-200);
+}
+.field__textarea {
+	min-height: 7rem;
+	resize: vertical;
+}
+.field__checkbox {
+	appearance: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1rem;
+	height: 1rem;
+	margin-top: 0.125rem;
+
+	background-color: var(--white);
+	border: 2px solid var(--neutral-500);
+	border-radius: 0.25rem;
+}
+.field__checkbox::before {
+	content: "";
+	display: block;
+	width: 0.75rem;
+	height: 0.75rem;
+
+	background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaGVjay1pY29uIGx1Y2lkZS1jaGVjayI+PHBhdGggZD0iTTIwIDYgOSAxN2wtNS01Ii8+PC9zdmc+");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+
+	transform: scale(0);
+}
+.field__checkbox:checked {
+	background-color: var(--red-600);
+	border-color: var(--red-600);
+}
+.field__checkbox:checked::before {
+	transform: scale(1);
+}
+.field__error {
+	display: block;
+	margin-top: 0.25rem;
+
+	color: var(--red-600);
+	font-size: 0.75rem;
+	font-weight: bolder;
+	line-height: 1rem;
+}
+
+/* Dropzone */
+
+.dropzone {
+	margin: 0;
+	padding: 0;
+
+	border: 0;
+}
+.dropzone__legend {
+	display: block;
+	margin-bottom: 0.25rem;
+
+	font-size: 0.875rem;
+	font-weight: bolder;
+	line-height: 1.25rem;
+}
+.dropzone__required {
+	color: var(--red-600);
+	text-decoration: none;
+}
+.dropzone__tabs {
+	margin-bottom: 0.25rem;
+}
+.dropzone__area {
+	cursor: pointer;
+	display: block;
+	padding: 2.5rem;
+
+	text-align: center;
+
+	background-color: var(--white);
+	border: 2px dashed var(--neutral-500);
+	border-radius: 0.25rem;
+}
+.dropzone__area:has(:focus) {
+	border-color: var(--red-600);
+}
+.dropzone__area:has(.dropzone--error) {
+	border-color: var(--red-600);
+}
+.dropzone__field > :not(:last-child) {
+	margin-bottom: 0.5rem;
+}
+.dropzone__icon {
+	display: inline-flex;
+	vertical-align: top;
+	align-items: center;
+	justify-content: center;
+	width: 3rem;
+	height: 3rem;
+
+	color: var(--red-600);
+	fill: var(--red-600);
+
+	background-color: var(--neutral-100);
+	border-radius: 0.25rem;
+}
+.dropzone__icon svg {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+.dropzone__label {
+	display: block;
+	margin-top: 0.75rem;
+
+	font-size: 1.125rem;
+	font-weight: bolder;
+	line-height: 1.75rem;
+}
+.dropzone__hint {
+	display: block;
+
+	color: var(--neutral-500);
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+}
+.dropzone__button {
+	margin-top: 0.75rem;
+}
+.dropzone__error {
+	display: block;
+	margin-top: 0.25rem;
+
+	color: var(--red-600);
+	font-size: 0.75rem;
+	font-weight: bolder;
+	line-height: 1rem;
 }

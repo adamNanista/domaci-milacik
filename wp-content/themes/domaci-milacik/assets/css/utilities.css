@@ -1,3 +1,14 @@
+.visually-hidden {
+	border: 0;
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal !important;
+}
 .hidden {
 	display: none !important;
 }
@@ -76,6 +87,22 @@
 	}
 	.lg\:grid-cols-6 {
 		grid-template-columns: repeat(6, minmax(0, 1fr));
+	}
+}
+
+.col-span-full {
+	grid-column: 1/-1;
+}
+
+@media (min-width: 768px) {
+	.md\:col-span-full {
+		grid-column: 1/-1;
+	}
+}
+
+@media (min-width: 1025px) {
+	.lg\:col-span-full {
+		grid-column: 1/-1;
 	}
 }
 
@@ -165,6 +192,10 @@
 	.lg\:gap-12 {
 		gap: 3rem;
 	}
+}
+
+.space-y-6 > :not(:last-child) {
+	margin-bottom: 1.5rem;
 }
 
 .text-6xl {

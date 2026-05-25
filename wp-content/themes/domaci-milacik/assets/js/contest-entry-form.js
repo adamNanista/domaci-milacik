@@ -14,7 +14,13 @@ document.addEventListener("DOMContentLoaded", function () {
 	if (!form) return;
 
 	// Validation & submission
-	const validation = new window.JustValidate(form);
+	const validation = new JustValidate(form, {
+		errorFieldStyle: {},
+		errorFieldCssClass: "field--error",
+		errorLabelStyle: {},
+		errorLabelCssClass: "field__error",
+		focusInvalidField: false,
+	});
 
 	validation
 		.addField("#contest-entry-form-owner-name", [
@@ -65,53 +71,40 @@ document.addEventListener("DOMContentLoaded", function () {
 				errorMessage: "Popis miláčika môže mať maximálne 2 000 znakov.",
 			},
 		])
-		.addField("#contest-entry-form-photo", [
-			{
-				rule: "minFilesCount",
-				value: 1,
-				errorMessage: "Fotografia je povinná.",
-			},
-			{
-				rule: "files",
-				value: {
-					files: {
-						maxSize: 5242880,
-					},
+		.addField(
+			"#contest-entry-form-photo",
+			[
+				{
+					rule: "minFilesCount",
+					value: 1,
+					errorMessage: "Fotografia je povinná.",
 				},
-				errorMessage: "Fotografia musí mať menej ako 5 MB.",
-			},
-			{
-				rule: "files",
-				value: {
-					files: {
-						extensions: ["jpeg", "jpg", "png"],
-						types: ["image/jpeg", "image/jpg", "image/png"],
+				{
+					rule: "files",
+					value: {
+						files: {
+							maxSize: 5242880,
+						},
 					},
+					errorMessage: "Fotografia musí mať menej ako 5 MB.",
 				},
-				errorMessage: "Fotografia musí byť vo formáte JPG alebo PNG.",
-			},
-		])
-		.addField("#contest-entry-form-video-upload", [
-			{
-				rule: "files",
-				value: {
-					files: {
-						maxSize: 31457280,
+				{
+					rule: "files",
+					value: {
+						files: {
+							extensions: ["jpeg", "jpg", "png"],
+							types: ["image/jpeg", "image/jpg", "image/png"],
+						},
 					},
+					errorMessage: "Fotografia musí byť vo formáte JPG alebo PNG.",
 				},
-				errorMessage: "Video musí mať menej ako 30 MB.",
-			},
+			],
 			{
-				rule: "files",
-				value: {
-					files: {
-						extensions: ["mp4"],
-						types: ["video/mp4"],
-					},
-				},
-				errorMessage: "Video musí byť vo formáte MP4.",
+				errorFieldCssClass: "dropzone--error",
+				errorLabelCssClass: "dropzone__error",
+				errorsContainer: ".dropzone",
 			},
-		])
+		)
 		.addField("#contest-entry-form-video-url", [
 			{
 				validator: (value) => {
@@ -139,6 +132,35 @@ document.addEventListener("DOMContentLoaded", function () {
 				errorMessage: "Povolené sú iba odkazy na YouTube alebo Vimeo.",
 			},
 		])
+		.addField(
+			"#contest-entry-form-video-upload",
+			[
+				{
+					rule: "files",
+					value: {
+						files: {
+							maxSize: 31457280,
+						},
+					},
+					errorMessage: "Video musí mať menej ako 30 MB.",
+				},
+				{
+					rule: "files",
+					value: {
+						files: {
+							extensions: ["mp4"],
+							types: ["video/mp4"],
+						},
+					},
+					errorMessage: "Video musí byť vo formáte MP4.",
+				},
+			],
+			{
+				errorFieldCssClass: "dropzone--error",
+				errorLabelCssClass: "dropzone__error",
+				errorsContainer: ".dropzone",
+			},
+		)
 		.addField("#contest-entry-form-consent-combined", [
 			{
 				rule: "required",
