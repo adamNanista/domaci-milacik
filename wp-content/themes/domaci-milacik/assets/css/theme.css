@@ -10,6 +10,17 @@
 	--red-800: #a41014;
 	--red-900: #881417;
 	--red-950: #4a0507;
+	--yellow-50: #fff8eb;
+	--yellow-100: #feecc7;
+	--yellow-200: #fdd78a;
+	--yellow-300: #fcc059;
+	--yellow-400: #fba224;
+	--yellow-500: #f57f0b;
+	--yellow-600: #d95b06;
+	--yellow-700: #b43c09;
+	--yellow-800: #922e0e;
+	--yellow-900: #78270f;
+	--yellow-950: #451103;
 	--green-50: #f2fbf2;
 	--green-100: #e2f6e2;
 	--green-200: #c6ecc7;
@@ -39,4 +50,9 @@
 body {
 	color: var(--black);
 	font-family: "PT Sans", sans-serif;
+}
+
+:focus {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
 }
