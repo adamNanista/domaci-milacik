@@ -1,0 +1,39 @@
+.editor-flex {
+	display: flex;
+}
+.editor-gap-4 {
+	gap: 1rem;
+}
+
+.editor-hero {
+	padding: 3rem;
+	background-color: #f5f5f5;
+}
+
+.editor-hero h1 {
+	margin-top: 0;
+}
+
+.editor-button {
+	display: inline-flex;
+	vertical-align: top;
+	align-items: center;
+	justify-content: center;
+	gap: 0.625rem;
+	padding: 0.625rem 1.25rem;
+
+	font-size: 1rem;
+	line-height: 1.5rem;
+
+	background-color: #e5e5e5;
+	border: 2px solid #e5e5e5;
+	border-radius: 0.375rem;
+}
+.editor-button-primary {
+	color: #ffffff;
+	border-color: #db1218;
+	background-color: #db1218;
+}
+.editor-button-outline {
+	background-color: transparent;
+}

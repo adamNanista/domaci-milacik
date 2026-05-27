@@ -54,6 +54,7 @@ wp-content/plugins/domaci-milacik/vendor/
 wp-content/themes/*
 wp-content/themes/domaci-milacik/node_modules/
 wp-content/themes/domaci-milacik/vendor/
+wp-content/themes/domaci-milacik/blocks/node_modules/
 !wp-content/themes/domaci-milacik/
 
 # ACF Local JSON (IMPORTANT)

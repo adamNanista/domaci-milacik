@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	headerToggle.addEventListener("click", function (event) {
 		event.preventDefault();
 
+		headerToggle.classList.toggle("open");
 		headerMenu.classList.toggle("hidden");
 		document.body.classList.toggle("overflow-hidden");
 	});

@@ -96,6 +96,13 @@ body {
 	border-radius: 0.25rem;
 	transition: all 0.3s;
 }
+.header-toggle .header-toggle-close,
+.header-toggle.open .header-toggle-open {
+	display: none;
+}
+.header-toggle.open .header-toggle-close {
+	display: block;
+}
 .header-menu {
 	width: 100vw;
 	padding: 1.5rem 1rem;
@@ -183,10 +190,56 @@ body {
 .content {
 	padding: 3rem 1rem;
 }
+.content > :not(:last-child) {
+	margin-bottom: 3rem;
+}
 
 @media (min-width: 768px) {
 	.content {
 		padding: 4rem 1.5rem;
+	}
+	.content > :not(:last-child) {
+		margin-bottom: 4rem;
+	}
+}
+
+.hero {
+	padding: 56.25% 1rem 3rem;
+
+	color: var(--white);
+
+	background-image: url("../img/hero--mobile.jpg");
+	background-position: top center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+@media (min-width: 768px) {
+	.hero {
+		padding: 4rem 1.5rem;
+
+		background-image: url("../img/hero--desktop.jpg");
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+	}
+}
+
+/* Leaderboard */
+
+.leaderboard {
+	padding: 3rem 1rem;
+}
+.leaderboard > :not(:last-child) {
+	margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+	.leaderboard {
+		padding: 4rem 1.5rem;
+	}
+	.leaderboard > :not(:last-child) {
+		margin-bottom: 3rem;
 	}
 }
 
@@ -213,8 +266,8 @@ body {
 	height: 4rem;
 }
 .footer-claim {
-	font-size: 0.875rem;
-	line-height: 1.25rem;
+	font-size: 1rem;
+	line-height: 1.5rem;
 	text-align: center;
 }
 
@@ -223,22 +276,20 @@ body {
 		padding: 2rem 1.5rem;
 	}
 	.footer-claim {
-		font-size: 1rem;
-		line-height: 1.5rem;
 		text-align: left;
 	}
 }
 
 /* Social menu */
 
-.social-menu {
+.social-icons {
 	display: flex;
 	align-items: center;
 	gap: 1rem;
 	padding-left: 0;
 	list-style: none;
 }
-.social-menu a {
+.social-icons a {
 	display: inline-flex;
 	vertical-align: top;
 	align-items: center;
@@ -252,11 +303,11 @@ body {
 	border-radius: 50%;
 	transition: all 0.3s;
 }
-.social-menu a:focus,
-.social-menu a:hover {
-	background-color: rgba(255, 255, 255, 0.25);
+.social-icons a:focus,
+.social-icons a:hover {
+	background-color: rgba(255, 255, 255, 0.2);
 }
-.social-menu svg {
+.social-icons svg {
 	width: 1.25rem;
 	height: 1.25rem;
 
@@ -265,7 +316,7 @@ body {
 }
 
 @media (min-width: 768px) {
-	.social-menu {
+	.social-icons {
 		margin-left: auto;
 	}
 }
@@ -318,6 +369,7 @@ body.admin-bar {
 	overflow: hidden;
 }
 .card-thumbnail img {
+	width: 100%;
 	aspect-ratio: 4/3;
 	object-fit: cover;
 	object-position: center;
@@ -331,12 +383,13 @@ body.admin-bar {
 .card-content {
 	padding: 1.25rem 1rem;
 }
-.card-content > :not(:last-child) {
-	margin-bottom: 0.5rem;
-}
 .card-content a:not(.button) {
 	color: inherit;
 	text-decoration: none;
+}
+.card-content a:not(.button):focus,
+.card-content a:not(.button):hover {
+	text-decoration: underline;
 }
 
 @media (min-width: 768px) {
@@ -345,9 +398,6 @@ body.admin-bar {
 	}
 	.card-content {
 		padding: 1.5rem 1.25rem;
-	}
-	.card-content > :not(:last-child) {
-		margin-bottom: 0.75rem;
 	}
 }
 
@@ -396,25 +446,21 @@ body.admin-bar {
 	pointer-events: none;
 	opacity: 0.5;
 }
-.button svg {
-	flex: none;
-
-	width: var(--button--icon-size, 1.25rem);
-	height: var(--button--icon-size, 1.25rem);
-}
 
 .button-outline {
 	color: var(--button--text-outline, var(--black));
 
 	background-color: transparent;
-	border-color: var(--button--border-outline, var(--neutral-200));
+	border-color: var(--button--border-outline, var(--black));
 }
 .button-outline:focus,
 .button-outline:hover {
 	color: var(--button--text-outline, var(--black));
 
 	background-color: var(--button--background-outline-hover, var(--neutral-100));
+	border-color: var(--button--border-outline, var(--black));
 }
+
 .button-wide {
 	width: 100%;
 }
@@ -426,7 +472,6 @@ body.admin-bar {
 	--button--font-size: 0.75rem;
 	--button--line-height: 1rem;
 	--button--border-radius: 0.25rem;
-	--button--icon-size: 0.875rem;
 }
 .button-sm {
 	--button--gap: 0.5rem;
@@ -435,7 +480,6 @@ body.admin-bar {
 	--button--font-size: 0.875rem;
 	--button--line-height: 1.25rem;
 	--button--border-radius: 0.25rem;
-	--button--icon-size: 1rem;
 }
 .button-md {
 	--button--gap: 0.625rem;
@@ -444,7 +488,6 @@ body.admin-bar {
 	--button--font-size: 1rem;
 	--button--line-height: 1.5rem;
 	--button--border-radius: 0.375rem;
-	--button--icon-size: 1.25rem;
 }
 .button-lg {
 	--button--gap: 0.75rem;
@@ -453,7 +496,6 @@ body.admin-bar {
 	--button--font-size: 1.125rem;
 	--button--line-height: 1.75rem;
 	--button--border-radius: 0.5rem;
-	--button--icon-size: 1.5rem;
 }
 
 .button-primary {
@@ -476,6 +518,16 @@ body.admin-bar {
 	--button--border-filled-hover: var(--yellow-400);
 	--button--border-outline: var(--yellow-700);
 }
+.button-white {
+	--button--text-filled: var(--black);
+	--button--text-outline: var(--white);
+	--button--background-filled: var(--white);
+	--button--background-filled-hover: var(--neutral-100);
+	--button--background-outline-hover: rgba(255, 255, 255, 0.2);
+	--button--border-filled: var(--white);
+	--button--border-filled-hover: var(--neutral-100);
+	--button--border-outline: var(--white);
+}
 
 @media (min-width: 768px) {
 	.md\:button-xs {
@@ -485,7 +537,6 @@ body.admin-bar {
 		--button--font-size: 0.75rem;
 		--button--line-height: 1rem;
 		--button--border-radius: 0.25rem;
-		--button--icon-size: 0.875rem;
 	}
 	.md\:button-sm {
 		--button--padding-inline: 1.25rem;
@@ -518,7 +569,6 @@ body.admin-bar {
 		--button--font-size: 0.75rem;
 		--button--line-height: 1rem;
 		--button--border-radius: 0.25rem;
-		--button--icon-size: 0.875rem;
 	}
 	.lg\:button-sm {
 		--button--padding-inline: 1.25rem;
@@ -553,14 +603,13 @@ body.admin-bar {
 	font-size: var(--votes--font-size, 1rem);
 	line-height: var(--votes--line-height, 1.5rem);
 }
-.votes-icon {
-	flex: none;
-	margin-top: 0.125rem;
+.votes svg {
+	flex: 0 0 auto;
 
-	fill: var(--red-600);
+	color: var(--red-600);
 
 	width: var(--votes--icon-size, 1.25rem);
-	height: var(--votes--icon-size, 1.25rem);
+	height: 1lh;
 }
 
 .votes-sm {
@@ -645,7 +694,7 @@ body.admin-bar {
 }
 .messages-icon {
 	display: none;
-	flex: none;
+	flex: 0 0 auto;
 	width: 1rem;
 	height: 1rem;
 	margin-top: 0.125rem;
@@ -688,7 +737,7 @@ body.admin-bar {
 	line-height: 1.25rem;
 }
 .countdown-icon {
-	flex: none;
+	flex: 0 0 auto;
 	width: 1rem;
 	height: 1rem;
 	margin-top: 0.125rem;

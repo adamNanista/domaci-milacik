@@ -5,7 +5,7 @@
                 <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/novycas--white.svg" alt="Logo Nový Čas" width="65" height="64" />
             </a>
             <p class="footer-claim">&copy; <?php echo date("Y"); ?> Nový Čas - Všetky práva vyhradené</p>
-            <ul class="social-menu">
+            <ul class="social-icons">
                 <li>
                     <a href="https://www.facebook.com/novycas" target="_blank">
                         <span class="visually-hidden">Facebook</span>

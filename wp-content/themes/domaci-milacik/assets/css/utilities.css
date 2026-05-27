@@ -327,6 +327,22 @@
 	overflow: hidden;
 }
 
+@media (min-width: 768px) {
+	.md\:overflow-hidden {
+		overflow: hidden;
+	}
+}
+
+@media (min-width: 1025px) {
+	.lg\:overflow-hidden {
+		overflow: hidden;
+	}
+}
+
+.text-7xl {
+	font-size: 4.5rem;
+	line-height: 1;
+}
 .text-6xl {
 	font-size: 3.75rem;
 	line-height: 1;
@@ -369,6 +385,10 @@
 }
 
 @media (min-width: 768px) {
+	.md\:text-7xl {
+		font-size: 4.5rem;
+		line-height: 1;
+	}
 	.md\:text-6xl {
 		font-size: 3.75rem;
 		line-height: 1;
@@ -412,6 +432,10 @@
 }
 
 @media (min-width: 1025px) {
+	.lg\:text-7xl {
+		font-size: 4.5rem;
+		line-height: 1;
+	}
 	.lg\:text-6xl {
 		font-size: 3.75rem;
 		line-height: 1;
@@ -451,5 +475,21 @@
 	.lg\:text-xs {
 		font-size: 0.75rem;
 		line-height: 1rem;
+	}
+}
+
+.text-uppercase {
+	text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+	.md\:text-uppercase {
+		text-transform: uppercase;
+	}
+}
+
+@media (min-width: 1025px) {
+	.lg\:text-uppercase {
+		text-transform: uppercase;
 	}
 }

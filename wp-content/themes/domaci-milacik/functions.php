@@ -33,6 +33,20 @@
     require_once get_stylesheet_directory() . '/inc/latest-articles.php';
 
     /**
+     * Register blocks
+     */
+
+    add_action('init', function () {
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/hero'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/leaderboard'
+        );
+    });
+
+    /**
      * Load CSS and JS
      */
 
@@ -87,57 +101,13 @@
         return get_stylesheet_directory() . '/acf-json';
     } );
 
-    add_filter( 'acf/settings/load_json', function($paths) {
+    add_filter( 'acf/settings/load_json', function( $paths ) {
         $paths[] = get_stylesheet_directory() . '/acf-json';
         return $paths;
     } );
 
-    /**
-     * Add subtitle to pages
-     */
-
-    add_action( 'edit_form_after_title', function($post) {
-        if ($post->post_type != 'page') {
-            return;
+    add_action( 'save_post_contest_entry', function( $post_id ) {
+        if ( get_post_meta( $post_id, 'votes', true ) === '' ) {
+            update_post_meta( $post_id, 'votes', 0 );
         }
-
-        $value = get_post_meta( $post->ID, '_subtitle', true );
-
-        wp_nonce_field( 'save_subtitle', 'subtitle_nonce' );
-
-        echo 
-        '
-            <input 
-                type="text"
-                name="subtitle"
-                value="' . esc_attr( $value ) . '"
-                placeholder="Zadajte podnadpis"
-                style="
-                    width:100%;
-                    margin-top:5px;
-                "
-            />
-        ';
-    } );
-
-    add_action( 'save_post', function( $post_id ) {
-        if ( ! isset( $_POST['subtitle_nonce'] ) ) {
-            return;
-        }
-
-        if ( ! wp_verify_nonce( $_POST['subtitle_nonce'], 'save_subtitle' ) ) {
-            return;
-        }
-
-        if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
-            return;
-        }
-
-        if ( isset( $_POST['subtitle'] ) ) {
-            update_post_meta(
-                $post_id,
-                '_subtitle',
-                sanitize_text_field( $_POST['subtitle'] )
-            );
-        }
-    } );
+    });

@@ -8,22 +8,22 @@
         the_post();
 
         ?>
-            <main class="main" role="main">
-                <section class="content space-y-12 md:space-y-16">
-                    <div class="container space-y-4 md:space-y-6">
+            <main <?php post_class( 'main' ); ?> role="main">
+                <div class="content">
+                    <section class="container">
                         <h1 class="text-3xl md:text-5xl">
                             <?php
                                 the_title();
                             ?>
                         </h1>
-                    </div>
-                    <div class="container">
+                    </section>
+                    <section class="container">
                         <?php 
                             the_content();
                         ?>
-                    </div>
-                </section>
+                    </section>
+                </div>
             </main>
         <?php
-        
+
     endwhile;

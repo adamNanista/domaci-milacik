@@ -1,0 +1,9 @@
+{
+	"apiVersion": 3,
+	"name": "custom/contest-leaderboard",
+	"title": "Leaderboard",
+	"category": "widgets",
+	"icon": "awards",
+	"editorScript": "file:./build/index.js",
+	"render": "file:./render.php"
+}

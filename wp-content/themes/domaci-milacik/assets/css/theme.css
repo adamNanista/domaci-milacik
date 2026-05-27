@@ -47,12 +47,12 @@
 	--white: #ffffff;
 }
 
-body {
-	color: var(--black);
-	font-family: "PT Sans", sans-serif;
-}
-
 :focus {
 	outline: 2px solid currentColor;
 	outline-offset: 2px;
+}
+
+body {
+	color: var(--black);
+	font-family: "PT Sans", sans-serif;
 }
