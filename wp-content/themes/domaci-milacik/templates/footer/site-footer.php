@@ -1,7 +1,7 @@
 <footer class="footer" role="contentinfo">
     <div class="container">
-        <div class="flex flex-col items-center gap-6 md:flex-row">
-            <a href="#" class="footer-logo">
+        <div class="flex flex-col items-center gap-8 md:flex-row md:gap-6">
+            <a href="<?php echo home_url(); ?>" class="footer-logo">
                 <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/novycas--white.svg" alt="Logo Nový Čas" width="65" height="64" />
             </a>
             <p class="footer-claim">&copy; <?php echo date("Y"); ?> Nový Čas - Všetky práva vyhradené</p>

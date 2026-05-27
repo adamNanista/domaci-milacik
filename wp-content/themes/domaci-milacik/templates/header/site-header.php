@@ -1,7 +1,7 @@
 <header class="header" role="banner">
     <div class="container">
         <div class="flex items-center gap-4 md:gap-6">
-            <a href="#" class="header-logo">
+            <a href="<?php echo home_url(); ?>" class="header-logo">
                 <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/novycas.svg" alt="Logo Nový Čas" width="65" height="64" />
             </a>
             <nav class="header-nav" id="header-nav">

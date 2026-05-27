@@ -130,7 +130,7 @@ body {
 	flex: 0 0 auto;
 	margin-left: auto;
 
-	outline-color: var(--white) !important;
+	outline-color: var(--yellow-400) !important;
 }
 
 @media (min-width: 768px) {
@@ -138,6 +138,8 @@ body {
 		padding: 0 1.5rem;
 	}
 	.header-nav {
+		margin: -4px;
+		padding: 4px;
 		order: 0;
 		overflow: auto;
 	}
@@ -167,22 +169,6 @@ body {
 	}
 	.header-menu > :not(:last-child) {
 		margin-bottom: 0;
-	}
-}
-
-.admin-bar .header {
-	top: 32px;
-}
-.admin-bar .header-menu {
-	top: calc(32px + 4rem);
-}
-
-@media screen and (max-width: 782px) {
-	.admin-bar .header {
-		top: 0;
-	}
-	.admin-bar .header-menu {
-		top: calc(46px + 4rem);
 	}
 }
 
@@ -290,6 +276,32 @@ body {
 	max-width: 72rem;
 	margin-right: auto;
 	margin-left: auto;
+}
+
+/* Admin bar */
+
+body.admin-bar {
+	min-height: calc(100dvh - 32px);
+}
+
+.admin-bar .header {
+	top: 32px;
+}
+.admin-bar .header-menu {
+	top: calc(32px + 4rem);
+}
+
+@media screen and (max-width: 782px) {
+	body.admin-bar {
+		min-height: calc(100dvh - 46px);
+	}
+
+	.admin-bar .header {
+		top: 0;
+	}
+	.admin-bar .header-menu {
+		top: calc(46px + 4rem);
+	}
 }
 
 /* Card */
