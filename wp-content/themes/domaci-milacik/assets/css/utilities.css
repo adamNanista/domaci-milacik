@@ -478,6 +478,10 @@
 	}
 }
 
+.text-red-600 {
+	color: var(--red-600);
+}
+
 .text-uppercase {
 	text-transform: uppercase;
 }
@@ -492,4 +496,13 @@
 	.lg\:text-uppercase {
 		text-transform: uppercase;
 	}
+}
+
+.font-heading {
+	font-family: "din-2014-narrow", sans-serif;
+	letter-spacing: -0.025em;
+}
+
+.font-bold {
+	font-weight: 700;
 }

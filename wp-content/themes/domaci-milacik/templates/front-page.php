@@ -4,7 +4,7 @@
 		exit; // Exit if accessed directly.
 	}
 
-    while ( have_posts() ) :
+    while ( have_posts() ) {
         the_post();
 
         ?>
@@ -15,4 +15,4 @@
             </main>
         <?php
 
-    endwhile;
+    }

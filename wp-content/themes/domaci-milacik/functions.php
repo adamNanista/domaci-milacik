@@ -44,6 +44,14 @@
         register_block_type(
             get_stylesheet_directory() . '/blocks/leaderboard'
         );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/prizes'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/prize'
+        );
     });
 
     /**
@@ -54,6 +62,11 @@
         wp_enqueue_style(
             'pt-sans',
             'https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap',
+        );
+
+        wp_enqueue_style(
+            'din-2014-narrow',
+            'https://use.typekit.net/yoq8bhl.css',
         );
 
         wp_enqueue_style(
@@ -106,8 +119,21 @@
         return $paths;
     } );
 
+    /**
+     * Update votes on post save
+     */
+
     add_action( 'save_post_contest_entry', function( $post_id ) {
         if ( get_post_meta( $post_id, 'votes', true ) === '' ) {
             update_post_meta( $post_id, 'votes', 0 );
         }
-    });
+    } );
+
+    /**
+     * Allow svg
+     */
+
+    add_filter( 'upload_mimes', function( $mimes ) {
+        $mimes['svg'] = 'image/svg+xml';
+        return $mimes;
+    } );

@@ -1,7 +1,7 @@
 {
 	"apiVersion": 3,
-	"name": "custom/leaderboard",
-	"title": "Leaderboard",
+	"name": "custom/prizes",
+	"title": "Prizes",
 	"category": "widgets",
 	"icon": "awards",
 	"editorScript": "file:./build/index.js",

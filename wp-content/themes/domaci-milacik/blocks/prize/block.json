@@ -1,0 +1,24 @@
+{
+	"apiVersion": 3,
+	"name": "custom/prize",
+	"title": "Prize",
+	"category": "widgets",
+	"icon": "tickets-alt",
+	"parent": ["custom/prizes"],
+	"editorScript": "file:./build/index.js",
+	"render": "file:./render.php",
+	"attributes": {
+		"imageId": {
+			"type": "number",
+			"default": 0
+		},
+		"position": {
+			"type": "string",
+			"default": ""
+		},
+		"prize": {
+			"type": "string",
+			"default": ""
+		}
+	}
+}

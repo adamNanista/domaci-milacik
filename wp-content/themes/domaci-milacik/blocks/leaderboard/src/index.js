@@ -1,11 +1,12 @@
 import { registerBlockType } from "@wordpress/blocks";
+import { useBlockProps } from "@wordpress/block-editor";
 
-registerBlockType("custom/contest-leaderboard", {
+registerBlockType("custom/leaderboard", {
 	edit() {
 		return (
-			<section>
-				<strong>Contest Leaderboard</strong>
-				<p>Top 10 entries by votes (ACF)</p>
+			<section {...useBlockProps({ className: "editor-leaderboard" })}>
+				<h1>Top miláčikovia</h1>
+				<p>Top 10 miláčikov podľa počtu hlasov</p>
 			</section>
 		);
 	},

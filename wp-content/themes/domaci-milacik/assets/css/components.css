@@ -24,7 +24,7 @@ ol {
 	padding-left: 1.5em;
 }
 li::marker {
-	font-weight: bolder;
+	font-weight: 700;
 }
 ol li {
 	padding-left: 0.25em;
@@ -59,6 +59,7 @@ body {
 	padding: 0 1rem;
 	position: sticky;
 	top: 0;
+	z-index: 9999;
 
 	color: var(--white);
 
@@ -116,7 +117,7 @@ body {
 
 	color: var(--black);
 	font-size: 1rem;
-	font-weight: bolder;
+	font-weight: 700;
 	line-height: 1.5rem;
 	text-transform: uppercase;
 
@@ -231,7 +232,7 @@ body {
 	padding: 3rem 1rem;
 }
 .leaderboard > :not(:last-child) {
-	margin-bottom: 2rem;
+	margin-bottom: 1.5rem;
 }
 
 @media (min-width: 768px) {
@@ -239,7 +240,25 @@ body {
 		padding: 4rem 1.5rem;
 	}
 	.leaderboard > :not(:last-child) {
-		margin-bottom: 3rem;
+		margin-bottom: 2rem;
+	}
+}
+
+/* Prizes */
+
+.prizes {
+	padding: 3rem 1rem;
+}
+.prizes > :not(:last-child) {
+	margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+	.prizes {
+		padding: 4rem 1.5rem;
+	}
+	.prizes > :not(:last-child) {
+		margin-bottom: 2rem;
 	}
 }
 
@@ -401,6 +420,39 @@ body.admin-bar {
 	}
 }
 
+/* Prize */
+
+.prize {
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
+	padding: 1.25rem 1rem;
+
+	background-color: var(--neutral-100);
+	border-radius: 0.5rem;
+}
+.prize-icon {
+	flex: 0 0 auto;
+}
+.prize-icon img {
+	width: 3rem;
+	height: 3rem;
+	object-fit: contain;
+}
+
+@media (min-width: 768px) {
+	.prize {
+		gap: 1.5rem;
+		padding: 1.5rem 1.25rem;
+
+		border-radius: 0.75rem;
+	}
+	.prize-icon img {
+		width: 4rem;
+		height: 4rem;
+	}
+}
+
 /* Buttons */
 
 .button {
@@ -410,7 +462,7 @@ body.admin-bar {
 	align-items: center;
 	justify-content: center;
 
-	font-weight: bolder;
+	font-weight: 700;
 	text-align: center;
 	text-decoration: none;
 	text-transform: uppercase;
@@ -818,7 +870,7 @@ body.admin-bar {
 	display: block;
 
 	font-size: 0.875rem;
-	font-weight: bolder;
+	font-weight: 700;
 	line-height: 1.25rem;
 }
 .field:not(.checkbox) .field-label {
@@ -926,7 +978,7 @@ body.admin-bar {
 	margin-bottom: 0.25rem;
 
 	font-size: 0.875rem;
-	font-weight: bolder;
+	font-weight: 700;
 	line-height: 1.25rem;
 }
 .dropzone-area {
@@ -963,8 +1015,8 @@ body.admin-bar {
 	width: 3rem;
 	height: 3rem;
 
-	color: var(--red-600);
-	fill: var(--red-600);
+	color: var(--neutral-500);
+	fill: var(--neutral-500);
 
 	background-color: var(--neutral-100);
 	border-radius: 0.25rem;
@@ -978,7 +1030,7 @@ body.admin-bar {
 	margin-top: 0.75rem;
 
 	font-size: 1.125rem;
-	font-weight: bolder;
+	font-weight: 700;
 	line-height: 1.75rem;
 }
 .dropzone-hint {
@@ -1016,7 +1068,7 @@ body.admin-bar {
 
 	color: var(--red-600);
 	font-size: 0.75rem;
-	font-weight: bolder;
+	font-weight: 700;
 	line-height: 1rem;
 }
 
@@ -1035,6 +1087,6 @@ body.admin-bar {
 
 	color: var(--red-600);
 	font-size: 0.75rem;
-	font-weight: bolder;
+	font-weight: 700;
 	line-height: 1rem;
 }
