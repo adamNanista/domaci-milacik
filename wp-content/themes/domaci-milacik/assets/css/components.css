@@ -30,20 +30,6 @@ ol li {
 	padding-left: 0.25em;
 }
 
-/* Visually hidden */
-
-.visually-hidden {
-	border: 0;
-	clip-path: inset(50%);
-	height: 1px;
-	margin: -1px;
-	overflow: hidden;
-	padding: 0;
-	position: absolute;
-	width: 1px;
-	word-wrap: normal !important;
-}
-
 /* Body */
 
 body {
@@ -330,6 +316,40 @@ body {
 .card-content a:not(.button):focus,
 .card-content a:not(.button):hover {
 	text-decoration: underline;
+}
+
+/* Swiper navigation */
+
+.swiper-button-disabled {
+	display: none;
+}
+.swiper-button-prev,
+.swiper-button-next {
+	width: 2rem;
+	height: 2rem;
+	margin-top: -1rem;
+
+	color: var(--neutral-500);
+
+	background-color: var(--white);
+	border-radius: 50%;
+	box-shadow:
+		rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+		rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+.swiper-button-prev {
+	margin-left: -1rem !important;
+	left: 0 !important;
+}
+.swiper-button-next {
+	margin-right: -1rem !important;
+	right: 0 !important;
+}
+.swiper-button-prev svg,
+.swiper-button-next svg {
+	width: 1rem;
+	height: 1rem;
+	fill: none;
 }
 
 /* Buttons */

@@ -4,6 +4,9 @@
 .leaderboard > :not(:last-child) {
 	margin-bottom: 1.5rem;
 }
+.leaderboard-slider-wrapper {
+	position: relative;
+}
 .leaderboard-slider {
 	--gutter: calc((var(--viewport-width) - 100%) / 2);
 
