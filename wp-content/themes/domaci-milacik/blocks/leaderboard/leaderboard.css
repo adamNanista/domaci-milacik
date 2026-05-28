@@ -1,0 +1,47 @@
+.leaderboard {
+	padding: 3rem 1rem;
+}
+.leaderboard > :not(:last-child) {
+	margin-bottom: 1.5rem;
+}
+.leaderboard-slider {
+	--gutter: calc((var(--viewport-width) - 100%) / 2);
+
+	margin-left: calc(-1 * var(--gutter)) !important;
+	margin-right: calc(-1 * var(--gutter)) !important;
+	padding-right: var(--gutter) !important;
+	padding-left: var(--gutter) !important;
+}
+.leaderboard-slider .swiper-slide {
+	width: calc(var(--viewport-width) - calc(2 * var(--gutter)) - 1rem - 12px);
+}
+
+@media (min-width: 480px) {
+	.leaderboard-slider .swiper-slide {
+		width: calc((var(--viewport-width) - calc(2 * var(--gutter)) - 1rem - 24px) / 2);
+	}
+}
+
+@media (min-width: 768px) {
+	.leaderboard {
+		padding: 4rem 1.5rem;
+	}
+	.leaderboard > :not(:last-child) {
+		margin-bottom: 2rem;
+	}
+	.leaderboard-slider .swiper-slide {
+		width: calc((var(--viewport-width) - calc(2 * var(--gutter)) - 1.5rem - 48px) / 3);
+	}
+}
+
+@media (min-width: 1025px) {
+	.leaderboard-slider .swiper-slide {
+		width: calc((var(--viewport-width) - calc(2 * var(--gutter)) - 1.5rem - 64px) / 4);
+	}
+}
+
+@media (min-width: 1200px) {
+	.leaderboard-slider .swiper-slide {
+		width: calc((var(--viewport-width) - calc(2 * var(--gutter)) - 48px) / 4);
+	}
+}

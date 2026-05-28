@@ -6,5 +6,7 @@
 	"icon": "awards",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
+	"style": ["swiper", "leaderboard"],
+	"viewScript": ["swiper", "leaderboard"],
 	"render": "file:./render.php"
 }

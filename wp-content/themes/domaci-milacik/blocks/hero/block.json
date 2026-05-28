@@ -6,6 +6,7 @@
 	"icon": "cover-image",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
+	"style": ["hero"],
 	"render": "file:./render.php",
 	"attributes": {
 		"title": {
@@ -31,6 +32,14 @@
 		"secondaryButtonUrl": {
 			"type": "string",
 			"default": ""
+		},
+		"desktopBackgroundImageId": {
+			"type": "number",
+			"default": 0
+		},
+		"mobileBackgroundImageId": {
+			"type": "number",
+			"default": 0
 		}
 	}
 }

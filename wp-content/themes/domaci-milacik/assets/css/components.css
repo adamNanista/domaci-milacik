@@ -106,7 +106,7 @@ body {
 }
 .header-menu {
 	width: 100vw;
-	padding: 1.5rem 1rem;
+	padding: 1.25rem 1rem;
 	overflow: auto;
 	position: fixed;
 	top: 4rem;
@@ -145,11 +145,17 @@ body {
 	.header {
 		padding: 0 1.5rem;
 	}
+	.header-menu {
+		padding: 1.75rem 1.5rem;
+	}
+	.header-menu > :not(:last-child) {
+		margin-bottom: 1.5rem;
+	}
+}
+
+@media (min-width: 1025px) {
 	.header-nav {
-		margin: -4px;
-		padding: 4px;
 		order: 0;
-		overflow: auto;
 	}
 	.header-toggle {
 		display: none;
@@ -201,64 +207,6 @@ body {
 	}
 	.content > :not(:last-child) {
 		margin-bottom: 4rem;
-	}
-}
-
-.hero {
-	padding: 56.25% 1rem 3rem;
-
-	color: var(--white);
-
-	background-image: url("../img/hero--mobile.jpg");
-	background-position: top center;
-	background-repeat: no-repeat;
-	background-size: cover;
-}
-
-@media (min-width: 768px) {
-	.hero {
-		padding: 4rem 1.5rem;
-
-		background-image: url("../img/hero--desktop.jpg");
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: cover;
-	}
-}
-
-/* Leaderboard */
-
-.leaderboard {
-	padding: 3rem 1rem;
-}
-.leaderboard > :not(:last-child) {
-	margin-bottom: 1.5rem;
-}
-
-@media (min-width: 768px) {
-	.leaderboard {
-		padding: 4rem 1.5rem;
-	}
-	.leaderboard > :not(:last-child) {
-		margin-bottom: 2rem;
-	}
-}
-
-/* Prizes */
-
-.prizes {
-	padding: 3rem 1rem;
-}
-.prizes > :not(:last-child) {
-	margin-bottom: 1.5rem;
-}
-
-@media (min-width: 768px) {
-	.prizes {
-		padding: 4rem 1.5rem;
-	}
-	.prizes > :not(:last-child) {
-		margin-bottom: 2rem;
 	}
 }
 
@@ -348,40 +296,13 @@ body {
 	margin-left: auto;
 }
 
-/* Admin bar */
-
-body.admin-bar {
-	min-height: calc(100dvh - 32px);
-}
-
-.admin-bar .header {
-	top: 32px;
-}
-.admin-bar .header-menu {
-	top: calc(32px + 4rem);
-}
-
-@media screen and (max-width: 782px) {
-	body.admin-bar {
-		min-height: calc(100dvh - 46px);
-	}
-
-	.admin-bar .header {
-		top: 0;
-	}
-	.admin-bar .header-menu {
-		top: calc(46px + 4rem);
-	}
-}
-
 /* Card */
 
 .card {
 	overflow: hidden;
 
 	border: 1px solid var(--neutral-200);
-	border-radius: 0.5rem;
-	box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
+	border-radius: 0.75rem;
 }
 .card-thumbnail {
 	display: block;
@@ -400,7 +321,7 @@ body.admin-bar {
 	transform: scale(1.1);
 }
 .card-content {
-	padding: 1.25rem 1rem;
+	padding: 1.5rem 1.25rem;
 }
 .card-content a:not(.button) {
 	color: inherit;
@@ -409,48 +330,6 @@ body.admin-bar {
 .card-content a:not(.button):focus,
 .card-content a:not(.button):hover {
 	text-decoration: underline;
-}
-
-@media (min-width: 768px) {
-	.card {
-		border-radius: 0.75rem;
-	}
-	.card-content {
-		padding: 1.5rem 1.25rem;
-	}
-}
-
-/* Prize */
-
-.prize {
-	display: flex;
-	align-items: center;
-	gap: 1.25rem;
-	padding: 1.25rem 1rem;
-
-	background-color: var(--neutral-100);
-	border-radius: 0.5rem;
-}
-.prize-icon {
-	flex: 0 0 auto;
-}
-.prize-icon img {
-	width: 3rem;
-	height: 3rem;
-	object-fit: contain;
-}
-
-@media (min-width: 768px) {
-	.prize {
-		gap: 1.5rem;
-		padding: 1.5rem 1.25rem;
-
-		border-radius: 0.75rem;
-	}
-	.prize-icon img {
-		width: 4rem;
-		height: 4rem;
-	}
 }
 
 /* Buttons */
@@ -659,6 +538,7 @@ body.admin-bar {
 	flex: 0 0 auto;
 
 	color: var(--red-600);
+	fill: var(--red-100);
 
 	width: var(--votes--icon-size, 1.25rem);
 	height: 1lh;

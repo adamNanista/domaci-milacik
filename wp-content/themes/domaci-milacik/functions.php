@@ -33,6 +33,56 @@
     require_once get_stylesheet_directory() . '/inc/latest-articles.php';
 
     /**
+     * Register block assets
+     */
+
+    add_action('init', function () {
+        wp_register_script(
+            'swiper',
+            'https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js',
+            array(),
+            '12.2.0',
+            true
+        );
+
+        wp_register_style(
+            'swiper',
+            'https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css',
+            array(),
+            '12.2.0'
+        );
+
+        wp_register_style(
+            'hero',
+            get_stylesheet_directory_uri() . '/blocks/hero/hero.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/hero/hero.css' )
+        );
+
+        wp_register_script(
+            'leaderboard',
+            get_stylesheet_directory_uri() . '/blocks/leaderboard/leaderboard.js',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/leaderboard/leaderboard.js' ),
+            true
+        );
+
+        wp_register_style(
+            'leaderboard',
+            get_stylesheet_directory_uri() . '/blocks/leaderboard/leaderboard.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/leaderboard/leaderboard.css' )
+        );
+
+        wp_register_style(
+            'prizes',
+            get_stylesheet_directory_uri() . '/blocks/prizes/prizes.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/prizes/prizes.css' )
+        );
+    });
+
+    /**
      * Register blocks
      */
 
@@ -69,32 +119,12 @@
             'https://use.typekit.net/yoq8bhl.css',
         );
 
-        wp_enqueue_style(
-            'reset',
-            get_stylesheet_directory_uri() . '/assets/css/reset.css',
+        wp_enqueue_script(
+            'viewport-width',
+            get_stylesheet_directory_uri() . '/assets/js/viewport-width.js',
             array(),
-            filemtime(get_stylesheet_directory() . '/assets/css/reset.css'),
-        );
-
-        wp_enqueue_style(
-            'theme',
-            get_stylesheet_directory_uri() . '/assets/css/theme.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/assets/css/theme.css'),
-        );
-
-        wp_enqueue_style(
-            'utilities',
-            get_stylesheet_directory_uri() . '/assets/css/utilities.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/assets/css/utilities.css'),
-        );
-
-        wp_enqueue_style(
-            'components',
-            get_stylesheet_directory_uri() . '/assets/css/components.css',
-            array(),
-            filemtime(get_stylesheet_directory() . '/assets/css/components.css'),
+            filemtime( get_stylesheet_directory() . '/assets/js/viewport-width.js' ),
+            true,
         );
 
         wp_enqueue_script(
@@ -103,6 +133,34 @@
             array(),
             filemtime( get_stylesheet_directory() . '/assets/js/header-menu.js' ),
             true,
+        );
+
+        wp_enqueue_style(
+            'reset',
+            get_stylesheet_directory_uri() . '/assets/css/reset.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/assets/css/reset.css'),
+        );
+
+        wp_enqueue_style(
+            'theme',
+            get_stylesheet_directory_uri() . '/assets/css/theme.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/assets/css/theme.css'),
+        );
+
+        wp_enqueue_style(
+            'utilities',
+            get_stylesheet_directory_uri() . '/assets/css/utilities.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/assets/css/utilities.css'),
+        );
+
+        wp_enqueue_style(
+            'components',
+            get_stylesheet_directory_uri() . '/assets/css/components.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/assets/css/components.css'),
         );
     } );
 

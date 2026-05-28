@@ -1,11 +1,11 @@
 import { registerBlockType } from "@wordpress/blocks";
-import { RichText, RichTextToolbarButton, URLInputButton, useBlockProps, InspectorControls } from "@wordpress/block-editor";
+import { RichText, URLInputButton, useBlockProps, InspectorControls, MediaUploadCheck, MediaUpload } from "@wordpress/block-editor";
 import { PanelBody, TextControl } from "@wordpress/components";
-import { registerFormatType, toggleFormat } from "@wordpress/rich-text";
+import { Button } from "@wordpress/components";
 
 registerBlockType("custom/hero", {
 	edit({ attributes, setAttributes }) {
-		const { title, subtitle, primaryButtonText, primaryButtonUrl, secondaryButtonText, secondaryButtonUrl } = attributes;
+		const { title, subtitle, primaryButtonText, primaryButtonUrl, secondaryButtonText, secondaryButtonUrl, desktopBackgroundImageId, mobileBackgroundImageId } = attributes;
 
 		return (
 			<section {...useBlockProps({ className: "editor-hero" })}>
@@ -58,9 +58,39 @@ registerBlockType("custom/hero", {
 				</div>
 
 				<InspectorControls>
-					<PanelBody title="Buttons">
+					<PanelBody title="Obrázky pozadia">
+						<MediaUploadCheck>
+							<MediaUpload
+								onSelect={(media) => {
+									setAttributes({ desktopBackgroundImageId: media.id });
+								}}
+								allowedTypes={["image"]}
+								value={desktopBackgroundImageId}
+								render={({ open }) => (
+									<Button onClick={open} variant="secondary">
+										{desktopBackgroundImageId ? "Zmeniť desktop obrázok" : "Vybrať desktop obrázok"}
+									</Button>
+								)}
+							/>
+						</MediaUploadCheck>
+						<MediaUploadCheck>
+							<MediaUpload
+								onSelect={(media) => {
+									setAttributes({ mobileBackgroundImageId: media.id });
+								}}
+								allowedTypes={["image"]}
+								value={mobileBackgroundImageId}
+								render={({ open }) => (
+									<Button onClick={open} variant="secondary">
+										{mobileBackgroundImageId ? "Zmeniť mobil obrázok" : "Vybrať mobil obrázok"}
+									</Button>
+								)}
+							/>
+						</MediaUploadCheck>
+					</PanelBody>
+					<PanelBody title="Tlačidlá">
 						<TextControl
-							label="Primary Button URL"
+							label="URL hlavného tlačidla"
 							value={primaryButtonUrl}
 							onChange={(value) => {
 								setAttributes({
@@ -69,7 +99,7 @@ registerBlockType("custom/hero", {
 							}}
 						/>
 						<TextControl
-							label="Secondary Button URL"
+							label="URL vedľajšieho tlačidla"
 							value={secondaryButtonUrl}
 							onChange={(value) => {
 								setAttributes({
