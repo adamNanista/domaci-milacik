@@ -18,7 +18,9 @@ registerBlockType("custom/prizes", {
 					}}
 				/>
 
-				<InnerBlocks allowedBlocks={["custom/prize"]} template={[["custom/prize"]]} orientation="vertical" />
+				<div class="editor-prizes-list">
+					<InnerBlocks allowedBlocks={["custom/prize"]} template={[["custom/prize"]]} orientation="vertical" />
+				</div>
 			</section>
 		);
 	},
