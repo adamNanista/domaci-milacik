@@ -1,0 +1,1 @@
+(()=>{"use strict";const o=window.wp.blocks,e=window.wp.blockEditor,r=window.ReactJSXRuntime;(0,o.registerBlockType)("custom/entry-form",{edit:()=>(0,r.jsx)("section",{...(0,e.useBlockProps)({className:"editor-entry-form"}),children:(0,r.jsx)("h1",{children:"Prihlasovací formulár"})}),save:()=>null})})();

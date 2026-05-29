@@ -38,11 +38,16 @@
      */
 
     add_action('init', function () {
+
+        /**
+         * Swiper
+         */
+
         wp_register_script(
             'swiper',
             'https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js',
             array(),
-            '12.2.0',
+            null,
             true
         );
 
@@ -50,8 +55,36 @@
             'swiper',
             'https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css',
             array(),
-            '12.2.0'
+            null
         );
+
+        /**
+         * Just Validate
+         */
+
+        wp_register_script(
+            'just-validate',
+            'https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js',
+            array(),
+            false,
+            true,
+        );
+
+        /**
+         * CloudFlare Turnstile
+         */
+
+        wp_register_script(
+            'cf-turnstile',
+            'https://challenges.cloudflare.com/turnstile/v0/api.js',
+            array(),
+            null,
+            true,
+        );
+
+        /**
+         * Hero
+         */
 
         wp_register_style(
             'hero',
@@ -59,6 +92,10 @@
             array(),
             filemtime( get_stylesheet_directory() . '/blocks/hero/hero.css' )
         );
+
+        /**
+         * Leaderboard
+         */
 
         wp_register_script(
             'leaderboard',
@@ -75,6 +112,10 @@
             filemtime( get_stylesheet_directory() . '/blocks/leaderboard/leaderboard.css' )
         );
 
+        /**
+         * Prizes
+         */
+
         wp_register_style(
             'prizes',
             get_stylesheet_directory_uri() . '/blocks/prizes/prizes.css',
@@ -82,11 +123,39 @@
             filemtime( get_stylesheet_directory() . '/blocks/prizes/prizes.css' )
         );
 
+        /**
+         * Page title
+         */
+
         wp_register_style(
             'page-title',
             get_stylesheet_directory_uri() . '/blocks/page-title/page-title.css',
             array(),
             filemtime( get_stylesheet_directory() . '/blocks/page-title/page-title.css' )
+        );
+
+        /**
+         * Entry form
+         */
+
+        wp_register_script(
+            'entry-form',
+            get_stylesheet_directory_uri() . '/blocks/entry-form/entry-form.js',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/entry-form/entry-form.js' ),
+            true
+        );
+
+        wp_localize_script( 'entry-form', 'contest_entry_form_ajax', array(
+            'ajax_url' => admin_url( 'admin-ajax.php' ),
+            'nonce'    => wp_create_nonce( 'contest_entry_form_submit_entry' ),
+        ) );
+
+        wp_register_style(
+            'entry-form',
+            get_stylesheet_directory_uri() . '/blocks/entry-form/entry-form.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/entry-form/entry-form.css' )
         );
     });
 
@@ -113,6 +182,10 @@
 
         register_block_type(
             get_stylesheet_directory() . '/blocks/page-title'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/entry-form'
         );
     });
 
