@@ -56,7 +56,7 @@
                                                     </a>
                                                     <div class="card-content">
                                                         <div class="space-y-4">
-                                                            <div class="space-y-3">
+                                                            <div class="space-y-2">
                                                                 <h3 class="text-2xl font-bold">
                                                                     <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                                                                 </h3>

@@ -176,6 +176,39 @@ body {
 
 .main {
 	flex: 1 1 0;
+	padding-right: 1.5rem;
+	padding-left: 1.5rem;
+}
+.main > * {
+	max-width: var(--wp--style--global--content-size);
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: 3rem;
+}
+.main > :first-child {
+	margin-top: 3rem;
+}
+.main > .alignfull {
+	max-width: none;
+	margin-right: -1.5rem;
+	margin-left: -1.5rem;
+}
+
+@media (min-width: 768px) {
+	.main {
+		padding-right: 3rem;
+		padding-left: 3rem;
+	}
+	.main > * {
+		margin-bottom: 4rem;
+	}
+	.main > :first-child {
+		margin-top: 4rem;
+	}
+	.main > .alignfull {
+		margin-right: -3rem;
+		margin-left: -3rem;
+	}
 }
 
 /* Content */
@@ -194,6 +227,14 @@ body {
 	.content > :not(:last-child) {
 		margin-bottom: 4rem;
 	}
+}
+
+/* Container */
+
+.container {
+	max-width: 72rem;
+	margin-right: auto;
+	margin-left: auto;
 }
 
 /* Footer */
@@ -272,14 +313,6 @@ body {
 	.social-icons {
 		margin-left: auto;
 	}
-}
-
-/* Container */
-
-.container {
-	max-width: 72rem;
-	margin-right: auto;
-	margin-left: auto;
 }
 
 /* Card */

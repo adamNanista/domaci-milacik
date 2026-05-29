@@ -6,9 +6,7 @@
 
     get_header();
 
-    if ( is_front_page() ) {
-        get_template_part( 'templates/front-page' );
-    } elseif ( is_singular() ) {
+    if ( is_singular() ) {
         get_template_part( 'templates/single' );
     } elseif ( is_archive() ) {
         get_template_part( 'templates/archive' );

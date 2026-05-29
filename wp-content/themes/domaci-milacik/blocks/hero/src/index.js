@@ -1,5 +1,5 @@
 import { registerBlockType } from "@wordpress/blocks";
-import { RichText, URLInputButton, useBlockProps, InspectorControls, MediaUploadCheck, MediaUpload } from "@wordpress/block-editor";
+import { RichText, useBlockProps, InspectorControls, MediaUploadCheck, MediaUpload } from "@wordpress/block-editor";
 import { PanelBody, TextControl } from "@wordpress/components";
 import { Button } from "@wordpress/components";
 

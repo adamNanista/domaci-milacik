@@ -8,18 +8,19 @@
      * Theme setup
      */
 
-    add_action('after_setup_theme', function() {
-        add_theme_support('title-tag');
-        add_theme_support('post-thumbnails');
-        add_theme_support('menus');
-        add_theme_support('html5', [
+    add_action( 'after_setup_theme', function() {
+        add_theme_support( 'title-tag' );
+        add_theme_support( 'post-thumbnails' );
+        add_theme_support( 'menus' );
+        add_theme_support( 'html5', [
             'search-form',
             'comment-form',
             'comment-list',
             'gallery',
             'caption',
-        ]);
-    });
+        ] );
+        add_theme_support( 'align-wide' );
+    } );
 
     /**
      * Includes
@@ -80,6 +81,13 @@
             array(),
             filemtime( get_stylesheet_directory() . '/blocks/prizes/prizes.css' )
         );
+
+        wp_register_style(
+            'page-title',
+            get_stylesheet_directory_uri() . '/blocks/page-title/page-title.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/page-title/page-title.css' )
+        );
     });
 
     /**
@@ -101,6 +109,10 @@
 
         register_block_type(
             get_stylesheet_directory() . '/blocks/prize'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/page-title'
         );
     });
 

@@ -1,0 +1,21 @@
+{
+	"apiVersion": 3,
+	"name": "custom/page-title",
+	"title": "Page title",
+	"category": "design",
+	"icon": "cover-image",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./editor.css",
+	"viewStyle": ["page-title"],
+	"render": "file:./render.php",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"subtitle": {
+			"type": "string",
+			"default": ""
+		}
+	}
+}

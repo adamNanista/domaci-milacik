@@ -10,7 +10,6 @@
 
 .editor-leaderboard {
 	padding: 3rem;
-	background-color: #f5f5f5;
 }
 
 .editor-leaderboard h1 {
@@ -20,7 +19,7 @@
 .editor-card {
 	aspect-ratio: 1/1;
 
-	background-color: #ffffff;
+	background-color: #f5f5f5;
 }
 
 .editor-link {

@@ -1,18 +1,8 @@
-.prizes {
-	margin-bottom: 3rem;
-	padding-right: 1rem;
-	padding-left: 1rem;
-}
 .prizes > :not(:last-child) {
 	margin-bottom: 1.5rem;
 }
 
 @media (min-width: 768px) {
-	.prizes {
-		margin-bottom: 4rem;
-		padding-right: 1.5rem;
-		padding-left: 1.5rem;
-	}
 	.prizes > :not(:last-child) {
 		margin-bottom: 2rem;
 	}

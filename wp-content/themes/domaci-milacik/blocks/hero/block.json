@@ -8,6 +8,9 @@
 	"editorStyle": "file:./editor.css",
 	"viewStyle": ["hero"],
 	"render": "file:./render.php",
+	"supports": {
+		"align": ["full"]
+	},
 	"attributes": {
 		"title": {
 			"type": "string",

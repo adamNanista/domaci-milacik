@@ -1,7 +1,7 @@
 const defaultConfig = require("@wordpress/scripts/config/webpack.config");
 const path = require("path");
 
-const blocks = ["hero", "leaderboard", "prizes", "prize"];
+const blocks = ["hero", "leaderboard", "prizes", "prize", "page-title"];
 
 module.exports = blocks.map((block) => ({
 	...defaultConfig,
