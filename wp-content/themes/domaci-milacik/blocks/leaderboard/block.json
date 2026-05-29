@@ -3,7 +3,7 @@
 	"name": "custom/leaderboard",
 	"title": "Leaderboard",
 	"category": "widgets",
-	"icon": "awards",
+	"icon": "chart-bar",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
 	"viewStyle": ["swiper", "leaderboard"],
