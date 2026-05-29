@@ -1,3 +1,11 @@
+<?php 
+
+    if ( ! defined( 'ABSPATH' ) ) {
+		exit; // Exit if accessed directly.
+	}
+
+?>
+
 <header class="header" role="banner">
     <div class="container">
         <div class="flex items-center gap-4 md:gap-6">

@@ -1,4 +1,9 @@
 <?php
+
+    if ( ! defined( 'ABSPATH' ) ) {
+		exit; // Exit if accessed directly.
+	}
+    
     $imageId = $attributes['imageId'] ?? null;
     $position = $attributes['position'] ?? '';
     $prize = $attributes['prize'] ?? '';

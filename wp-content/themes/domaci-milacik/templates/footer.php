@@ -1,3 +1,11 @@
+<?php 
+
+    if ( ! defined( 'ABSPATH' ) ) {
+		exit; // Exit if accessed directly.
+	}
+
+?>
+
 <footer class="footer" role="contentinfo">
     <div class="container">
         <div class="flex flex-col items-center gap-8 md:flex-row md:gap-6">
