@@ -54,6 +54,17 @@
 	align-items: flex-end;
 }
 
+.justify-between {
+	justify-content: space-between;
+}
+
+.flex-none {
+	flex: 0 0 auto;
+}
+.flex-1 {
+	flex: 1 1 0;
+}
+
 .grid-cols-1 {
 	grid-template-columns: repeat(1, minmax(0, 1fr));
 }
@@ -491,6 +502,10 @@
 
 .text-red-600 {
 	color: var(--red-600);
+}
+
+.text-center {
+	text-align: center;
 }
 
 .text-uppercase {

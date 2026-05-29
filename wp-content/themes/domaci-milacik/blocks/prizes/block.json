@@ -6,6 +6,12 @@
 	"icon": "awards",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
-	"style": ["prizes"],
-	"render": "file:./render.php"
+	"viewStyle": ["prizes"],
+	"render": "file:./render.php",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": ""
+		}
+	}
 }

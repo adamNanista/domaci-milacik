@@ -6,7 +6,21 @@
 	"icon": "awards",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
-	"style": ["swiper", "leaderboard"],
+	"viewStyle": ["swiper", "leaderboard"],
 	"viewScript": ["swiper", "leaderboard"],
-	"render": "file:./render.php"
+	"render": "file:./render.php",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonText": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonUrl": {
+			"type": "string",
+			"default": ""
+		}
+	}
 }

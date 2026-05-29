@@ -1,11 +1,23 @@
 import { registerBlockType } from "@wordpress/blocks";
-import { InnerBlocks, useBlockProps } from "@wordpress/block-editor";
+import { RichText, InnerBlocks, useBlockProps } from "@wordpress/block-editor";
 
 registerBlockType("custom/prizes", {
-	edit() {
+	edit({ attributes, setAttributes }) {
+		const { title } = attributes;
+
 		return (
 			<section {...useBlockProps({ className: "editor-prizes" })}>
-				<h1>O čo hráme</h1>
+				<RichText
+					tagName="h1"
+					placeholder="Zadajte nadpis"
+					value={title}
+					onChange={(value) => {
+						setAttributes({
+							title: value,
+						});
+					}}
+				/>
+
 				<InnerBlocks allowedBlocks={["custom/prize"]} template={[["custom/prize"]]} orientation="vertical" />
 			</section>
 		);

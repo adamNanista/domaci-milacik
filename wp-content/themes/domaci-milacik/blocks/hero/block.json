@@ -6,7 +6,7 @@
 	"icon": "cover-image",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
-	"style": ["hero"],
+	"viewStyle": ["hero"],
 	"render": "file:./render.php",
 	"attributes": {
 		"title": {

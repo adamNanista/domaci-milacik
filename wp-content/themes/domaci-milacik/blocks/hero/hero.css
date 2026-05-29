@@ -6,6 +6,9 @@
 
 	background-color: var(--neutral-500);
 }
+.hero:not(:last-child) {
+	margin-bottom: 3rem;
+}
 .hero-background,
 .hero-background img {
 	width: 100%;
@@ -27,6 +30,9 @@
 @media (min-width: 768px) {
 	.hero {
 		padding: 4rem 1.5rem;
+	}
+	.hero:not(:last-child) {
+		margin-bottom: 4rem;
 	}
 	.hero-background img {
 		object-position: center;

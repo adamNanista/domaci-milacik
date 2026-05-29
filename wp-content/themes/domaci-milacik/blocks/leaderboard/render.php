@@ -1,5 +1,11 @@
 <?php
 
+    $attributes = $attributes ?? [];
+
+	$title = $attributes['title'] ?? '';
+    $buttonText = $attributes['buttonText'] ?? '';
+    $buttonUrl = $attributes['buttonUrl'] ?? '';
+
     $args = array(
         'post_type'         => 'contest_entry',
         'post_status'       => 'publish',
@@ -16,7 +22,21 @@
         ?>
             <section class="leaderboard">
                 <div class="container">
-                    <h2 class="font-heading text-3xl font-bold text-uppercase md:text-4xl">TOP miláčikovia</h2>
+                    <div class="flex items-start gap-4 md:gap-1.5">
+                        <div class="flex-1">
+                            <h2 class="font-heading text-4xl font-bold text-uppercase"><?php echo $title ? wp_kses_post( $title ) : 'Rebríček miláčikov'; ?></h2>
+                        </div>
+                        <div class="flex-none flex items-center gap-3 md:gap-4">
+                            <button class="leaderboard-button-prev" type="button">
+                                <span class="visually-hidden">Predošlý</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+                            </button>
+                            <button class="leaderboard-button-next" type="button">
+                                <span class="visually-hidden">Ďalší</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right-icon lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="container">
                     <div class="leaderboard-slider-wrapper">
@@ -55,14 +75,14 @@
                                 ?>
                             </div>
                         </div>
-                        <button class="swiper-button-prev" id="leaderboard-button-prev" type="button">
-                            <span class="visually-hidden">Predošlý</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
-                        </button>
-                        <button class="swiper-button-next" id="leaderboard-button-next" type="button">
-                            <span class="visually-hidden">Ďalší</span>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="text-center">
+                        <a href="<?php echo $buttonUrl ? esc_url( $buttonUrl ) : home_url( '/milacikovia' ); ?>" class="link link-sm link-primary">
+                            <?php echo $buttonText ? esc_html( $buttonText ) : 'Zobraziť celú galériu'; ?>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right-icon lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </section>

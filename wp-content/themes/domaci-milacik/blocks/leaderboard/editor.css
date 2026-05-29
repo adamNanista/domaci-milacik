@@ -1,3 +1,13 @@
+.editor-grid {
+	display: grid;
+}
+.editor-grid-cols-4 {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.editor-gap-4 {
+	gap: 1rem;
+}
+
 .editor-leaderboard {
 	padding: 3rem;
 	background-color: #f5f5f5;
@@ -5,4 +15,18 @@
 
 .editor-leaderboard h1 {
 	margin-top: 0;
+}
+
+.editor-card {
+	aspect-ratio: 1/1;
+
+	background-color: #ffffff;
+}
+
+.editor-link {
+	display: block;
+	margin-top: 1em;
+
+	color: #db1218;
+	text-align: center;
 }
