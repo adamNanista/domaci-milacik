@@ -6,12 +6,16 @@
 
     get_header();
 
-    if ( is_singular() ) {
-        get_template_part( 'templates/single' );
-    } elseif ( is_archive() ) {
-        get_template_part( 'templates/archive' );
-    } else {
-        get_template_part( 'templates/404' );
+    while ( have_posts() ) {
+        the_post();
+
+        ?>
+            <main <?php post_class( 'main' ); ?> role="main">
+                <?php 
+                    the_content();
+                ?>
+            </main>
+        <?php
     }
 
     get_footer();

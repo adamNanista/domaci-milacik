@@ -10,7 +10,7 @@
 	padding-left: var(--gutter) !important;
 }
 .leaderboard-slider .swiper-slide {
-	width: calc(var(--viewport-width) - calc(2 * var(--gutter)) - 1rem - 12px);
+	width: calc(var(--viewport-width) - calc(2 * var(--gutter)) - 1rem - 16px);
 }
 .leaderboard-button-prev,
 .leaderboard-button-next {
@@ -26,6 +26,7 @@
 
 	background-color: transparent;
 	border-radius: 0.25rem;
+	outline-color: var(--black);
 	transition: all 0.3s;
 }
 .leaderboard-button-prev:focus,
@@ -42,13 +43,13 @@
 }
 .leaderboard-button-prev svg,
 .leaderboard-button-next svg {
-	width: 1.5rem;
-	height: 1.5rem;
+	width: 1.25rem;
+	height: 1.25rem;
 }
 
 @media (min-width: 480px) {
 	.leaderboard-slider .swiper-slide {
-		width: calc((var(--viewport-width) - calc(2 * var(--gutter)) - 1rem - 24px) / 2);
+		width: calc((var(--viewport-width) - calc(2 * var(--gutter)) - 1rem - 32px) / 2);
 	}
 }
 
@@ -58,20 +59,6 @@
 	}
 	.leaderboard-slider .swiper-slide {
 		width: calc((var(--viewport-width) - calc(2 * var(--gutter)) - 1.5rem - 48px) / 3);
-	}
-	.leaderboard-button-prev,
-	.leaderboard-button-next {
-		width: 2.5rem;
-		height: 2.5rem;
-
-		color: var(--neutral-500);
-
-		background-color: transparent;
-	}
-	.leaderboard-button-prev svg,
-	.leaderboard-button-next svg {
-		width: 1.75rem;
-		height: 1.75rem;
 	}
 }
 

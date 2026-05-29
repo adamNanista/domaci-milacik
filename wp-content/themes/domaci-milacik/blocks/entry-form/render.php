@@ -6,7 +6,7 @@
 
 ?>
 
-<section class="entry-form">
+<section <?php echo get_block_wrapper_attributes( array( 'class' => 'entry-form' ) ); ?>>
     <form class="grid gap-6 md:grid-cols-2" id="contest-entry-form" enctype="multipart/form-data" novalidate="novalidate">
         <div class="space-y-6">
             <label class="field">

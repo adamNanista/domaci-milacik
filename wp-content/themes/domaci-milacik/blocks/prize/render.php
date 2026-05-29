@@ -10,7 +10,7 @@
 
 ?>
 
-<article class="prize">
+<article <?php echo get_block_wrapper_attributes( array( 'class' => 'prize' ) ); ?>>
     <?php 
         if ( $imageId  ) {
             ?>
@@ -24,7 +24,7 @@
     ?>
     <div class="prize-content">
         <div class="space-y-1">
-            <h3 class="font-heading text-lg font-bold text-uppercase">
+            <h3 class="font-heading text-xl font-bold text-uppercase">
                 <?php 
                     echo wp_kses_post( $position );
                 ?>

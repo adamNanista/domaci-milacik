@@ -23,6 +23,13 @@
     } );
 
     /**
+     * Custom image sizes
+     */
+
+    add_image_size( 'contest-entry-card', 274, 206, true );
+    add_image_size( 'contest-entry-detail', 552, 552, true );
+
+    /**
      * Includes
      */
 
@@ -37,7 +44,7 @@
      * Register block assets
      */
 
-    add_action('init', function () {
+    add_action( 'init', function () {
 
         /**
          * Swiper
@@ -157,7 +164,7 @@
             array(),
             filemtime( get_stylesheet_directory() . '/blocks/entry-form/entry-form.css' )
         );
-    });
+    } );
 
     /**
      * Register blocks
@@ -190,7 +197,7 @@
     });
 
     /**
-     * Load CSS and JS
+     * Load assets
      */
 
     add_action( 'wp_enqueue_scripts', function() {
@@ -247,6 +254,30 @@
             array(),
             filemtime( get_stylesheet_directory() . '/assets/css/components.css'),
         );
+
+        if ( is_singular( 'contest_entry' ) ) {
+            wp_enqueue_script(
+                'cf-turnstile',
+                'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit',
+                array(),
+                null,
+                true,
+            );
+
+            wp_enqueue_script(
+                'contest-entry-voting',
+                get_stylesheet_directory_uri() . '/assets/js/contest-entry-voting.js',
+                array( 'cf-turnstile' ),
+                filemtime( get_stylesheet_directory() . '/assets/js/contest-entry-voting.js' ),
+                true,
+            );
+
+            wp_localize_script( 'contest-entry-voting', 'contest_entry_voting_ajax', array(
+                'ajax_url'              => admin_url( 'admin-ajax.php' ),
+                'nonce'                 => wp_create_nonce( 'contest_entry_vote' ),
+                'turnstile_site_key'    => CLOUDFLARE_TURNSTILE_SITE_KEY,
+            ) );
+        }
     } );
 
     /**

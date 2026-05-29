@@ -4,6 +4,8 @@
 		exit; // Exit if accessed directly.
 	}
 
+    get_header();
+
     while ( have_posts() ) {
         the_post();
 
@@ -15,3 +17,5 @@
             </main>
         <?php
     }
+
+    get_footer();
