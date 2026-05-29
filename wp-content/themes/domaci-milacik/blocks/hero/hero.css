@@ -26,6 +26,9 @@
 .hero-content {
 	position: relative;
 }
+.hero .button {
+	outline-color: var(--white);
+}
 
 @media (min-width: 768px) {
 	.hero {
