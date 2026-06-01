@@ -1,12 +1,12 @@
 import { registerBlockType } from "@wordpress/blocks";
 import { RichText, InnerBlocks, useBlockProps } from "@wordpress/block-editor";
 
-registerBlockType("custom/prizes", {
+registerBlockType("custom/steps", {
 	edit({ attributes, setAttributes }) {
 		const { title } = attributes;
 
 		return (
-			<section {...useBlockProps({ className: "editor-prizes" })}>
+			<section {...useBlockProps({ className: "editor-steps" })}>
 				<RichText
 					tagName="h1"
 					placeholder="Zadajte nadpis"
@@ -18,8 +18,8 @@ registerBlockType("custom/prizes", {
 					}}
 				/>
 
-				<div class="editor-prizes-list">
-					<InnerBlocks allowedBlocks={["custom/prize"]} template={[["custom/prize"]]} orientation="horizontal" />
+				<div class="editor-steps-list">
+					<InnerBlocks allowedBlocks={["custom/step"]} template={[["custom/step"]]} orientation="horizontal" />
 				</div>
 			</section>
 		);

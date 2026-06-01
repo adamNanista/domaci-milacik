@@ -1,11 +1,12 @@
 {
 	"apiVersion": 3,
-	"name": "custom/prize",
-	"title": "Prize",
-	"category": "widgets",
-	"icon": "awards",
-	"parent": ["custom/prizes"],
+	"name": "custom/donation",
+	"title": "Donation",
+	"category": "design",
+	"icon": "money-alt",
 	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./editor.css",
+	"viewStyle": ["donation"],
 	"render": "file:./render.php",
 	"attributes": {
 		"imageId": {

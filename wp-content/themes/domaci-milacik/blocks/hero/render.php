@@ -13,7 +13,7 @@
 	$secondaryButtonText = $attributes['secondaryButtonText'] ?? '';
 	$secondaryButtonUrl = $attributes['secondaryButtonUrl'] ?? '';
 	$mobileBackgroundImageId = $attributes['mobileBackgroundImageId'] ?? null;
-	$desktopBackgroundImageId = $attributes['desktopBackgroundImageId'] ?? $mobileBackgroundImageId;
+	$desktopBackgroundImageId = $attributes['desktopBackgroundImageId'] ?? null;
 
 ?>
 
@@ -46,7 +46,7 @@
 			<div class="grid gap-6 md:grid-cols-2">
 				<div class="space-y-6">
 					<div class="space-y-4">
-						<h1 class="font-heading text-6xl font-bold text-uppercase md:text-7xl"><?php echo $title ? wp_kses_post( $title ) : 'Nadpis'; ?></h1>
+						<h1 class="font-heading text-5xl font-bold text-uppercase md:text-7xl"><?php echo $title ? wp_kses_post( $title ) : 'Nadpis'; ?></h1>
 						<?php 
 							if ( $subtitle ) {
 								?>
@@ -55,14 +55,30 @@
 							}
 						?>
 					</div>
-					<div class="flex items-center gap-4">
-						<a class="button button-md button-primary" href="<?php echo $primaryButtonUrl ? esc_url( $primaryButtonUrl ) : '#'; ?>">
-							<?php echo $primaryButtonText ? esc_html( $primaryButtonText ) : 'Hlavné tlačidlo'; ?>
-						</a>
-						<a class="button button-md button-white button-outline" href="<?php echo $secondaryButtonUrl ? esc_url( $secondaryButtonUrl ) : '#'; ?>">
-							<?php echo $secondaryButtonText ? esc_html( $secondaryButtonText ) : 'Vedľajšie tlačidlo'; ?>
-						</a>
-					</div>
+					<?php 
+						if ( ( $primaryButtonText && $primaryButtonUrl ) || ( $secondaryButtonText && $secondaryButtonUrl ) ) {
+							?>
+								<div class="flex flex-wrap items-center gap-4">
+									<?php 
+										if ( $primaryButtonText && $primaryButtonUrl ) {
+											?>	
+												<a class="button button-md button-primary" href="<?php echo esc_url( $primaryButtonUrl ); ?>">
+													<?php echo esc_html( $primaryButtonText ); ?>
+												</a>
+											<?php
+										}
+										if ( $secondaryButtonText && $secondaryButtonUrl ) {
+											?>
+												<a class="button button-md button-white button-outline" href="<?php echo esc_url( $secondaryButtonUrl ); ?>">
+													<?php echo esc_html( $secondaryButtonText ); ?>
+												</a>
+											<?php
+										}
+									?>
+								</div>
+							<?php
+						}
+					?>
 				</div>
 			</div>
 		</div>

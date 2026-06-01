@@ -15,7 +15,7 @@
                     <div class="grid gap-12 md:grid-cols-2">
                         <div class="">
                             <?php
-                                the_post_thumbnail();
+                                the_post_thumbnail( 'contest-entry-detail' );
                             ?>
                         </div>
                         <div>

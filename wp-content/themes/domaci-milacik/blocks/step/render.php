@@ -10,11 +10,11 @@
 
 ?>
 
-<article <?php echo get_block_wrapper_attributes( array( 'class' => 'prize' ) ); ?>>
+<article <?php echo get_block_wrapper_attributes( array( 'class' => 'step' ) ); ?>>
     <?php 
         if ( $imageId  ) {
             ?>
-                <div class="prize-icon">
+                <div class="step-icon">
                     <?php 
                         echo wp_get_attachment_image( $imageId, 'full' );
                     ?>
@@ -22,14 +22,14 @@
             <?php
         }
     ?>
-    <div class="prize-content">
-        <div class="space-y-1">
+    <div class="step-content">
+        <div class="space-y-3 text-center">
             <h3 class="font-heading text-2xl font-bold text-uppercase">
                 <?php 
                     echo wp_kses_post( $title );
                 ?>
             </h3>
-            <p class="font-heading text-red-600 text-5xl font-bold text-uppercase">
+            <p class="text-base text-neutral-500">
                 <?php 
                     echo wp_kses_post( $subtitle );
                 ?>

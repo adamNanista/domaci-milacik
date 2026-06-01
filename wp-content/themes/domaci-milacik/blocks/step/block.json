@@ -1,10 +1,10 @@
 {
 	"apiVersion": 3,
-	"name": "custom/prize",
-	"title": "Prize",
+	"name": "custom/step",
+	"title": "Step",
 	"category": "widgets",
-	"icon": "awards",
-	"parent": ["custom/prizes"],
+	"icon": "editor-ol",
+	"parent": ["custom/steps"],
 	"editorScript": "file:./build/index.js",
 	"render": "file:./render.php",
 	"attributes": {

@@ -1,0 +1,17 @@
+{
+	"apiVersion": 3,
+	"name": "custom/steps",
+	"title": "Steps",
+	"category": "widgets",
+	"icon": "editor-ol",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./editor.css",
+	"viewStyle": ["steps"],
+	"render": "file:./render.php",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": ""
+		}
+	}
+}

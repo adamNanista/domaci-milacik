@@ -1,0 +1,37 @@
+{
+	"apiVersion": 3,
+	"name": "custom/cta",
+	"title": "CTA",
+	"category": "design",
+	"icon": "megaphone",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./editor.css",
+	"viewStyle": ["cta"],
+	"render": "file:./render.php",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"subtitle": {
+			"type": "string",
+			"default": ""
+		},
+		"primaryButtonText": {
+			"type": "string",
+			"default": ""
+		},
+		"primaryButtonUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"secondaryButtonText": {
+			"type": "string",
+			"default": ""
+		},
+		"secondaryButtonUrl": {
+			"type": "string",
+			"default": ""
+		}
+	}
+}

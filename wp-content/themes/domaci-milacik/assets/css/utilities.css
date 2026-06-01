@@ -19,6 +19,10 @@
 	display: grid;
 }
 
+.flex-wrap {
+	flex-wrap: wrap;
+}
+
 .flex-row {
 	flex-direction: row;
 }
@@ -54,6 +58,9 @@
 	align-items: flex-end;
 }
 
+.justify-center {
+	justify-content: center;
+}
 .justify-between {
 	justify-content: space-between;
 }
@@ -524,6 +531,9 @@
 .text-red-600 {
 	color: var(--red-600);
 }
+.text-neutral-500 {
+	color: var(--neutral-500);
+}
 
 .text-center {
 	text-align: center;
@@ -534,6 +544,10 @@
 }
 
 @media (min-width: 768px) {
+	.md\:text-left {
+		text-align: left;
+	}
+
 	.md\:text-uppercase {
 		text-transform: uppercase;
 	}

@@ -32,7 +32,7 @@
 
 @media (min-width: 768px) {
 	.hero {
-		padding: 4rem 3rem;
+		padding: 6rem 3rem;
 	}
 	.hero-background img {
 		object-position: center;

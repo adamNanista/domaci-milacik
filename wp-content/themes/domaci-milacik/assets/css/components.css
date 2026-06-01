@@ -200,10 +200,10 @@ body {
 		padding-left: 3rem;
 	}
 	.main > * {
-		margin-bottom: 4rem;
+		margin-bottom: 6rem;
 	}
 	.main > :first-child {
-		margin-top: 4rem;
+		margin-top: 6rem;
 	}
 	.main > .alignfull {
 		margin-right: -3rem;
@@ -300,6 +300,9 @@ body {
 /* Card */
 
 .card {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 	overflow: hidden;
 
 	border: 1px solid var(--neutral-200);
@@ -310,6 +313,7 @@ body {
 	text-decoration: none;
 }
 .card-thumbnail {
+	flex: 0 0 auto;
 	display: block;
 	overflow: hidden;
 }
@@ -329,15 +333,30 @@ body {
 	transform: scale(1.1);
 }
 .card-content {
+	flex: 1 1 0;
+	display: flex;
+	flex-direction: column;
 	padding: 1.5rem;
 }
-.card-content a:not(.button) {
+.card-content > :not(:last-child) {
+	margin-bottom: 1rem;
+}
+.card-content-header {
+	flex: 1 1 0;
+}
+.card-content-header > :not(:last-child) {
+	margin-bottom: 0.5rem;
+}
+.card-content-header a {
 	color: inherit;
 	text-decoration: none;
 }
-.card-content a:not(.button):focus,
-.card-content a:not(.button):hover {
+.card-content-header a:focus,
+.card-content-header a:hover {
 	text-decoration: underline;
+}
+.card-content-footer {
+	flex: 0 0 auto;
 }
 
 /* Buttons */
@@ -428,10 +447,10 @@ body {
 	--button--text-filled: var(--black);
 	--button--text-outline: var(--white);
 	--button--background-filled: var(--white);
-	--button--background-filled-hover: var(--neutral-100);
+	--button--background-filled-hover: rgba(255, 255, 255, 0.8);
 	--button--background-outline-hover: rgba(255, 255, 255, 0.2);
 	--button--border-filled: var(--white);
-	--button--border-filled-hover: var(--neutral-100);
+	--button--border-filled-hover: rgba(255, 255, 255, 0);
 	--button--border-outline: var(--white);
 }
 
@@ -583,7 +602,7 @@ body {
 	flex: 0 0 auto;
 
 	color: var(--red-600);
-	fill: var(--red-100);
+	fill: var(--red-600);
 
 	width: var(--votes--icon-size, 1.25rem);
 	height: 1lh;

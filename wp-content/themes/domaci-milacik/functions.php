@@ -131,6 +131,39 @@
         );
 
         /**
+         * Steps
+         */
+
+        wp_register_style(
+            'steps',
+            get_stylesheet_directory_uri() . '/blocks/steps/steps.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/steps/steps.css' )
+        );
+
+        /**
+         * Donation
+         */
+
+        wp_register_style(
+            'donation',
+            get_stylesheet_directory_uri() . '/blocks/donation/donation.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/donation/donation.css' )
+        );
+
+        /**
+         * CTA
+         */
+
+        wp_register_style(
+            'cta',
+            get_stylesheet_directory_uri() . '/blocks/cta/cta.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/cta/cta.css' )
+        );
+
+        /**
          * Page title
          */
 
@@ -185,6 +218,22 @@
 
         register_block_type(
             get_stylesheet_directory() . '/blocks/prize'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/steps'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/step'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/donation'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/cta'
         );
 
         register_block_type(

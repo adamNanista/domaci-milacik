@@ -1,0 +1,24 @@
+.donation {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2rem;
+	padding: 1.5rem 2rem;
+
+	background-color: var(--green-100);
+	border-radius: 0.75rem;
+}
+
+.donation-icon {
+	width: 6rem;
+}
+.donation-icon img {
+	width: 100%;
+}
+
+@media (min-width: 768px) {
+	.donation {
+		flex-direction: row-reverse;
+		justify-content: space-between;
+	}
+}

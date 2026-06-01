@@ -3,7 +3,7 @@ import { MediaUploadCheck, MediaUpload, RichText, useBlockProps } from "@wordpre
 import { Button } from "@wordpress/components";
 import { useSelect } from "@wordpress/data";
 
-registerBlockType("custom/prize", {
+registerBlockType("custom/step", {
 	edit({ attributes, setAttributes }) {
 		const { imageId, title, subtitle } = attributes;
 
@@ -17,7 +17,7 @@ registerBlockType("custom/prize", {
 		);
 
 		return (
-			<article {...useBlockProps({ className: "editor-prize" })}>
+			<article {...useBlockProps({ className: "editor-step" })}>
 				<MediaUploadCheck>
 					{imageUrl && (
 						<div style={{ marginBottom: "8px" }}>

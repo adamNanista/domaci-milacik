@@ -208,6 +208,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 					videoUrlPanel.classList.remove("hidden");
 					videoUploadPanel.classList.add("hidden");
+
+					const dropzoneFile = dropzone.parentElement.querySelector(".dropzone-file");
+
+					if (dropzoneFile) {
+						dropzoneFile.remove();
+					}
 				} else {
 					if (result.data.message) {
 						showError(result.data.message || "Niečo sa pokazilo. Skúste to prosím znova.");
@@ -301,10 +307,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 
 	function renderFiles(dropzone, input) {
-		const dropzoneFiles = dropzone.parentElement.querySelector(".dropzone-file");
+		const dropzoneFile = dropzone.parentElement.querySelector(".dropzone-file");
 
-		if (dropzoneFiles) {
-			dropzoneFiles.remove();
+		if (dropzoneFile) {
+			dropzoneFile.remove();
 		}
 
 		[...input.files].forEach((file) => {
