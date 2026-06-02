@@ -23,10 +23,20 @@
     } );
 
     /**
+     * Change default posts per page count
+     */
+
+    add_action( 'pre_get_posts', function( $query ) {
+        if ( ! is_admin() && $query->is_main_query() ) {
+            $query->set( 'posts_per_page', 8 );
+        }
+    } );
+
+    /**
      * Custom image sizes
      */
 
-    add_image_size( 'contest-entry-card', 274, 206, true );
+    add_image_size( 'contest-entry-card', 272, 204, true );
     add_image_size( 'contest-entry-detail', 552, 552, true );
 
     /**
@@ -39,6 +49,10 @@
     require_once get_stylesheet_directory() . '/inc/contest-entry-voting.php';
     require_once get_stylesheet_directory() . '/inc/contest-entry-import.php';
     require_once get_stylesheet_directory() . '/inc/latest-articles.php';
+
+    if ( defined( 'WP_CLI' ) && WP_CLI ) {
+        require_once get_stylesheet_directory() . '/inc/contest-entry-seeder.php';
+    }
 
     /**
      * Register block assets

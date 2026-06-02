@@ -8,5 +8,15 @@
 	color: var(--white);
 
 	background-color: var(--red-600);
+	background-image: url(assets/paw-print.svg);
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 48rem;
 	border-radius: 0.75rem;
+}
+
+@media (min-width: 768px) {
+	.cta {
+		background-size: 72rem;
+	}
 }

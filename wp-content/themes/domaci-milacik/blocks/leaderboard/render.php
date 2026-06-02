@@ -13,7 +13,7 @@
     $args = array(
         'post_type'         => 'contest_entry',
         'post_status'       => 'publish',
-        'posts_per_page'    => 10,
+        'posts_per_page'    => 8,
         'meta_key'          => 'votes',
         'orderby'           => 'meta_value_num',
         'order'             => 'DESC',
@@ -29,7 +29,7 @@
                     <div class="flex-1">
                         <h2 class="font-heading text-4xl font-bold text-uppercase"><?php echo $title ? wp_kses_post( $title ) : 'Rebríček miláčikov'; ?></h2>
                     </div>
-                    <div class="flex-none flex items-center gap-3">
+                    <div class="flex-none flex items-center gap-2">
                         <button class="leaderboard-button-prev" type="button">
                             <span class="visually-hidden">Predošlý</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
