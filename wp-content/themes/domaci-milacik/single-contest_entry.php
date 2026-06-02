@@ -10,7 +10,7 @@
         the_post();
 
         ?>
-            <main <?php post_class( 'main' ); ?> role="main">
+            <main <?php post_class( 'flex-1 px-6 [&>*]:max-w-[var(--wp--style--global--content-size)] [&>*]:mx-auto [&>*]:mb-12 [&>:first-child]:mt-12 [&>.alignfull]:max-w-none [&>.alignfull]:-mx-6 md:px-12 md:[&>*]:mb-24 md:[&>:first-child]:mt-24 md:[&>.alignfull]:-mx-12' ); ?> role="main">
                 <section class="detail">
                     <div class="grid gap-12 md:grid-cols-2">
                         <div class="detail-media">

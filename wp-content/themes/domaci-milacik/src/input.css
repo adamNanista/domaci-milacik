@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@theme {
+	--font-sans: "PT Sans", sans-serif;
+	--font-heading: "din-2014-narrow", sans-serif;
+
+	--color-primary-50: #fff1f1;
+	--color-primary-100: #ffe0e1;
+	--color-primary-200: #ffc5c7;
+	--color-primary-300: #ff9da0;
+	--color-primary-400: #ff656a;
+	--color-primary-500: #fe353b;
+	--color-primary-600: #db1218;
+	--color-primary-700: #c70e14;
+	--color-primary-800: #a41014;
+	--color-primary-900: #881417;
+	--color-primary-950: #4a0507;
+	--color-accent-50: #fff8eb;
+	--color-accent-100: #feecc7;
+	--color-accent-200: #fdd78a;
+	--color-accent-300: #fcc059;
+	--color-accent-400: #fba224;
+	--color-accent-500: #f57f0b;
+	--color-accent-600: #d95b06;
+	--color-accent-700: #b43c09;
+	--color-accent-800: #922e0e;
+	--color-accent-900: #78270f;
+	--color-accent-950: #451103;
+	--color-success-50: #f2fbf2;
+	--color-success-100: #e2f6e2;
+	--color-success-200: #c6ecc7;
+	--color-success-300: #99dc9b;
+	--color-success-400: #65c368;
+	--color-success-500: #3c9f40;
+	--color-success-600: #2f8a33;
+	--color-success-700: #286d2b;
+	--color-success-800: #245727;
+	--color-success-900: #1f4822;
+	--color-success-950: #0c270e;
+}
+
+@layer base {
+	:root {
+		@apply accent-accent-700;
+	}
+	:focus {
+		@apply outline-2 outline-solid outline-offset-2 outline-current;
+	}
+}
+
+@layer components {
+	.button {
+		@apply cursor-pointer inline-flex align-top items-center justify-center font-bold text-center uppercase border-2 outline-black transition-colors;
+
+		gap: var(--button--gap, calc(var(--spacing) * 2.5));
+		height: var(--button--size, calc(var(--spacing) * 12));
+		padding-right: var(--button--padding-inline, calc(var(--spacing) * 5));
+		padding-left: var(--button--padding-inline, calc(var(--spacing) * 5));
+
+		color: var(--button--text-filled, var(--color-black));
+		fill: var(--button--text-filled, var(--color-black));
+		font-size: var(--button--font-size, var(--text-base));
+		line-height: var(--button--line-height, var(--text-base--line-height));
+
+		background-color: var(--button--background-filled, var(--color-neutral-200));
+		border-color: var(--button--border-filled, var(--color-neutral-200));
+		border-radius: var(--button--border-radius, var(--radius-md));
+	}
+}
+
+@utility button-sm {
+	--button--gap: calc(var(--spacing) * 2);
+	--button--size: calc(var(--spacing) * 10);
+	--button--padding-inline: calc(var(--spacing) * 4);
+	--button--font-size: var(--text-sm);
+	--button--line-height: var(--text-sm--line-height);
+	--button--border-radius: var(--radius-sm);
+}
+
+@utility button-md {
+	--button--gap: calc(var(--spacing) * 2.5);
+	--button--size: calc(var(--spacing) * 12);
+	--button--padding-inline: calc(var(--spacing) * 5);
+	--button--font-size: var(--text-base);
+	--button--line-height: var(--text-base--line-height);
+	--button--border-radius: var(--radius-md);
+}
+
+@utility button-lg {
+	--button--gap: calc(var(--spacing) * 3);
+	--button--size: calc(var(--spacing) * 14);
+	--button--padding-inline: calc(var(--spacing) * 6);
+	--button--font-size: var(--text-lg);
+	--button--line-height: var(--text-lg--line-height);
+	--button--border-radius: var(--radius-lg);
+}

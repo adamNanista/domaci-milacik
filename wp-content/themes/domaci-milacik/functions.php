@@ -127,17 +127,6 @@
         );
 
         /**
-         * Hero
-         */
-
-        wp_register_style(
-            'hero',
-            get_stylesheet_directory_uri() . '/blocks/hero/hero.css',
-            array(),
-            filemtime( get_stylesheet_directory() . '/blocks/hero/hero.css' )
-        );
-
-        /**
          * Leaderboard
          */
 
@@ -314,6 +303,13 @@
         );
 
         wp_enqueue_style(
+            'style',
+            get_stylesheet_directory_uri() . '/assets/css/style.css',
+            array(),
+            filemtime( get_stylesheet_directory() . '/assets/css/style.css'),
+        );
+
+        /*wp_enqueue_style(
             'reset',
             get_stylesheet_directory_uri() . '/assets/css/reset.css',
             array(),
@@ -339,7 +335,7 @@
             get_stylesheet_directory_uri() . '/assets/css/components.css',
             array(),
             filemtime( get_stylesheet_directory() . '/assets/css/components.css'),
-        );
+        );*/
 
         if ( is_singular( 'contest_entry' ) ) {
 
