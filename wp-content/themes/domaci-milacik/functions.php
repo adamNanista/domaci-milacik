@@ -75,8 +75,6 @@
         wp_register_style(
             'swiper',
             'https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css',
-            array(),
-            null
         );
 
         /**
@@ -85,7 +83,7 @@
 
         wp_register_script(
             'just-validate',
-            'https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js',
+            'https://cdn.jsdelivr.net/npm/just-validate@4.3.0/dist/just-validate.production.min.js',
             array(),
             false,
             true,
@@ -101,6 +99,31 @@
             array(),
             null,
             true,
+        );
+
+        wp_register_script(
+            'cf-turnstile-explicit',
+            'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit',
+            array(),
+            null,
+            true,
+        );
+
+        /**
+         * Fancybox
+         */
+
+        wp_register_script(
+            'fancybox',
+            'https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1/dist/fancybox/fancybox.umd.js',
+            array(),
+            null,
+            true,
+        );
+
+        wp_register_style(
+            'fancybox',
+            'https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1/dist/fancybox/fancybox.css',
         );
 
         /**
@@ -319,11 +342,33 @@
         );
 
         if ( is_singular( 'contest_entry' ) ) {
+
+            /**
+             * CloudFlare Turnstile
+             */
+
+            wp_enqueue_script( 'cf-turnstile-explicit' );
+
+            /**
+             * Fancybox
+             */
+
+            wp_enqueue_script( 'fancybox' );
+            wp_enqueue_style( 'fancybox' );
+
             wp_enqueue_script(
-                'cf-turnstile',
-                'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit',
+                'copy-to-clipboard',
+                get_stylesheet_directory_uri() . '/assets/js/copy-to-clipboard.js',
                 array(),
-                null,
+                filemtime( get_stylesheet_directory() . '/assets/js/copy-to-clipboard.js' ),
+                true,
+            );
+
+            wp_enqueue_script(
+                'detail-gallery',
+                get_stylesheet_directory_uri() . '/assets/js/detail-gallery.js',
+                array( 'fancybox' ),
+                filemtime( get_stylesheet_directory() . '/assets/js/detail-gallery.js' ),
                 true,
             );
 

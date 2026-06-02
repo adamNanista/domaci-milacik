@@ -15,7 +15,7 @@
             <h3 class="text-2xl font-bold">
                 <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
             </h3>
-            <?php get_template_part( 'templates/contest_entry/vote-count' ); ?>
+            <?php get_template_part( 'templates/contest_entry/vote-count', 'md' ); ?>
         </div>
         <div class="card-content-footer">
             <a href="<?php the_permalink(); ?>" class="button button-md button-wide button-primary">Hlasovať</a>
