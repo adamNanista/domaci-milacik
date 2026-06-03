@@ -1,11 +1,21 @@
 import { registerBlockType } from "@wordpress/blocks";
-import { MediaUploadCheck, MediaUpload, RichText, useBlockProps } from "@wordpress/block-editor";
+import { MediaUploadCheck, MediaUpload, RichText, useBlockProps, RichTextToolbarButton } from "@wordpress/block-editor";
 import { Button } from "@wordpress/components";
 import { useSelect } from "@wordpress/data";
+import { registerFormatType, toggleFormat } from "@wordpress/rich-text";
 
 registerBlockType("custom/prize", {
 	edit({ attributes, setAttributes }) {
-		const { imageId, title, subtitle } = attributes;
+		const { iconId, title, subtitle, imageId } = attributes;
+
+		const iconUrl = useSelect(
+			(select) => {
+				if (!iconId) return null;
+				const media = select("core").getMedia(iconId);
+				return media?.source_url ?? null;
+			},
+			[iconId],
+		);
 
 		const imageUrl = useSelect(
 			(select) => {
@@ -19,20 +29,20 @@ registerBlockType("custom/prize", {
 		return (
 			<article {...useBlockProps({ className: "editor-prize" })}>
 				<MediaUploadCheck>
-					{imageUrl && (
+					{iconUrl && (
 						<div style={{ marginBottom: "8px" }}>
-							<img src={imageUrl} alt="" style={{ display: "block", width: "100%", height: "auto", maxWidth: "6rem" }} />
+							<img src={iconUrl} alt="" style={{ display: "block", width: "100%", height: "auto", maxWidth: "6rem" }} />
 						</div>
 					)}
 					<MediaUpload
 						onSelect={(media) => {
-							setAttributes({ imageId: media.id });
+							setAttributes({ iconId: media.id });
 						}}
 						allowedTypes={["image"]}
-						value={imageId}
+						value={iconId}
 						render={({ open }) => (
 							<Button onClick={open} variant="secondary">
-								{imageId ? "Zmeniť obrázok" : "Vybrať obrázok"}
+								{iconId ? "Zmeniť obrázok" : "Vybrať obrázok"}
 							</Button>
 						)}
 					/>
@@ -58,11 +68,55 @@ registerBlockType("custom/prize", {
 							subtitle: value,
 						});
 					}}
+					allowedFormats={["core/bold", "custom/highlight"]}
 				/>
+
+				<MediaUploadCheck>
+					{imageUrl && (
+						<div style={{ marginBottom: "8px" }}>
+							<img src={imageUrl} alt="" style={{ display: "block", width: "100%", height: "auto" }} />
+						</div>
+					)}
+					<MediaUpload
+						onSelect={(media) => {
+							setAttributes({ imageId: media.id });
+						}}
+						allowedTypes={["image"]}
+						value={imageId}
+						render={({ open }) => (
+							<Button onClick={open} variant="secondary">
+								{imageId ? "Zmeniť obrázok" : "Vybrať obrázok"}
+							</Button>
+						)}
+					/>
+				</MediaUploadCheck>
 			</article>
 		);
 	},
 	save() {
 		return null;
+	},
+});
+
+registerFormatType("custom/highlight", {
+	title: "Highlight",
+	tagName: "span",
+	className: "highlight",
+
+	edit({ isActive, value, onChange }) {
+		return (
+			<RichTextToolbarButton
+				icon="marker"
+				title="Highlight"
+				onClick={() => {
+					onChange(
+						toggleFormat(value, {
+							type: "custom/highlight",
+						}),
+					);
+				}}
+				isActive={isActive}
+			/>
+		);
 	},
 });

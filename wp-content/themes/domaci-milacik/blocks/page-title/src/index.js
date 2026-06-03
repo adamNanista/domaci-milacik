@@ -27,6 +27,7 @@ registerBlockType("custom/page-title", {
 							subtitle: value,
 						});
 					}}
+					allowedFormats={["core/bold", "custom/highlight"]}
 				/>
 			</section>
 		);

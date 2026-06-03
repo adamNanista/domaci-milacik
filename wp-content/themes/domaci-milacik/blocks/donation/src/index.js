@@ -58,6 +58,7 @@ registerBlockType("custom/donation", {
 							subtitle: value,
 						});
 					}}
+					allowedFormats={["core/bold", "custom/highlight"]}
 				/>
 			</article>
 		);

@@ -8,7 +8,7 @@
 	"editorScript": "file:./build/index.js",
 	"render": "file:./render.php",
 	"attributes": {
-		"imageId": {
+		"iconId": {
 			"type": "number",
 			"default": 0
 		},
@@ -19,6 +19,10 @@
 		"subtitle": {
 			"type": "string",
 			"default": ""
+		},
+		"imageId": {
+			"type": "number",
+			"default": 0
 		}
 	}
 }

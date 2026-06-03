@@ -28,6 +28,7 @@ registerBlockType("custom/cta", {
 							subtitle: value,
 						});
 					}}
+					allowedFormats={["core/bold", "custom/highlight"]}
 				/>
 
 				<div class="editor-flex editor-gap-4">

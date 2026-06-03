@@ -58,6 +58,7 @@ registerBlockType("custom/step", {
 							subtitle: value,
 						});
 					}}
+					allowedFormats={["core/bold", "custom/highlight"]}
 				/>
 			</article>
 		);

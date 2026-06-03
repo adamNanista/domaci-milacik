@@ -49,6 +49,12 @@
 }
 
 @layer components {
+	/* Highlight */
+
+	.highlight {
+		@apply text-primary-600;
+	}
+
 	/* Fancybox */
 
 	.fancybox__backdrop {
