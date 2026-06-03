@@ -393,3 +393,21 @@
         $mimes['svg'] = 'image/svg+xml';
         return $mimes;
     } );
+
+    /**
+     * Change contest_entry Yoast SEO og image
+     */
+
+    add_filter( 'wpseo_opengraph_image', function( $image ) {
+        if ( ! is_singular( 'contest_entry' ) ) {
+            return $image;
+        }
+
+        $custom = get_post_meta(
+            get_the_ID(),
+            '_contest_og_image',
+            true
+        );
+
+        return $custom ?: $image;
+    } );

@@ -16,7 +16,7 @@
     <?php 
         if ( $subtitle ) {
             ?>
-                <p><?php echo wp_kses_post( $subtitle ); ?></p>
+                <p class="text-neutral-500"><?php echo wp_kses_post( $subtitle ); ?></p>
             <?php
         }
     ?>

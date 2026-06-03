@@ -58,9 +58,9 @@
         $errors   = [];
         $rollback = [];
 
-        $post_id                = 0;
-        $photo_id               = 0;
-        $video_id               = 0;
+        $post_id    = 0;
+        $photo_id   = 0;
+        $video_id   = 0;
 
         $fail = function($message, $fields = []) use (&$rollback) {
             foreach (array_reverse($rollback) as $undo) {
@@ -448,6 +448,13 @@
 
         /**
          * =========================
+         * GENERATE OG IMAGE
+         * =========================
+         */
+        generate_contest_entry_og_image( $post_id );
+
+        /**
+         * =========================
          * SUCCESS
          * =========================
          */
@@ -498,4 +505,88 @@
         ) );
 
         return ob_get_clean();
+    }
+
+    function generate_contest_entry_og_image( $post_id ) {
+        $featured_image_id = get_post_thumbnail_id( $post_id );
+
+        if ( ! $featured_image_id ) {
+            return null;
+        }
+
+        $featured_image_path = get_attached_file( $featured_image_id );
+
+        if ( ! file_exists( $featured_image_path ) ) {
+            return null;
+        }
+
+        $template_path = get_stylesheet_directory() . '/assets/img/og-template.png';
+
+        if ( ! file_exists( $template_path ) ) {
+            return null;
+        }
+
+        try {
+            $canvas_width  = 1200;
+            $canvas_height = 630;
+
+            $source = new Imagick( $featured_image_path );
+
+            $canvas = new Imagick();
+
+            $canvas->newImage(
+                $canvas_width,
+                $canvas_height,
+                new ImagickPixel( 'white' )
+            );
+            
+            $canvas->setImageFormat( 'jpg' );
+
+            $source->cropThumbnailImage(
+                $canvas_width / 2,
+                $canvas_height
+            );
+
+            $canvas->compositeImage(
+                $source,
+                Imagick::COMPOSITE_OVER,
+                $canvas_width / 2,
+                0
+            );
+
+            $template = new Imagick( $template_path );
+
+            $canvas->compositeImage(
+                $template,
+                Imagick::COMPOSITE_OVER,
+                0,
+                0
+            );
+
+            $upload_dir = wp_upload_dir();
+
+            $filename = '' . $post_id . '-og.jpg';
+
+            $filepath = trailingslashit( $upload_dir['basedir'] ) . $filename;
+
+            $canvas->writeImage( $filepath );
+
+            $url = trailingslashit( $upload_dir['baseurl'] ) . $filename;
+
+            update_post_meta(
+                $post_id,
+                '_contest_og_image',
+                $url
+            );
+
+            $source->clear();
+            $canvas->clear();
+            $template->clear();
+
+            return $url;
+        } catch ( Exception $error ) {
+            error_log( $error->getMessage() );
+
+            return null;
+        }
     }

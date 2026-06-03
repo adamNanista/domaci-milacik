@@ -209,10 +209,12 @@ document.addEventListener("DOMContentLoaded", function () {
 					videoUrlPanel.classList.remove("hidden");
 					videoUploadPanel.classList.add("hidden");
 
-					const dropzoneFile = dropzone.parentElement.querySelector(".dropzone-file");
+					const dropzoneFiles = document.querySelectorAll(".dropzone-file");
 
-					if (dropzoneFile) {
-						dropzoneFile.remove();
+					if (dropzoneFiles.length) {
+						dropzoneFiles.forEach((dropzoneFile) => {
+							dropzoneFile.remove();
+						});
 					}
 				} else {
 					if (result.data.message) {
@@ -231,6 +233,8 @@ document.addEventListener("DOMContentLoaded", function () {
 				}
 			} catch (error) {
 				setLoading(false);
+
+				console.error("AJAX form error:", error);
 
 				if (window.turnstile) {
 					turnstile.reset();
@@ -257,6 +261,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Helpers
 	function setLoading(isLoading) {
+		form.classList.toggle("loading", isLoading);
+
 		submitButton.disabled = isLoading;
 		submitButton.textContent = isLoading ? "Odosielam prihlášku" : "Odoslať prihlášku";
 	}
@@ -268,13 +274,13 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 
 	function showSuccess(message) {
-		messages.parentElement.classList.remove("hidden");
+		messages.parentElement.classList.remove("hidden", "error");
 		messages.parentElement.classList.add("success");
 		messages.textContent = message;
 	}
 
 	function showError(message) {
-		messages.parentElement.classList.remove("hidden");
+		messages.parentElement.classList.remove("hidden", "success");
 		messages.parentElement.classList.add("error");
 		messages.textContent = message;
 	}

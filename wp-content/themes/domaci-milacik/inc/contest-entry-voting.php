@@ -124,7 +124,7 @@
         $already_voted  = $wpdb->get_var( $wpdb->prepare(
             "SELECT 1
             FROM {$wpdb->prefix}contest_entry_votes
-            WHERE ( fingerprint_ip = %s OR fingerprint_cookie = %s )
+            WHERE ( fingerprint_ip = %s AND fingerprint_cookie = %s )
             AND created_at > %s
             LIMIT 1",
             $fingerprint_ip,
@@ -143,7 +143,7 @@
          * POST RATE LIMIT
          * =========================
          */
-        $vote_key = 'contest_vote_' . $fingerprint_ip;
+        $vote_key = 'contest_vote_' . $fingerprint_ip . '_' . $fingerprint_cookie;
 
         if ( get_transient( $vote_key ) ) {
             wp_send_json_error( array( 'message' => 'Už ste hlasovali. Skúste znova o hodinu.' ) );
@@ -158,7 +158,7 @@
          */
         $turnstile_token = sanitize_text_field( $_POST['turnstile_token'] ?? '' );
 
-        $rate_key = 'contest_vote_rate_' . $fingerprint_ip;
+        $rate_key = 'contest_vote_rate_' . $fingerprint_ip . '_' . $fingerprint_cookie;
         $attempts = (int) get_transient( $rate_key );
 
         if ( $attempts >= 5 ) {
@@ -323,7 +323,7 @@
         $last_vote_at  = $wpdb->get_var( $wpdb->prepare(
             "SELECT created_at
             FROM {$wpdb->prefix}contest_entry_votes
-            WHERE ( fingerprint_ip = %s OR fingerprint_cookie = %s )
+            WHERE ( fingerprint_ip = %s AND fingerprint_cookie = %s )
             AND created_at > %s
             ORDER BY created_at DESC
             LIMIT 1",
