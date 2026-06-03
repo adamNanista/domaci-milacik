@@ -107,7 +107,7 @@
         $attempts = (int) get_transient( $rate_key );
         
         if ( $attempts >= 3 ) {
-            $fail( 'Dosiahli ste limit odoslaní pre túto chvíľu. Skúste to znova o 15 minút.' );
+            $fail( 'Dosiahli ste limit odoslaní pre túto chvíľu. Skúste to znova o chvíľu.' );
         }
 
         /**
