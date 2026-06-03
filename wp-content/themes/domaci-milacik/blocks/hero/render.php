@@ -42,15 +42,15 @@
 		}
 	?>
 	<div class="relative">
-		<div class="max-w-[var(--wp--style--global--content-size)] mx-auto">
+		<div class="max-w-6xl mx-auto">
 			<div class="grid gap-6 md:grid-cols-2">
 				<div class="space-y-6">
 					<div class="space-y-4">
-						<h1 class="font-heading text-5xl font-bold uppercase md:text-7xl"><?php echo $title ? wp_kses_post( $title ) : 'Nadpis'; ?></h1>
+						<h1 class="font-heading text-5xl font-bold uppercase tracking-tight md:text-6xl lg:text-7xl"><?php echo $title ? wp_kses_post( $title ) : 'Nadpis'; ?></h1>
 						<?php 
 							if ( $subtitle ) {
 								?>
-									<p class="text-base"><?php echo wp_kses_post( $subtitle ); ?></p>
+									<p><?php echo wp_kses_post( $subtitle ); ?></p>
 								<?php
 							}
 						?>
@@ -62,14 +62,14 @@
 									<?php 
 										if ( $primaryButtonText && $primaryButtonUrl ) {
 											?>	
-												<a class="button button-md button-primary" href="<?php echo esc_url( $primaryButtonUrl ); ?>">
+												<a class="button button-md button-primary outline-white" href="<?php echo esc_url( $primaryButtonUrl ); ?>">
 													<?php echo esc_html( $primaryButtonText ); ?>
 												</a>
 											<?php
 										}
 										if ( $secondaryButtonText && $secondaryButtonUrl ) {
 											?>
-												<a class="button button-md button-white button-outline" href="<?php echo esc_url( $secondaryButtonUrl ); ?>">
+												<a class="button button-md button-white button-outline outline-white" href="<?php echo esc_url( $secondaryButtonUrl ); ?>">
 													<?php echo esc_html( $secondaryButtonText ); ?>
 												</a>
 											<?php

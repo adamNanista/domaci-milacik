@@ -6,7 +6,7 @@
 	"icon": "chart-bar",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
-	"viewStyle": ["swiper", "leaderboard"],
+	"viewStyle": ["swiper"],
 	"viewScript": ["swiper", "leaderboard"],
 	"render": "file:./render.php",
 	"attributes": {

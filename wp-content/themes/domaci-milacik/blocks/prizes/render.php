@@ -10,9 +10,9 @@
 
 ?>
 
-<section <?php echo get_block_wrapper_attributes( array( 'class' => 'prizes' ) ); ?>>
+<section <?php echo get_block_wrapper_attributes( array( 'class' => 'space-y-8 md:space-y-12' ) ); ?>>
     <div>
-        <h2 class="font-heading text-4xl font-bold text-uppercase"><?php echo $title ? wp_kses_post( $title ) : 'Výhry'; ?></h2>
+        <h2 class="font-heading text-4xl font-bold uppercase tracking-tight"><?php echo $title ? wp_kses_post( $title ) : 'Výhry'; ?></h2>
     </div>
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <?php echo $content; ?>

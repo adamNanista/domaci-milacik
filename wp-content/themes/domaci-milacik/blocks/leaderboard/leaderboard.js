@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
 		spaceBetween: 16,
 		watchSlidesProgress: true,
 		navigation: {
-			prevEl: ".leaderboard-button-prev",
-			nextEl: ".leaderboard-button-next",
+			prevEl: "#leaderboard-button-prev",
+			nextEl: "#leaderboard-button-next",
 		},
 	});
 });

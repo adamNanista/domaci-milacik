@@ -6,7 +6,6 @@
 	"icon": "format-aside",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
-	"viewStyle": ["entry-form"],
 	"viewScript": ["just-validate", "cf-turnstile", "entry-form"],
 	"render": "file:./render.php"
 }

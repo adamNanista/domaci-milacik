@@ -6,7 +6,6 @@
 	"icon": "money-alt",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
-	"viewStyle": ["donation"],
 	"render": "file:./render.php",
 	"attributes": {
 		"imageId": {

@@ -10,30 +10,28 @@
 
 ?>
 
-<section <?php echo get_block_wrapper_attributes( array( 'class' => 'donation' ) ); ?>>
+<section <?php echo get_block_wrapper_attributes( array( 'class' => 'flex flex-col items-center gap-8 px-8 py-6 bg-success-100 rounded-xl md:flex-row-reverse md:justify-between' ) ); ?>>
     <?php 
         if ( $imageId  ) {
             ?>
-                <div class="donation-icon">
+                <div class="w-24 md:flex-none">
                     <?php 
-                        echo wp_get_attachment_image( $imageId, 'full' );
+                        echo wp_get_attachment_image( $imageId, 'full', false, array( 'class' => 'w-full' ) );
                     ?>
                 </div>
             <?php
         }
     ?>
-    <div class="donation-content">
-        <div class="space-y-4 text-center md:text-left">
-            <h3 class="font-heading text-4xl font-bold text-uppercase">
-                <?php 
-                    echo wp_kses_post( $title );
-                ?>
-            </h3>
-            <p class="text-base text-neutral-500">
-                <?php 
-                    echo wp_kses_post( $subtitle );
-                ?>
-            </p>
-        </div>
+    <div class="space-y-4 text-center md:text-left">
+        <h3 class="font-heading text-4xl font-bold uppercase tracking-tight">
+            <?php 
+                echo wp_kses_post( $title );
+            ?>
+        </h3>
+        <p class="text-neutral-500">
+            <?php 
+                echo wp_kses_post( $subtitle );
+            ?>
+        </p>
     </div>
 </section>

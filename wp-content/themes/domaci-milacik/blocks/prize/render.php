@@ -10,30 +10,28 @@
 
 ?>
 
-<article <?php echo get_block_wrapper_attributes( array( 'class' => 'prize' ) ); ?>>
+<article <?php echo get_block_wrapper_attributes( array( 'class' => 'flex items-center gap-8 px-8 py-6 bg-neutral-100 rounded-xl' ) ); ?>>
     <?php 
         if ( $imageId  ) {
             ?>
-                <div class="prize-icon">
+                <div class="flex-none w-24">
                     <?php 
-                        echo wp_get_attachment_image( $imageId, 'full' );
+                        echo wp_get_attachment_image( $imageId, 'full', false, array( 'class' => 'w-full' ) );
                     ?>
                 </div>
             <?php
         }
     ?>
-    <div class="prize-content">
-        <div class="space-y-1">
-            <h3 class="font-heading text-2xl font-bold text-uppercase">
-                <?php 
-                    echo wp_kses_post( $title );
-                ?>
-            </h3>
-            <p class="font-heading text-red-600 text-5xl font-bold text-uppercase">
-                <?php 
-                    echo wp_kses_post( $subtitle );
-                ?>
-            </p>
-        </div>
+    <div class="space-y-1">
+        <h3 class="font-heading text-2xl font-bold uppercase tracking-tight">
+            <?php 
+                echo wp_kses_post( $title );
+            ?>
+        </h3>
+        <p class="font-heading text-red-600 text-5xl font-bold uppercase tracking-tight">
+            <?php 
+                echo wp_kses_post( $subtitle );
+            ?>
+        </p>
     </div>
 </article>

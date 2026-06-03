@@ -6,7 +6,6 @@
 	"icon": "editor-alignleft",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
-	"viewStyle": ["page-title"],
 	"render": "file:./render.php",
 	"attributes": {
 		"title": {

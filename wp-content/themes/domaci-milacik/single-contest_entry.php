@@ -10,50 +10,44 @@
         the_post();
 
         ?>
-            <main <?php post_class( 'flex-1 px-6 [&>*]:max-w-[var(--wp--style--global--content-size)] [&>*]:mx-auto [&>*]:mb-12 [&>:first-child]:mt-12 [&>.alignfull]:max-w-none [&>.alignfull]:-mx-6 md:px-12 md:[&>*]:mb-24 md:[&>:first-child]:mt-24 md:[&>.alignfull]:-mx-12' ); ?> role="main">
-                <section class="detail">
+            <main <?php post_class( 'flex-1 px-6 *:max-w-6xl *:mx-auto *:mb-12 *:first:mt-12 [&>.alignfull]:max-w-none [&>.alignfull]:-mx-6 md:px-12 md:*:mb-24 md:*:first:mt-24 md:[&>.alignfull]:-mx-12' ); ?> role="main">
+                <div class="space-y-4">
+                    <a href="<?php echo home_url( '/milacikovia/' ); ?>" class="inline-flex align-top items-center justify-center gap-2.5 text-neutral-500 font-bold text-center uppercase outline-black hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="flex-none size-4" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                        Späť na galériu
+                    </a>
                     <div class="grid gap-12 md:grid-cols-2">
-                        <div class="detail-media">
-                            <a href="<?php echo get_the_post_thumbnail_url( get_the_ID(), 'full' ); ?>" class="detail-thumbnail" data-fancybox="detail-lightbox">
-                                <?php 
-                                    the_post_thumbnail( 'contest-entry-detail' );
-                                ?>
+                        <div class="relative">
+                            <a href="<?php echo get_the_post_thumbnail_url( get_the_ID(), 'full' ); ?>" class="block overflow-hidden rounded-xl focus:-outline-offset-2 hover:[&_img]:scale-105" data-fancybox="detail-lightbox">
+                                <?php the_post_thumbnail( 'contest-entry-detail', array( 'class' => 'block w-full aspect-square object-cover object-center transition-transform duration-300' ) ); ?>
                             </a>
                             <?php
                                 $video_url = get_field( 'video_url' );
 
                                 if ( $video_url ) {
                                     ?>
-                                        <a href="<?php echo esc_url( $video_url ); ?>" class="detail-play" data-fancybox="detail-lightbox">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg>
+                                        <a href="<?php echo esc_url( $video_url ); ?>" class="inline-flex align-top items-center justify-center gap-2 h-10 px-4 absolute right-4 bottom-4 text-white text-sm font-bold uppercase bg-black/50 border-2 border-transparent rounded-sm outline-white backdrop-blur-sm hover:bg-black/60" data-fancybox="detail-lightbox">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="size-3.5" aria-hidden="true"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg>
                                             Prehrať video
                                         </a>
                                     <?php
                                 }
                             ?>
                         </div>
-                        <div class="detail-content">
-                            <div class="detail-content-header">
-                                <div class="detail-content-header-meta">
-                                    <h1 class="font-heading text-5xl font-bold text-uppercase md:text-6xl"><?php the_title(); ?></h1>
-                                    <?php
-                                        get_template_part( 'templates/contest_entry/vote-count', 'xl' );
-                                    ?>
+                        <div class="self-center space-y-8 md:space-y-12">
+                            <div class="space-y-6">
+                                <div class="space-y-4">
+                                    <h1 class="font-heading text-5xl font-bold uppercase tracking-tight md:text-6xl"><?php the_title(); ?></h1>
+                                    <?php get_template_part( 'templates/contest_entry/vote-count', 'xl' ); ?>
                                 </div>
-                                <div class="detail-content-header-actions">
-                                    <?php
-                                        get_template_part( 'templates/contest_entry/vote-button' );
-                                    ?>
-                                </div>
+                                <?php get_template_part( 'templates/contest_entry/vote-button' ); ?>
                             </div>
-                            <div class="detail-content-body">
-                                <?php
-                                    the_content();
-                                ?>
+                            <div class="text-neutral-500">
+                                <?php the_content(); ?>
                             </div>
                             <div class="detail-content-footer">
                                 <div class="space-y-4">
-                                    <p class="text-base">Zdieľaj a získaj viac hlasov</p>
+                                    <p class="text-sm font-bold uppercase">Zdieľaj a získaj viac hlasov</p>
                                     <div class="flex flex-wrap items-center gap-3">
                                         <a href="https://www.facebook.com/sharer/sharer.php?u=<?php the_permalink(); ?>" class="button button-sm button-outline" target="_blank">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M240 363.3L240 576L356 576L356 363.3L442.5 363.3L460.5 265.5L356 265.5L356 230.9C356 179.2 376.3 159.4 428.7 159.4C445 159.4 458.1 159.8 465.7 160.6L465.7 71.9C451.4 68 416.4 64 396.2 64C289.3 64 240 114.5 240 223.4L240 265.5L174 265.5L174 363.3L240 363.3z"/></svg>

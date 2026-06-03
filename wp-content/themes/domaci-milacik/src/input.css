@@ -49,6 +49,33 @@
 }
 
 @layer components {
+	/* Pagination */
+
+	.nav-links {
+		@apply flex items-center justify-center gap-2;
+	}
+	.page-numbers {
+		@apply inline-flex align-top items-center justify-center w-8 h-8 text-neutral-500 font-bold rounded-sm;
+	}
+	.page-numbers:hover {
+		@apply bg-neutral-100;
+	}
+	.page-numbers.current {
+		@apply text-primary-600 bg-primary-100;
+	}
+	.page-numbers.prev,
+	.page-numbers.next {
+		@apply relative text-[0rem] after:block after:size-4 after:bg-center after:bg-no-repeat after:bg-contain;
+	}
+	.page-numbers.prev {
+		@apply after:bg-[url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MzczNzMiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaGV2cm9uLWxlZnQtaWNvbiBsdWNpZGUtY2hldnJvbi1sZWZ0Ij48cGF0aCBkPSJtMTUgMTgtNi02IDYtNiIvPjwvc3ZnPg==)];
+	}
+	.page-numbers.next {
+		@apply after:bg-[url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MzczNzMiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1jaGV2cm9uLXJpZ2h0LWljb24gbHVjaWRlLWNoZXZyb24tcmlnaHQiPjxwYXRoIGQ9Im05IDE4IDYtNi02LTYiLz48L3N2Zz4=)];
+	}
+
+	/* Button */
+
 	.button {
 		@apply cursor-pointer inline-flex align-top items-center justify-center font-bold text-center uppercase border-2 outline-black transition-colors;
 
@@ -65,6 +92,68 @@
 		background-color: var(--button--background-filled, var(--color-neutral-200));
 		border-color: var(--button--border-filled, var(--color-neutral-200));
 		border-radius: var(--button--border-radius, var(--radius-md));
+	}
+	.button:hover {
+		color: var(--button--text-filled, var(--color-black));
+		fill: var(--button--text-filled, var(--color-black));
+
+		background-color: var(--button--background-filled-hover, var(--color-neutral-300));
+		border-color: var(--button--border-filled-hover, var(--color-neutral-300));
+	}
+	.button:disabled {
+		@apply cursor-default pointer-events-none opacity-50;
+	}
+	.button svg {
+		@apply flex-none;
+
+		width: var(--button--icon-size, calc(var(--spacing) * 4));
+		height: var(--button--icon-size, calc(var(--spacing) * 4));
+	}
+
+	.button-outline {
+		@apply bg-transparent;
+
+		color: var(--button--text-outline, var(--color-black));
+		fill: var(--button--text-outline, var(--color-black));
+
+		border-color: var(--button--border-outline, var(--color-black));
+	}
+	.button-outline:hover {
+		color: var(--button--text-outline, var(--color-black));
+
+		background-color: var(--button--background-outline-hover, var(--color-neutral-100));
+		border-color: var(--button--border-outline, var(--color-black));
+	}
+
+	.button-primary {
+		--button--text-filled: var(--color-white);
+		--button--text-outline: var(--color-primary-600);
+		--button--background-filled: var(--color-primary-600);
+		--button--background-filled-hover: var(--color-primary-700);
+		--button--background-outline-hover: var(--color-primary-100);
+		--button--border-filled: var(--color-primary-600);
+		--button--border-filled-hover: var(--color-primary-700);
+		--button--border-outline: var(--color-primary-600);
+	}
+	.button-accent {
+		--button--text-filled: var(--color-black);
+		--button--text-outline: var(--color-accent-700);
+		--button--background-filled: var(--color-accent-300);
+		--button--background-filled-hover: var(--color-accent-400);
+		--button--background-outline-hover: var(--color-accent-100);
+		--button--border-filled: var(--color-accent-300);
+		--button--border-filled-hover: var(--color-accent-400);
+		--button--border-outline: var(--color-accent-700);
+	}
+	.button-white {
+		--button--text-filled: var(--color-black);
+		--button--text-outline: var(--color-white);
+		--button--background-filled: var(--color-white);
+		--button--background-filled-hover: color-mix(in oklab, var(--color-white) 80%, transparent);
+		--button--background-outline-hover: color-mix(in oklab, var(--color-white) 20%, transparent);
+		--button--border-filled: color-mix(in oklab, var(--color-white) 0%, transparent);
+		--button--border-filled-hover: color-mix(in oklab, var(--color-white) 0%, transparent);
+		--button--border-outline: var(--color-white);
 	}
 }
 
