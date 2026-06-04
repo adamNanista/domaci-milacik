@@ -36,7 +36,7 @@
                     <?php
                 }
             ?>
-            <div class="space-y-1">
+            <div class="flex-1 space-y-1">
                 <h3 class="font-heading text-3xl font-bold uppercase tracking-tight">
                     <?php 
                         echo wp_kses_post( $title );

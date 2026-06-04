@@ -1,0 +1,40 @@
+{
+	"apiVersion": 3,
+	"name": "custom/card",
+	"title": "Card",
+	"category": "widgets",
+	"icon": "columns",
+	"parent": ["custom/cards"],
+	"editorScript": "file:./build/index.js",
+	"render": "file:./render.php",
+	"attributes": {
+		"iconId": {
+			"type": "number",
+			"default": 0
+		},
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"subtitle": {
+			"type": "string",
+			"default": ""
+		},
+		"imageId": {
+			"type": "number",
+			"default": 0
+		},
+		"highlight": {
+			"type": "string",
+			"default": ""
+		},
+		"description": {
+			"type": "string",
+			"default": ""
+		},
+		"variant": {
+			"type": "string",
+			"default": "primary"
+		}
+	}
+}

@@ -261,6 +261,21 @@
     } );
 
     /**
+     * Enqueue shared editor assets
+     */
+
+    add_action('enqueue_block_editor_assets', function () {
+        $asset_file = include get_stylesheet_directory() . '/blocks/shared/build/index.asset.php';
+
+        wp_enqueue_script(
+            'shared-editor-assets',
+            get_stylesheet_directory_uri() . '/blocks/shared/build/index.js',
+            $asset_file['dependencies'],
+            $asset_file['version']
+        );
+    });
+
+    /**
      * Register blocks
      */
 
@@ -307,6 +322,14 @@
 
         register_block_type(
             get_stylesheet_directory() . '/blocks/sms-leaderboard'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/cards'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/card'
         );
     });
 

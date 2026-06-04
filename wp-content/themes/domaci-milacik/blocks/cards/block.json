@@ -1,0 +1,10 @@
+{
+	"apiVersion": 3,
+	"name": "custom/cards",
+	"title": "Cards",
+	"category": "widgets",
+	"icon": "columns",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./editor.css",
+	"render": "file:./render.php"
+}

@@ -1,7 +1,6 @@
 import { registerBlockType } from "@wordpress/blocks";
 import { RichText, useBlockProps, InspectorControls, MediaUploadCheck, MediaUpload } from "@wordpress/block-editor";
-import { PanelBody, TextControl } from "@wordpress/components";
-import { Button } from "@wordpress/components";
+import { PanelBody, TextControl, Button } from "@wordpress/components";
 
 registerBlockType("custom/hero", {
 	edit({ attributes, setAttributes }) {

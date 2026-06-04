@@ -1,8 +1,7 @@
 import { registerBlockType } from "@wordpress/blocks";
-import { MediaUploadCheck, MediaUpload, RichText, useBlockProps, RichTextToolbarButton } from "@wordpress/block-editor";
+import { MediaUploadCheck, MediaUpload, RichText, useBlockProps } from "@wordpress/block-editor";
 import { Button } from "@wordpress/components";
 import { useSelect } from "@wordpress/data";
-import { registerFormatType, toggleFormat } from "@wordpress/rich-text";
 
 registerBlockType("custom/prize", {
 	edit({ attributes, setAttributes }) {
@@ -28,6 +27,26 @@ registerBlockType("custom/prize", {
 
 		return (
 			<article {...useBlockProps({ className: "editor-prize" })}>
+				<MediaUploadCheck>
+					{imageUrl && (
+						<div style={{ marginBottom: "8px" }}>
+							<img src={imageUrl} alt="" style={{ display: "block", width: "100%", height: "auto" }} />
+						</div>
+					)}
+					<MediaUpload
+						onSelect={(media) => {
+							setAttributes({ imageId: media.id });
+						}}
+						allowedTypes={["image"]}
+						value={imageId}
+						render={({ open }) => (
+							<Button onClick={open} variant="secondary">
+								{imageId ? "Zmeniť obrázok" : "Vybrať obrázok"}
+							</Button>
+						)}
+					/>
+				</MediaUploadCheck>
+
 				<MediaUploadCheck>
 					{iconUrl && (
 						<div style={{ marginBottom: "8px" }}>
@@ -70,53 +89,10 @@ registerBlockType("custom/prize", {
 					}}
 					allowedFormats={["core/bold", "custom/highlight"]}
 				/>
-
-				<MediaUploadCheck>
-					{imageUrl && (
-						<div style={{ marginBottom: "8px" }}>
-							<img src={imageUrl} alt="" style={{ display: "block", width: "100%", height: "auto" }} />
-						</div>
-					)}
-					<MediaUpload
-						onSelect={(media) => {
-							setAttributes({ imageId: media.id });
-						}}
-						allowedTypes={["image"]}
-						value={imageId}
-						render={({ open }) => (
-							<Button onClick={open} variant="secondary">
-								{imageId ? "Zmeniť obrázok" : "Vybrať obrázok"}
-							</Button>
-						)}
-					/>
-				</MediaUploadCheck>
 			</article>
 		);
 	},
 	save() {
 		return null;
-	},
-});
-
-registerFormatType("custom/highlight", {
-	title: "Highlight",
-	tagName: "span",
-	className: "highlight",
-
-	edit({ isActive, value, onChange }) {
-		return (
-			<RichTextToolbarButton
-				icon="marker"
-				title="Highlight"
-				onClick={() => {
-					onChange(
-						toggleFormat(value, {
-							type: "custom/highlight",
-						}),
-					);
-				}}
-				isActive={isActive}
-			/>
-		);
 	},
 });
