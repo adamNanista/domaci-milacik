@@ -432,6 +432,22 @@
         return $custom ?: $image;
     } );
 
+    add_filter( 'wpseo_opengraph_image_width', function ( $width ) {
+        if ( is_singular( 'contest_entry' ) ) {
+            return 1200;
+        }
+
+        return $width;
+    } );
+
+    add_filter( 'wpseo_opengraph_image_height', function ($height) {
+        if ( is_singular( 'contest_entry' ) ) {
+            return 630;
+        }
+        
+        return $height;
+    } );
+
     /**
      * Add SMS toggle and number to general settings
      */

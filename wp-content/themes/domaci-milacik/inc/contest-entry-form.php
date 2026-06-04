@@ -455,6 +455,13 @@
 
         /**
          * =========================
+         * SEND THANK YOU EMAIL
+         * =========================
+         */
+        send_thank_you_email( $post_id );
+
+        /**
+         * =========================
          * SUCCESS
          * =========================
          */
@@ -483,7 +490,7 @@
 
         $owner_email    = get_field( 'owner_email' );
         $pet_name       = get_the_title( $post_id );
-        $photo_url      = get_post_thumbnail_url( $post_id, 'thumbnail' );
+        $photo_url      = get_the_post_thumbnail_url( $post_id, 'thumbnail' );
 
         if ( ! $owner_email ) {
             return;
