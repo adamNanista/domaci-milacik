@@ -488,28 +488,30 @@
             return;
         }
 
-        $owner_email    = get_field( 'owner_email' );
+        $owner_email    = get_field( 'owner_email', $post_id );
         $pet_name       = get_the_title( $post_id );
-        $photo_url      = get_the_post_thumbnail_url( $post_id, 'thumbnail' );
+        $pet_decription = wp_strip_all_tags( get_the_content( $post_id ) );
+        $photo_url      = get_the_post_thumbnail_url( $post_id, 'medium' );
 
         if ( ! $owner_email ) {
             return;
         }
 
         $subject    = 'Ďakujeme! Vaša prihláška bola prijatá a čaká na schválenie.';
-        $body       = get_thank_you_email_html( $pet_name, $photo_url );
+        $body       = get_thank_you_email_html( $photo_url, $pet_name, $pet_decription );
         $headers    = [ 'Content-Type: text/html; charset=UTF-8' ];
 
         wp_mail( $owner_email, $subject, $body, $headers );
     }
 
-    function get_thank_you_email_html( $pet_name, $photo_url ) {
+    function get_thank_you_email_html( $photo_url, $pet_name, $pet_decription ) {
         ob_start();
 
-        $template_path = get_template_part( 'templates/email/thank-you', null, array(
-            'pet_name'  => $pet_name,
-            'photo_url' => $photo_url,
-        ) );
+        $template_path = locate_template( 'templates/email/thank-you.php' );
+
+        if ( $template_path ) {
+            include $template_path;
+        }
 
         return ob_get_clean();
     }

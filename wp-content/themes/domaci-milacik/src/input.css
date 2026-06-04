@@ -43,7 +43,7 @@
 
 @layer base {
 	:root {
-		@apply accent-accent-700;
+		@apply accent-primary-600;
 	}
 	:focus {
 		@apply outline-2 outline-solid outline-offset-2 outline-current;
