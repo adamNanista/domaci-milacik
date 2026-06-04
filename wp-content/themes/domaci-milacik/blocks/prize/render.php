@@ -24,7 +24,7 @@
         }
     ?>
     <div class="p-6 space-y-2">
-        <div class="flex items-center gap-4">
+        <div class="flex items-start gap-4">
             <?php 
                 if ( $iconId  ) {
                     ?>
@@ -36,7 +36,7 @@
                     <?php
                 }
             ?>
-            <div class="flex-1 space-y-1">
+            <div class="flex-1 self-center space-y-1">
                 <h3 class="font-heading text-3xl font-bold uppercase tracking-tight">
                     <?php 
                         echo wp_kses_post( $title );

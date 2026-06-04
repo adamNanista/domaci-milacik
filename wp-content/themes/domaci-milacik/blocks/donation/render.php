@@ -10,7 +10,7 @@
 
 ?>
 
-<section <?php echo get_block_wrapper_attributes( array( 'class' => 'flex flex-col items-center gap-8 px-8 py-6 bg-success-100 rounded-xl md:flex-row-reverse md:justify-between' ) ); ?>>
+<section <?php echo get_block_wrapper_attributes( array( 'class' => 'flex flex-col items-center gap-8 px-8 py-6 bg-success-100 rounded-xl md:flex-row-reverse md:justify-between md:items-start md:gap-6' ) ); ?>>
     <?php 
         if ( $imageId  ) {
             ?>
@@ -22,7 +22,7 @@
             <?php
         }
     ?>
-    <div class="space-y-4 text-center md:text-left">
+    <div class="space-y-4 text-center md:self-center md:text-left">
         <h3 class="font-heading text-4xl font-bold uppercase tracking-tight">
             <?php 
                 echo wp_kses_post( $title );
