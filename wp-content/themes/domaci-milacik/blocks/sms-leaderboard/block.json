@@ -1,16 +1,22 @@
 {
 	"apiVersion": 3,
-	"name": "custom/prizes",
-	"title": "Prizes",
+	"name": "custom/sms-leaderboard",
+	"title": "SMS leaderboard",
 	"category": "widgets",
-	"icon": "awards",
+	"icon": "chart-bar",
 	"editorScript": "file:./build/index.js",
 	"editorStyle": "file:./editor.css",
-	"viewStyle": ["fancybox"],
-	"viewScript": ["fancybox", "prizes"],
 	"render": "file:./render.php",
 	"attributes": {
 		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonText": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonUrl": {
 			"type": "string",
 			"default": ""
 		}

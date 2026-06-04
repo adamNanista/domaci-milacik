@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <a href="<?php echo $buttonUrl ? esc_url( $buttonUrl ) : home_url( '/milacikovia' ); ?>" class="inline-flex align-top items-center justify-center gap-2.5 text-primary-600 font-bold text-center uppercase outline-black hover:underline">
+                    <a href="<?php echo $buttonUrl ? esc_url( $buttonUrl ) : home_url( '/milacikovia/' ); ?>" class="inline-flex align-top items-center justify-center gap-2.5 text-primary-600 font-bold text-center uppercase outline-black hover:underline">
                         <?php echo $buttonText ? esc_html( $buttonText ) : 'Zobraziť celú galériu'; ?>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="flex-none size-4" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                     </a>

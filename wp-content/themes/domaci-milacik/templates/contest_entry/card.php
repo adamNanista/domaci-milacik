@@ -6,8 +6,8 @@
 
 ?>
 
-<article class="flex flex-col h-full overflow-hidden border-2 border-neutral-200 rounded-xl">
-    <a href="<?php the_permalink(); ?>" class="flex-none block overflow-hidden focus:-outline-offset-2 hover:[&_img]:scale-105">
+<article class="flex flex-col h-full border-2 border-neutral-200 rounded-xl">
+    <a href="<?php the_permalink(); ?>" class="flex-none block overflow-hidden rounded-t-[0.625rem] focus:-outline-offset-2 hover:[&_img]:scale-105">
         <?php the_post_thumbnail( 'contest-entry-card', array( 'class' => 'w-full aspect-4/3 object-cover object-center transition-transform duration-300' ) ); ?>
     </a>
     <div class="flex-1 flex flex-col p-6 space-y-4">

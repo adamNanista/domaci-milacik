@@ -1,3 +1,11 @@
+<?php 
+
+    if ( ! defined( 'ABSPATH' ) ) {
+		exit; // Exit if accessed directly.
+	}
+
+?>
+
 <div>
     <div class="empty:hidden" id="contest-vote-turnstile"></div>
     <button class="button button-lg button-wide button-primary w-full" id="contest-vote-button" data-post-id="<?php echo get_the_ID(); ?>">Hlasovať</button>

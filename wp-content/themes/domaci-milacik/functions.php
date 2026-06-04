@@ -200,6 +200,18 @@
         );
 
         /**
+         * Prizes
+         */
+
+        wp_register_script(
+            'prizes',
+            get_stylesheet_directory_uri() . '/blocks/prizes/prizes.js',
+            array(),
+            filemtime( get_stylesheet_directory() . '/blocks/prizes/prizes.js' ),
+            true
+        );
+
+        /**
          * Entry form
          */
 
@@ -292,6 +304,10 @@
         register_block_type(
             get_stylesheet_directory() . '/blocks/entry-form'
         );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/sms-leaderboard'
+        );
     });
 
     /**
@@ -383,6 +399,10 @@
         if ( get_post_meta( $post_id, 'votes', true ) === '' ) {
             update_post_meta( $post_id, 'votes', 0 );
         }
+
+        if ( get_post_meta( $post_id, 'sms_votes', true ) === '' ) {
+            update_post_meta( $post_id, 'sms_votes', 0 );
+        }
     } );
 
     /**
@@ -411,3 +431,57 @@
 
         return $custom ?: $image;
     } );
+
+    /**
+     * Add SMS toggle and number to general settings
+     */
+
+    add_action('admin_init', function() {
+        register_setting('general', 'sms_contest_enabled');
+
+        add_settings_field(
+            'sms_contest_enabled',
+            'SMS fáza',
+            function() {
+                ?>
+                <input type="checkbox"
+                    name="sms_contest_enabled"
+                    value="1"
+                    <?php checked(get_option('sms_contest_enabled'), 1); ?>>
+                <?php
+            },
+            'general'
+        );
+
+        register_setting('general', 'sms_contest_number');
+
+        add_settings_field(
+            'sms_contest_number',
+            'SMS číslo',
+            function() {
+                ?>
+                <input type="text"
+                    name="sms_contest_number"
+                    value="<?php echo esc_attr(get_option('sms_contest_number')); ?>"
+                    class="regular-text">
+                <?php
+            },
+            'general'
+        );
+
+        register_setting('general', 'sms_contest_price');
+
+        add_settings_field(
+            'sms_contest_price',
+            'Cena SMS',
+            function() {
+                ?>
+                <input type="text"
+                    name="sms_contest_price"
+                    value="<?php echo esc_attr(get_option('sms_contest_price')); ?>"
+                    class="regular-text">
+                <?php
+            },
+            'general'
+        );
+    });

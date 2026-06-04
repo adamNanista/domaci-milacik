@@ -13,7 +13,16 @@
             <main <?php post_class( 'flex-1 px-6 *:max-w-6xl *:mx-auto *:mb-12 *:first:mt-12 [&>.alignfull]:max-w-none [&>.alignfull]:-mx-6 md:px-12 md:*:mb-24 md:*:first:mt-24 md:[&>.alignfull]:-mx-12' ); ?> role="main">
                 <section class="mt-0! px-4 py-3 bg-neutral-100 md:px-6 alignfull">
                     <div class="max-w-6xl mx-auto">
-                        <a href="<?php echo home_url( '/milacikovia/' ); ?>" class="inline-flex align-top items-center justify-center gap-2.5 text-neutral-500 font-bold text-center uppercase outline-black hover:underline">
+                        <?php
+                            $back_button_url = '';
+
+                            if ( get_option( 'sms_contest_enabled' ) ) {
+                                $back_button_url = home_url( '/finale/' );
+                            } else {
+                                $back_button_url = home_url( '/milacikovia/' );
+                            }
+                        ?>
+                        <a href="<?php echo esc_url( $back_button_url ); ?>" class="inline-flex align-top items-center justify-center gap-2.5 text-neutral-500 font-bold text-center uppercase outline-black hover:underline">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="flex-none size-4" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
                             Späť na galériu
                         </a>    
@@ -37,14 +46,29 @@
                             }
                         ?>
                     </div>
-                    <div class="self-center space-y-12">
+                    <div class="self-center space-y-8 md:space-y-12">
                         <div class="space-y-6">
                             <div class="space-y-4">
                                 <h1 class="font-heading text-5xl font-bold uppercase tracking-tight md:text-6xl"><?php the_title(); ?></h1>
-                                <?php get_template_part( 'templates/contest_entry/vote-count', 'xl' ); ?>
+                                <?php 
+                                    if ( get_option( 'sms_contest_enabled' ) ) {
+                                        get_template_part( 'templates/contest_entry/sms-vote-count', 'xl' ); 
+                                    } else {
+                                        get_template_part( 'templates/contest_entry/vote-count', 'xl' ); 
+                                    }
+                                ?>
                             </div>
-                            <?php get_template_part( 'templates/contest_entry/vote-button' ); ?>
+                            <?php 
+                                if ( ! get_option( 'sms_contest_enabled' ) ) {  
+                                    get_template_part( 'templates/contest_entry/vote-button' );
+                                } 
+                             ?>
                         </div>
+                        <?php 
+                            if ( get_option( 'sms_contest_enabled' ) ) {
+                                get_template_part( 'templates/contest_entry/sms-vote-instructions' );
+                            } 
+                        ?>
                         <div class="text-neutral-500">
                             <?php the_content(); ?>
                         </div>

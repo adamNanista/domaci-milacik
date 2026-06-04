@@ -37,6 +37,8 @@
 	--color-success-800: #245727;
 	--color-success-900: #1f4822;
 	--color-success-950: #0c270e;
+
+	--breakpoint-xs: 30rem;
 }
 
 @layer base {
@@ -62,6 +64,9 @@
 	}
 	.f-button {
 		@apply bg-transparent!;
+	}
+	.f-caption {
+		@apply text-white!;
 	}
 
 	/* Pagination */
