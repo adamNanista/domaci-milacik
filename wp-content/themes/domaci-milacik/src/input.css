@@ -245,13 +245,13 @@
 		color: var(--button--text-outline, var(--color-black));
 		fill: var(--button--text-outline, var(--color-black));
 
-		border-color: var(--button--border-outline, var(--color-black));
+		border-color: var(--button--border-outline, var(--color-neutral-200));
 	}
 	.button-outline:hover {
 		color: var(--button--text-outline, var(--color-black));
 
 		background-color: var(--button--background-outline-hover, var(--color-neutral-100));
-		border-color: var(--button--border-outline, var(--color-black));
+		border-color: var(--button--border-outline, var(--color-neutral-200));
 	}
 
 	.button-primary {
@@ -284,6 +284,26 @@
 		--button--border-filled-hover: color-mix(in oklab, var(--color-white) 0%, transparent);
 		--button--border-outline: var(--color-white);
 	}
+	.button-facebook {
+		--button--text-filled: var(--color-white);
+		--button--text-outline: #1663df;
+		--button--background-filled: #1663df;
+		--button--background-filled-hover: #1950b4;
+		--button--background-outline-hover: #daeeff;
+		--button--border-filled: #1663df;
+		--button--border-filled-hover: #1950b4;
+		--button--border-outline: #1663df;
+	}
+	.button-messenger {
+		--button--text-filled: var(--color-white);
+		--button--text-outline: #0865c5;
+		--button--background-filled: #0865c5;
+		--button--background-filled-hover: #0d569b;
+		--button--background-outline-hover: #d6f2ff;
+		--button--border-filled: #0865c5;
+		--button--border-filled-hover: #0d569b;
+		--button--border-outline: #0865c5;
+	}
 }
 
 @utility button-sm {
@@ -293,6 +313,7 @@
 	--button--font-size: var(--text-sm);
 	--button--line-height: var(--text-sm--line-height);
 	--button--border-radius: var(--radius-sm);
+	--button--icon-size: calc(var(--spacing) * 3.5);
 }
 
 @utility button-md {
@@ -302,6 +323,7 @@
 	--button--font-size: var(--text-base);
 	--button--line-height: var(--text-base--line-height);
 	--button--border-radius: var(--radius-md);
+	--button--icon-size: calc(var(--spacing) * 4);
 }
 
 @utility button-lg {
@@ -311,4 +333,5 @@
 	--button--font-size: var(--text-lg);
 	--button--line-height: var(--text-lg--line-height);
 	--button--border-radius: var(--radius-lg);
+	--button--icon-size: calc(var(--spacing) * 4.5);
 }

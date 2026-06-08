@@ -8,8 +8,8 @@
         <footer class="px-4 py-8 text-white bg-black md:px-6 md:py-8" role="contentinfo">
             <div class="max-w-6xl mx-auto">
                 <div class="flex flex-col items-center gap-8 md:flex-row md:gap-6">
-                    <a href="<?php echo home_url(); ?>" class="flex-none block">
-                        <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/novycas--white.svg" alt="Logo Nový Čas" class="h-16" width="65" height="64" />
+                    <a href="<?php echo esc_url( 'https://www.cas.sk/' ); ?>" class="flex-none block" target="_blank">
+                        <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/novycas--white.svg" alt="Logo Nový Čas" class="h-16" width="60" height="64" />
                     </a>
                     <p class="text-center md:text-left">&copy; <?php echo date("Y"); ?> Nový Čas - Všetky práva vyhradené</p>
                     <ul class="flex items-center gap-4 md:ml-auto">

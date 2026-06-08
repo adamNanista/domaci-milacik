@@ -154,7 +154,7 @@
         $owner_email        = isset( $_POST['contest-entry-form-owner-email'] )         ? sanitize_email( wp_unslash( $_POST['contest-entry-form-owner-email'] ) )              : '';
         $pet_name           = isset( $_POST['contest-entry-form-pet-name'] )            ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-pet-name'] ) )            : '';
         $pet_description    = isset( $_POST['contest-entry-form-pet-description'] )     ? sanitize_textarea_field( wp_unslash( $_POST['contest-entry-form-pet-description'] ) ) : '';
-        $photo              = isset( $_FILES['contest-entry-form-photo'] ) && $_FILES['contest-entry-form-photo']['error'] === UPLOAD_ERR_OK;
+        $photo              = isset( $_FILES['contest-entry-form-photo'] ) && is_array( $_FILES['contest-entry-form-photo']['error'] ) && count( array_filter( $_FILES['contest-entry-form-photo']['error'], fn( $e ) => $e === UPLOAD_ERR_OK ) ) > 0;
         $video_type         = isset( $_POST['contest-entry-form-video-type'] )          ? sanitize_text_field( wp_unslash( $_POST['contest-entry-form-video-type'] ) )          : 'upload';
         $video_url          = isset( $_POST['contest-entry-form-video-url'] )           ? esc_url_raw( wp_unslash( $_POST['contest-entry-form-video-url'] ) )                   : '';
         $consent_combined   = ! empty( $_POST['contest-entry-form-consent-combined'] )  ? 1                                                                                     : 0;
@@ -214,19 +214,33 @@
         /**
          * Photo validation
          */
-        if (!isset($_FILES['contest-entry-form-photo'])) {
+        if ( ! isset( $_FILES['contest-entry-form-photo'] ) || ! is_array( $_FILES['contest-entry-form-photo']['error'] ) ) {
             $errors['contest-entry-form-photo'] = 'Fotografia je povinná.';
         } else {
-            $file_error = $_FILES['contest-entry-form-photo']['error'];
+            $files = $_FILES['contest-entry-form-photo'];
+            $count = count( $files['error'] );
+            $valid_files = 0;
+            $file_errors = [];
 
-            if ($file_error === UPLOAD_ERR_NO_FILE) {
+            for ( $i = 0; $i < $count; $i++ ) {
+                if ( $files['error'][$i] === UPLOAD_ERR_NO_FILE ) continue;
+                if ( $i >= 3 ) continue; 
+
+                if ( $files['error'][$i] === UPLOAD_ERR_INI_SIZE || $files['error'][$i] === UPLOAD_ERR_FORM_SIZE ) {
+                    $file_errors[] = 'Fotografia ' . ( $i + 1 ) . ' je príliš veľká.';
+                } elseif ( $files['error'][$i] !== UPLOAD_ERR_OK ) {
+                    $file_errors[] = 'Nahrávanie fotografie ' . ( $i + 1 ) . ' zlyhalo.';
+                } elseif ( $files['size'][$i] > 5 * MB_IN_BYTES ) {
+                    $file_errors[] = 'Fotografia ' . ( $i + 1 ) . ' musí mať menej ako 5 MB.';
+                } else {
+                    $valid_files++;
+                }
+            }
+
+            if ($valid_files === 0) {
                 $errors['contest-entry-form-photo'] = 'Fotografia je povinná.';
-            } elseif ($file_error === UPLOAD_ERR_INI_SIZE || $file_error === UPLOAD_ERR_FORM_SIZE) {
-                $errors['contest-entry-form-photo'] = 'Fotografia je príliš veľká.';
-            } elseif ($file_error !== UPLOAD_ERR_OK) {
-                $errors['contest-entry-form-photo'] = 'Nahrávanie fotografie zlyhalo.';
-            } elseif ($_FILES['contest-entry-form-photo']['size'] > 5 * MB_IN_BYTES) {
-                $errors['contest-entry-form-photo'] = 'Fotografia musí mať menej ako 5 MB.';
+            } elseif (!empty($file_errors)) {
+                $errors['contest-entry-form-photo'] = implode(' ', $file_errors);
             }
         }
 
@@ -298,71 +312,78 @@
          * PHOTO UPLOAD
          * =========================
          */
-        $tmp_photo = $_FILES['contest-entry-form-photo']['tmp_name'];
-
-        $photo_finfo = finfo_open( FILEINFO_MIME_TYPE );
-        $photo_real_mime = finfo_file( $photo_finfo, $tmp_photo );
-        finfo_close( $photo_finfo );
-
-        if ( ! in_array( $photo_real_mime, [ 'image/jpeg', 'image/png' ], true ) ) {
-            $fail( '', [ 'contest-entry-form-photo' => 'Nepodporovaný formát obrázku. Povolené sú iba JPG a PNG.' ] );
-        }
-
-        $photo_size = @getimagesize( $tmp_photo );
-        if ( false === $photo_size ) {
-            $fail( '', [ 'contest-entry-form-photo' => 'Súbor nie je platný obrázok.' ] );
-        }
-
-        $max_dimension = 10000;
-
-        if ( $photo_size[0] > $max_dimension || $photo_size[1] > $max_dimension ) {
-            $fail( '', [ 'contest-entry-form-photo' => 'Obrázok je príliš veľký. Prosím, zmenšite ho pred nahraním.' ] );
-        }
-
-        $estimated_memory = $photo_size[0] * $photo_size[1] * 4;
-        $limit = 100 * MB_IN_BYTES;
-
-        if ( $estimated_memory > $limit ) {
-            $fail( '', [ 'contest-entry-form-photo' => 'Súbor je príliš náročný na spracovanie.' ] );
-        }
-
         require_once ABSPATH . 'wp-admin/includes/file.php';
         require_once ABSPATH . 'wp-admin/includes/media.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
 
-        try {
-            add_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
-            $photo_id = media_handle_upload( 'contest-entry-form-photo', 0 );
-        } finally {
-            remove_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
+        $photo_ids = [];
+        $files = $_FILES['contest-entry-form-photo'];
+        $count = count( $files['error'] );
+
+        for ( $i = 0; $i < $count; $i++ ) {
+            if ( $files['error'][$i] === UPLOAD_ERR_NO_FILE ) continue;
+            if ( $i >= 3 ) continue;
+
+            $tmp = $files['tmp_name'][$i];
+
+            $finfo = finfo_open( FILEINFO_MIME_TYPE );
+            $real_mime = finfo_file( $finfo, $tmp );
+            finfo_close( $finfo );
+
+            if ( ! in_array( $real_mime, ['image/jpeg', 'image/png'], true ) ) {
+                $fail( '', ['contest-entry-form-photo' => 'Fotografia ' . ( $i + 1 ) . ' má nepodporovaný formát. Povolené sú iba JPG a PNG.'] );
+            }
+
+            $photo_size = @getimagesize( $tmp );
+            if ( false === $photo_size ) {
+                $fail( '', ['contest-entry-form-photo' => 'Fotografia ' . ( $i + 1 ) . ' nie je platný obrázok.'] );
+            }
+
+            if ( $photo_size[0] > 10000 || $photo_size[1] > 10000 ) {
+                $fail( '', ['contest-entry-form-photo' => 'Fotografia ' . ( $i + 1 ) . ' je príliš veľká. Prosím, zmenšite ju pred nahraním.'] );
+            }
+
+            if ( $photo_size[0] * $photo_size[1] * 4 > 100 * MB_IN_BYTES ) {
+                $fail( '', ['contest-entry-form-photo' => 'Fotografia ' . ( $i + 1 ) . ' je príliš náročná na spracovanie.'] );
+            }
+
+            $_FILES['contest-entry-form-photo-single'] = [
+                'name'     => $files['name'][$i],
+                'type'     => $files['type'][$i],
+                'tmp_name' => $files['tmp_name'][$i],
+                'error'    => $files['error'][$i],
+                'size'     => $files['size'][$i],
+            ];
+
+            try {
+                add_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
+                $pid = media_handle_upload( 'contest-entry-form-photo-single', 0 );
+            } finally {
+                remove_filter( 'upload_mimes', 'contest_entry_form_image_mimes' );
+            }
+
+            if ( is_wp_error( $pid ) ) {
+                $fail( '', ['contest-entry-form-photo' => 'Nahrávanie fotografie ' . ( $i + 1 ) . ' zlyhalo: ' . $pid->get_error_message()] );
+            }
+
+            $rollback[] = function() use ( $pid ) {
+                wp_delete_attachment( $pid, true );
+            };
+
+            $photo_file = get_attached_file( $pid );
+            $editor = wp_get_image_editor( $photo_file );
+
+            if ( ! is_wp_error( $editor ) ) {
+                $editor->resize( 2560, 2560, false );
+                $saved = $editor->save( $photo_file );
+                if ( ! is_wp_error( $saved ) ) {
+                    wp_update_attachment_metadata( $pid, wp_generate_attachment_metadata( $pid, $photo_file ) );
+                }
+            }
+
+            update_post_meta( $pid, '_wp_attachment_image_alt', $pet_name );
+            $photo_ids[] = $pid;
         }
-
-        if ( is_wp_error( $photo_id ) ) {
-            $fail( '', [ 'contest-entry-form-photo' => 'Nahrávanie fotografie zlyhalo: ' . $photo_id->get_error_message() ] );
-        }
-
-        $rollback[] = function() use ( $photo_id ) {
-            wp_delete_attachment( $photo_id, true );
-        };
-
-        $photo_file = get_attached_file( $photo_id );
-        $editor = wp_get_image_editor( $photo_file );
-
-        if ( is_wp_error( $editor ) ) {
-            $fail( '', [ 'contest-entry-form-photo' => 'Nepodporovaný formát fotografie.' ] );
-        }
-
-        $editor->resize( 2560, 2560, false );
-        $saved = $editor->save( $photo_file );
-
-        if ( is_wp_error( $saved ) ) {
-            $fail( '', [ 'contest-entry-form-photo' => 'Nepodarilo sa spracovať fotografiu.' ] );
-        }
-
-        $metadata = wp_generate_attachment_metadata( $photo_id, $photo_file );
-        wp_update_attachment_metadata( $photo_id, $metadata );
-
-        update_post_meta( $photo_id, '_wp_attachment_image_alt', $pet_name );
 
         /**
          * =========================
@@ -427,22 +448,24 @@
          * FINAL SAVE
          * =========================
          */
-        update_post_meta( $post_id, '_contest_entry_form_photo',                $photo_id );
+        update_post_meta( $post_id, '_contest_entry_form_photo',                $photo_ids[0] );
         update_post_meta( $post_id, '_contest_entry_form_consent_combined',     $consent_combined );
         update_post_meta( $post_id, '_contest_entry_form_ip_hash',              $fingerprint_ip );
         update_post_meta( $post_id, '_contest_entry_form_submitted_at',         gmdate( 'Y-m-d H:i:s' ) );
 
         if ( function_exists('update_field') ) {
+            update_field( 'gallery',        $photo_ids,         $post_id );
             update_field( 'owner_name',     $owner_name,        $post_id );
             update_field( 'owner_email',    $owner_email,       $post_id );
             update_field( 'video_url',      $final_video_url,   $post_id );
         } else {
+            update_post_meta( $post_id, '_gallery',     $photo_ids);
             update_post_meta( $post_id, '_owner_name',  $owner_name );
             update_post_meta( $post_id, '_owner_email', $owner_email );
             update_post_meta( $post_id, '_video_url',   $final_video_url );
         }  
 
-        set_post_thumbnail( $post_id, $photo_id );
+        set_post_thumbnail( $post_id, $photo_ids[0] );
 
         set_transient($entry_key, 1, DAY_IN_SECONDS);
 

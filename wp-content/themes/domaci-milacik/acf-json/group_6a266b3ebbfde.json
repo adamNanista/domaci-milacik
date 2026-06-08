@@ -1,0 +1,70 @@
+{
+    "key": "group_6a266b3ebbfde",
+    "title": "Galéria",
+    "fields": [
+        {
+            "key": "field_6a266b40c2149",
+            "label": "Galéria",
+            "name": "gallery",
+            "aria-label": "",
+            "type": "enhanced_gallery",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "display_layout": "grid",
+            "columns": 3,
+            "gap": 16,
+            "image_size": "medium",
+            "enable_lightbox": 0,
+            "show_caption": 0,
+            "enable_lazy_load": 0,
+            "return_format": "id",
+            "library": "all",
+            "min": 0,
+            "max": 0,
+            "insert": "append",
+            "preview_size": "medium",
+            "mime_types": "",
+            "allow_in_bindings": 0,
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "carousel_autoplay": 1,
+            "carousel_speed": 3000,
+            "carousel_slides_to_show": 3,
+            "carousel_height": 400,
+            "carousel_dots": 1,
+            "carousel_arrows": 1
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "contest_entry"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1780902807
+}

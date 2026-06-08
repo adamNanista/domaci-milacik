@@ -86,6 +86,11 @@ document.addEventListener("DOMContentLoaded", function () {
 					errorMessage: "Fotografia je povinná.",
 				},
 				{
+					rule: "maxFilesCount",
+					value: 3,
+					errorMessage: "Môžete nahrať maximálne 3 fotografie.",
+				},
+				{
 					rule: "files",
 					value: {
 						files: {
@@ -304,9 +309,16 @@ document.addEventListener("DOMContentLoaded", function () {
 			event.preventDefault();
 			dropzone.classList.remove("dragover");
 			const dataTransfer = new DataTransfer();
-			const file = event.dataTransfer.files[0];
-			if (!file) return;
-			dataTransfer.items.add(file);
+
+			const files = event.dataTransfer.files;
+			if (!files.length) return;
+
+			files.forEach((file) => dataTransfer.items.add(file));
+
+			[...event.dataTransfer.files].forEach((file) => {
+				if (dataTransfer.files.length < 3) dataTransfer.items.add(file);
+			});
+
 			input.files = dataTransfer.files;
 			renderFiles(dropzone, input);
 		});

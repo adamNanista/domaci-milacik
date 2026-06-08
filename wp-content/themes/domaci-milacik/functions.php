@@ -253,7 +253,7 @@
         wp_register_script(
             'detail-gallery',
             get_stylesheet_directory_uri() . '/assets/js/detail-gallery.js',
-            array( 'fancybox' ),
+            array( 'swiper', 'fancybox' ),
             filemtime( get_stylesheet_directory() . '/assets/js/detail-gallery.js' ),
             true,
         );
@@ -371,6 +371,13 @@
              */
 
             wp_enqueue_script( 'cf-turnstile-explicit' );
+
+            /**
+             * Swiper
+             */
+
+            wp_enqueue_script( 'swiper' );
+            wp_enqueue_style( 'swiper' );            
 
             /**
              * Fancybox

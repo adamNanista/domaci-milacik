@@ -20,7 +20,7 @@
         <header class="flex-none px-4 sticky top-0 z-100 text-white bg-primary-600 md:px-6" role="banner">
             <div class="max-w-6xl mx-auto">
                 <div class="flex items-center gap-4 md:gap-6">
-                    <a href="<?php echo home_url(); ?>" class="flex-none block focus:-outline-offset-2">
+                    <a href="<?php echo esc_url( 'https://www.cas.sk/' ); ?>" class="flex-none block focus:-outline-offset-2" target="_blank">
                         <img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/novycas.svg" alt="Logo Nový Čas" class="h-16" width="65" height="64" />
                     </a>
                     <nav class="order-last lg:order-0" id="header-nav">
