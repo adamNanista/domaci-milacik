@@ -17,7 +17,7 @@
         $token  = defined('NOVYCAS_API_JWT') ? NOVYCAS_API_JWT : '';
 
         if ( ! $url || ! $token ) {
-            return new WP_Error( 'misconfigured', 'API URL or JWT nie je definované vo wp-config.php', array( 'status' => 500 ) );
+            return new WP_Error( 'misconfigured', 'API URL alebo JWT nie je definované vo wp-config.php', array( 'status' => 500 ) );
         }
 
         $response = wp_remote_get( $url, array(

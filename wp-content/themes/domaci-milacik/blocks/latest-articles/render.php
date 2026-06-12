@@ -14,10 +14,6 @@
     $response = rest_do_request( $request );
 
     if ( is_wp_error( $response ) ) {
-        ?>
-            <p class="text-neutral-500">Články sa nepodarilo načítať.</p>
-        <?php
-
         return;
     }
 
@@ -27,7 +23,7 @@
         <div class="flex items-start gap-4">
             <div class="flex-1">
                 <h2 class="font-heading text-4xl font-bold uppercase tracking-tight">
-                    <?php echo $title ? wp_kses_post( $title ) : 'Najnovšie články'; ?>
+                    <?php echo $title ? wp_kses_post( $title ) : 'Mohlo by vás zaujímať'; ?>
                 </h2>
             </div>
             <div class="flex-none flex items-center gap-2">
@@ -46,7 +42,7 @@
         </div>
         <div class="text-center">
             <a href="<?php echo $buttonUrl ? esc_url( $buttonUrl ) : esc_url( 'https://www.cas.sk/' ); ?>" class="inline-flex align-top items-center justify-center gap-2.5 text-primary-600 font-bold text-center uppercase outline-black hover:underline">
-                <?php echo $buttonText ? esc_html( $buttonText ) : 'Zobraziť všetky články'; ?>
+                <?php echo $buttonText ? esc_html( $buttonText ) : 'Viac článkov'; ?>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="flex-none size-4" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
             </a>
         </div>

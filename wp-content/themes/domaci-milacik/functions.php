@@ -419,6 +419,12 @@
              */
 
             wp_enqueue_script( 'contest-entry-voting' );
+
+            /**
+             * Latest articles
+             */
+
+            wp_enqueue_script( 'latest-articles' );
             
         }
 

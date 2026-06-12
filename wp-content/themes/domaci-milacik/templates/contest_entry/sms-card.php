@@ -16,9 +16,9 @@
     <a href="<?php the_permalink(); ?>" class="flex-none block overflow-hidden rounded-t-[0.625rem] focus:-outline-offset-2 hover:[&_img]:scale-105 md:w-24 md:rounded-t-none md:rounded-l-[0.625rem]">
         <?php the_post_thumbnail( 'contest-entry-card', array( 'class' => 'w-full aspect-4/3 object-cover object-center transition-transform duration-300 md:aspect-none md:h-full' ) ); ?>
     </a>
-    <div class="flex-1 flex flex-col gap-4 p-6 md:flex-row md:items-center md:gap-6">
-        <div class="flex-1 space-y-2">
-            <h2 class="text-2xl font-bold">
+    <div class="flex-1 flex flex-col min-w-0 gap-4 p-6 md:flex-row md:items-center md:gap-6">
+        <div class="flex-1 min-w-0 space-y-2">
+            <h2 class="text-2xl font-bold wrap-break-word">
                 <a href="<?php the_permalink(); ?>" class="hover:underline"><?php the_title(); ?></a>
             </h2>
             <?php get_template_part( 'templates/contest_entry/sms-vote-count', 'md' ); ?>
