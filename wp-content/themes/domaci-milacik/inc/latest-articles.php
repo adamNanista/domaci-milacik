@@ -4,98 +4,85 @@
 		exit; // Exit if accessed directly.
 	}
 
-    add_action( 'wp_enqueue_scripts', 'enqueue_latest_articles_assets' );
+    add_action( 'rest_api_init', function() {
+        register_rest_route( 'latest-articles/v1', '/articles', array(
+            'methods'               => 'GET',
+            'callback'              => 'latest_articles_proxy',
+            'permission_callback'   => '__return_true',
+        ) );
+    } );
 
-    function enqueue_latest_articles_assets() {
-        if ( is_page( 60 ) ) {
-            wp_enqueue_script(
-                'swiper',
-                'https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js',
-                array(),
-                false,
-                true,
-            );
+    function latest_articles_proxy( WP_REST_Request $request ) {
+        $url    = defined('NOVYCAS_API_URL') ? NOVYCAS_API_URL : '';
+        $token  = defined('NOVYCAS_API_JWT') ? NOVYCAS_API_JWT : '';
 
-            wp_enqueue_style(
-                'swiper',
-                'https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css',
-            );
-
-            wp_enqueue_script(
-                'latest-articles',
-                get_stylesheet_directory_uri() . '/assets/js/latest-articles.js',
-                array( 'swiper' ),
-                filemtime( get_stylesheet_directory() . '/assets/js/latest-articles.js' ),
-                true,
-            );
+        if ( ! $url || ! $token ) {
+            return new WP_Error( 'misconfigured', 'API URL or JWT nie je definované vo wp-config.php', array( 'status' => 500 ) );
         }
+
+        $response = wp_remote_get( $url, array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $token,
+                'Accept'        => 'application/json',
+            ),
+            'timeout' => 30,
+        ) );
+
+        if ( is_wp_error( $response ) ) {
+            return new WP_Error( 'fetch_failed', $response->get_error_message(), array( 'status' => 502 ) );
+        }
+
+        $code = wp_remote_retrieve_response_code( $response );
+        $body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        return new WP_REST_Response( $body, $code );
     }
 
-    add_shortcode( 'latest_articles', 'render_latest_articles' );
+    function render_latest_articles( $data ) {
+        $articles = $data['results'] ?? [];
 
-    function render_latest_articles() {
-        include_once( ABSPATH . WPINC . '/feed.php' );
-
-        add_filter( 'wp_feed_cache_transient_lifetime' , 'return_3600' );
-
-        $feed = fetch_feed( 'https://www.cas.sk/temporary-rss.xml' );
-
-        remove_filter( 'wp_feed_cache_transient_lifetime' , 'return_3600' );
-
-        if ( is_wp_error( $feed ) ) {
+        if ( empty( $articles ) ) {
+            ?>
+                <p class="text-neutral-500">Nenašli sa žiadne články.</p>
+            <?php
             return;
         }
-
-        $max_items = $feed->get_item_quantity( 6 );
-        $feed_items = $feed->get_items( 0, $max_items );
-
-        ob_start();
-
         ?>
-            <div id="latest-articles-slider" class="swiper">
+            <div id="latest-articles-slider" class="swiper -m-[4px]! p-[4px]!">
                 <div class="swiper-wrapper">
                     <?php 
-                        foreach ( $feed_items as $item ) {
-                            $link = $item->get_link();
-                            $title = $item->get_title();
-
-                            $image = '';
-                            $alt = '';
-
-                            $enclosure = $item->get_enclosure();
-                            if ( $enclosure && str_contains( $enclosure->get_type(), 'image' ) ) {
-                                $image = $enclosure->get_link();
-                                $alt = $enclosure->data['description'] ?? '';
-                            }
-                            
+                        foreach ( $articles as $article ) {
+                            $title      = $article['title'] ?? '';
+                            $url        = $article['mainRoute']['path'] ?? $article['externalUrl'] ?? '#';
+                            $domain     = $article['site']['domain'] ?? 'https://www.cas.sk';
+                            $full_url   = $url !== '#' ? rtrim( $domain, '/' ) . $url : '#';
+                            $image      = get_image_url( $article['heroImage'] ?? [], 640, 360 );
                             ?>
                                 <div class="swiper-slide">
-                                    <a href="<?php echo esc_url( $item->get_link() ); ?>" target="_blank">
-                                        <?php 
-                                            if ( $image ) {
-                                                ?>
-                                                    <img 
-                                                        src="<?php echo esc_url( $image ); ?>" 
-                                                        alt="<?php echo esc_attr( $alt ?: $title ); ?>" />
-                                                <?php
-                                            }
-                                        ?>
-                                        <?php echo esc_html( $item->get_title() ); ?>
-                                    </a>
+                                    <article class="space-y-4">
+                                        <a href="<?php echo esc_url( $full_url ); ?>" class="block overflow-hidden rounded-xl focus:-outline-offset-2 hover:[&_img]:scale-105">
+                                            <img src="<?php echo esc_url( $image ); ?>" alt="<?php echo esc_attr( $title ); ?>" class="w-full transition-transform duration-300" width="640" height="360" />
+                                        </a>
+                                        <h3 class="font-bold">
+                                            <a href="<?php echo esc_url( $full_url ); ?>" class="hover:underline" target="_blank">
+                                                <?php echo esc_html( $title ); ?>
+                                            </a>
+                                        </h3>
+                                    </article>
                                 </div>
                             <?php
                         }
                     ?>
                 </div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
             </div>
         <?php
-        
-
-        return ob_get_clean();
     }
 
-    function return_3600( $seconds ) {
-        return 3600;
-    }
+    function get_image_url( $heroImage, $width = 640, $height = 360 ) {
+        $cdn      = defined('NOVYCAS_CDN_URL') ? rtrim(NOVYCAS_CDN_URL, '/') : '';
+        $basename = $heroImage['baseName'] ?? '';
+
+        if ( ! $cdn || ! $basename ) return '';
+
+        return $cdn . '/api/image/' . $width . 'x' . $height . '/' . $basename;
+    };

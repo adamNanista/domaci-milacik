@@ -82,7 +82,7 @@
                     <div class="self-center space-y-8 md:space-y-12">
                         <div class="space-y-6">
                             <div class="space-y-4">
-                                <h1 class="font-heading text-5xl font-bold uppercase tracking-tight md:text-6xl"><?php the_title(); ?></h1>
+                                <h1 class="font-heading text-5xl font-bold uppercase tracking-tight wrap-break-word md:text-6xl"><?php the_title(); ?></h1>
                                 <?php 
                                     if ( get_option( 'sms_contest_enabled' ) ) {
                                         get_template_part( 'templates/contest_entry/sms-vote-count', 'xl' ); 
@@ -102,7 +102,7 @@
                                 get_template_part( 'templates/contest_entry/sms-vote-instructions' );
                             } 
                         ?>
-                        <div class="text-neutral-500">
+                        <div class="text-neutral-500 wrap-break-word">
                             <?php the_content(); ?>
                         </div>
                         <div class="detail-content-footer">

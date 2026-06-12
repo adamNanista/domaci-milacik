@@ -522,7 +522,7 @@
 
         $subject    = 'Ďakujeme! Vaša prihláška bola prijatá a čaká na schválenie.';
         $body       = get_thank_you_email_html( $photo_url, $pet_name, $pet_decription );
-        $headers    = [ 'Content-Type: text/html; charset=UTF-8' ];
+        $headers    = array( 'Content-Type: text/html; charset=UTF-8' );
 
         wp_mail( $owner_email, $subject, $body, $headers );
     }

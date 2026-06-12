@@ -1,20 +1,20 @@
 {
-  "name": "domaci-milacik",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-	"dev": "npx @tailwindcss/cli -i ./src/input.css -o ./assets/css/style.css --watch",
-    "build": "npx @tailwindcss/cli -i ./src/input.css -o ./assets/css/style.css --minify"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "tailwindcss": "^4.3.0"
-  },
-  "dependencies": {
-    "@tailwindcss/cli": "^4.3.0"
-  }
+	"name": "domaci-milacik",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "npx @tailwindcss/cli -i ./src/input.css -o ./assets/css/style.css --watch",
+		"build": "npx @tailwindcss/cli -i ./src/input.css -o ./assets/css/style.css --minify"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {
+		"tailwindcss": "^4.3.0"
+	},
+	"dependencies": {
+		"@tailwindcss/cli": "^4.3.0"
+	}
 }

@@ -1,0 +1,26 @@
+{
+	"apiVersion": 3,
+	"name": "custom/latest-articles",
+	"title": "Latest articles",
+	"category": "widgets",
+	"icon": "embed-post",
+	"editorScript": "file:./build/index.js",
+	"editorStyle": "file:./editor.css",
+	"viewStyle": ["swiper"],
+	"viewScript": ["swiper", "latest-articles"],
+	"render": "file:./render.php",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonText": {
+			"type": "string",
+			"default": ""
+		},
+		"buttonUrl": {
+			"type": "string",
+			"default": ""
+		}
+	}
+}

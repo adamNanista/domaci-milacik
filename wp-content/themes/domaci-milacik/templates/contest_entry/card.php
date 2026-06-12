@@ -12,7 +12,7 @@
     </a>
     <div class="flex-1 flex flex-col p-6 space-y-4">
         <div class="flex-1 space-y-2">
-            <h3 class="text-2xl font-bold">
+            <h3 class="text-2xl font-bold wrap-break-word">
                 <a href="<?php the_permalink(); ?>" class="hover:underline"><?php the_title(); ?></a>
             </h3>
             <?php get_template_part( 'templates/contest_entry/vote-count', 'md' ); ?>

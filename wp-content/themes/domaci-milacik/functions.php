@@ -212,6 +212,18 @@
         );
 
         /**
+         * Latest articles
+         */
+
+        wp_register_script(
+            'latest-articles',
+            get_stylesheet_directory_uri() . '/assets/js/latest-articles.js',
+            array( 'swiper' ),
+            filemtime( get_stylesheet_directory() . '/assets/js/latest-articles.js' ),
+            true,
+        );
+
+        /**
          * Entry form
          */
 
@@ -330,6 +342,10 @@
 
         register_block_type(
             get_stylesheet_directory() . '/blocks/card'
+        );
+
+        register_block_type(
+            get_stylesheet_directory() . '/blocks/latest-articles'
         );
     });
 
