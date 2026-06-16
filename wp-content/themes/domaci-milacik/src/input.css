@@ -306,6 +306,16 @@
 	}
 }
 
+@utility button-xs {
+	--button--gap: calc(var(--spacing) * 1.5);
+	--button--size: calc(var(--spacing) * 8);
+	--button--padding-inline: calc(var(--spacing) * 3);
+	--button--font-size: var(--text-xs);
+	--button--line-height: var(--text-xs--line-height);
+	--button--border-radius: var(--radius-sm);
+	--button--icon-size: calc(var(--spacing) * 3);
+}
+
 @utility button-sm {
 	--button--gap: calc(var(--spacing) * 2);
 	--button--size: calc(var(--spacing) * 10);

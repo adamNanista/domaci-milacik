@@ -127,11 +127,19 @@
                     </div>
                 </section>
                 <?php 
-                    $request  = new WP_REST_Request( 'GET', '/latest-articles/v1/articles' );
-                    $response = rest_do_request( $request );
+                    $cache_key  = 'latest_articles_data';
+                    $data       = get_transient( $cache_key );
 
-                    if ( is_wp_error( $response ) ) {
-                        return;
+                    if ( false === $data ) {
+                        $request    = new WP_REST_Request( 'GET', '/latest-articles/v1/articles' );
+                        $response   = rest_do_request( $request );
+
+                        if ( is_wp_error( $response ) ) {
+                            return;
+                        }
+
+                        $data = $response->get_data();
+                        set_transient( $cache_key, $data, HOUR_IN_SECONDS );
                     }
                 ?>
                 <section class="space-y-8 md:space-y-12">
@@ -151,10 +159,10 @@
                         </div>
                     </div>
                     <div>
-                        <?php render_latest_articles( $response->get_data() ); ?>
+                        <?php render_latest_articles( $data ); ?>
                     </div>
                     <div class="text-center">
-                        <a href="<?php echo esc_url( 'https://www.cas.sk/' ); ?>" class="inline-flex align-top items-center justify-center gap-2.5 text-primary-600 font-bold text-center uppercase outline-black hover:underline">
+                        <a href="<?php echo esc_url( 'https://www.cas.sk/' ); ?>" class="inline-flex align-top items-center justify-center gap-2.5 text-primary-600 font-bold text-center uppercase outline-black hover:underline" target="_blank">
                             Viac článkov
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="flex-none size-4" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                         </a>
@@ -163,5 +171,5 @@
             </main>
         <?php
     }
-
+    
     get_footer();

@@ -60,7 +60,7 @@
                             ?>
                                 <div class="swiper-slide">
                                     <article class="space-y-4">
-                                        <a href="<?php echo esc_url( $full_url ); ?>" class="block overflow-hidden rounded-xl focus:-outline-offset-2 hover:[&_img]:scale-105">
+                                        <a href="<?php echo esc_url( $full_url ); ?>" class="block overflow-hidden rounded-xl focus:-outline-offset-2 hover:[&_img]:scale-105" target="_blank">
                                             <img src="<?php echo esc_url( $image ); ?>" alt="<?php echo esc_attr( $title ); ?>" class="w-full transition-transform duration-300" width="640" height="360" />
                                         </a>
                                         <h3 class="font-bold">

@@ -45,16 +45,17 @@
 		<div class="max-w-6xl mx-auto">
 			<div class="grid gap-6 md:grid-cols-2">
 				<div class="space-y-6">
-					<div class="space-y-4">
-						<h1 class="font-heading text-5xl font-bold uppercase tracking-tight md:text-6xl lg:text-7xl"><?php echo $title ? wp_kses_post( $title ) : 'Nadpis'; ?></h1>
-						<?php 
-							if ( $subtitle ) {
-								?>
-									<p><?php echo wp_kses_post( $subtitle ); ?></p>
-								<?php
-							}
-						?>
+					<div class="lg:flex lg:items-center lg:gap-6">
+						<img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/domacimilacik--white.svg" alt="Logo Domáci Miláčik" class="hidden lg:flex-none lg:block lg:h-32" width="109" height="128" />
+						<h1 class="font-heading text-5xl font-bold uppercase tracking-tight md:text-6xl"><?php echo $title ? wp_kses_post( $title ) : 'Nadpis'; ?></h1>
 					</div>
+					<?php 
+						if ( $subtitle ) {
+							?>
+								<p><?php echo wp_kses_post( $subtitle ); ?></p>
+							<?php
+						}
+					?>
 					<?php 
 						if ( ( $primaryButtonText && $primaryButtonUrl ) || ( $secondaryButtonText && $secondaryButtonUrl ) ) {
 							?>
